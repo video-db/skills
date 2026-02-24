@@ -19,7 +19,7 @@ coll = conn.get_collection()
 video = coll.upload(url="https://example.com/conference-talk.mp4")
 
 # 2. Index spoken content
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 
 # 3. Search for key topics
 topics = [
@@ -69,7 +69,7 @@ for url in urls:
 
 # 2. Index all videos
 for video in videos:
-    video.index_spoken_words()
+    video.index_spoken_words(force=True)
     print(f"Indexed: {video.name}")
 
 # 3. Search across the entire collection
@@ -105,7 +105,7 @@ coll = conn.get_collection()
 video = coll.upload(file_path="/path/to/raw-footage.mp4")
 
 # 2. Generate transcript
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 transcript = video.get_transcript_text()
 print(f"Transcript ({len(transcript)} chars): {transcript[:200]}...")
 
@@ -131,7 +131,7 @@ coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
 # 1. Index if not already done
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 
 # 2. Search for a specific topic
 results = video.search("budget discussion", search_type=SearchType.semantic)
@@ -165,7 +165,7 @@ coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
 # 1. Generate a summary of the video
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 transcript_text = video.get_transcript_text()
 result = coll.generate_text(
     prompt=f"Create a concise 2-sentence summary of this video:\n{transcript_text}",
@@ -441,7 +441,7 @@ def webhook():
         video = coll.get_video(video_id)
 
         # Generate searchable transcript
-        video.index_spoken_words()
+        video.index_spoken_words(force=True)
         transcript = video.get_transcript_text()
         print(f"Transcript ({len(transcript)} chars):")
         print(transcript[:500])

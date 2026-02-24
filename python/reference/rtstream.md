@@ -46,7 +46,7 @@ video.play()
 
 ```python
 # Index and add subtitles first
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 video.add_subtitle()
 
 # Stream now includes subtitles
@@ -107,7 +107,7 @@ Compile search results into a single stream of all matching segments:
 ```python
 from videodb import SearchType
 
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 results = video.search("key announcement", search_type=SearchType.semantic)
 
 # Compile all matching shots into one stream
@@ -154,7 +154,7 @@ conn = videodb.connect()
 coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 
 # Search for key moments
 queries = ["introduction", "main demo", "Q&A"]
@@ -221,7 +221,7 @@ conn = videodb.connect()
 coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 
 timeline = Timeline(conn)
 
@@ -269,7 +269,7 @@ coll = conn.get_collection()
 
 # Upload event recording
 event = coll.upload(url="https://example.com/event-recording.mp4")
-event.index_spoken_words()
+event.index_spoken_words(force=True)
 
 # Generate background music
 music = coll.generate_music(
@@ -396,7 +396,7 @@ Index the recorded content and search over it:
 
 ```python
 # Index content
-rtstream.index_spoken_words()
+rtstream.index_spoken_words(force=True)
 rtstream.index_scenes()
 
 # Search the recorded stream
@@ -444,7 +444,7 @@ print(f"Exported video: {export_result.video_id}")
 
 # 4. Index the exported video for search
 video = coll.get_video(export_result.video_id)
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 
 # 5. Search for action items
 results = video.search("action items and next steps")

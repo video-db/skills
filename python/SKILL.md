@@ -65,7 +65,8 @@ video = coll.upload(file_path="/path/to/video.mp4")
 ### Transcript + subtitle
 
 ```python
-video.index_spoken_words()
+# force=True skips the error if the video is already indexed
+video.index_spoken_words(force=True)
 text = video.get_transcript_text()
 stream_url = video.add_subtitle()
 ```
@@ -73,31 +74,68 @@ stream_url = video.add_subtitle()
 ### Search inside videos
 
 ```python
-video.index_spoken_words()
-results = video.search("product demo")
-stream_url = results.compile()
+from videodb.exceptions import InvalidRequestError
+
+video.index_spoken_words(force=True)
+
+# search() raises InvalidRequestError when no results are found.
+# Always wrap in try/except and treat "No results found" as empty.
+try:
+    results = video.search("product demo")
+    shots = results.get_shots()
+    stream_url = results.compile()
+except InvalidRequestError as e:
+    if "No results found" in str(e):
+        shots = []
+    else:
+        raise
 ```
 
 ### Scene search
 
 ```python
+import re
 from videodb import SearchType, IndexType, SceneExtractionType
+from videodb.exceptions import InvalidRequestError
 
-scene_index_id = video.index_scenes(
-    extraction_type=SceneExtractionType.shot_based,
-    prompt="Describe the visual content in this scene.",
-)
+# index_scenes() has no force parameter — it raises an error if a scene
+# index already exists. Extract the existing index ID from the error.
+try:
+    scene_index_id = video.index_scenes(
+        extraction_type=SceneExtractionType.shot_based,
+        prompt="Describe the visual content in this scene.",
+    )
+except Exception as e:
+    match = re.search(r"id\s+([a-f0-9]+)", str(e))
+    if match:
+        scene_index_id = match.group(1)
+    else:
+        raise
 
-results = video.search(
-    query="person writing on a whiteboard",
-    search_type=SearchType.semantic,
-    index_type=IndexType.scene,
-    scene_index_id=scene_index_id,
-)
-stream_url = results.compile()
+# Use score_threshold to filter low-relevance noise (recommended: 0.3+)
+try:
+    results = video.search(
+        query="person writing on a whiteboard",
+        search_type=SearchType.semantic,
+        index_type=IndexType.scene,
+        scene_index_id=scene_index_id,
+        score_threshold=0.3,
+    )
+    shots = results.get_shots()
+    stream_url = results.compile()
+except InvalidRequestError as e:
+    if "No results found" in str(e):
+        shots = []
+    else:
+        raise
 ```
 
 ### Timeline editing
+
+**Important:** Always validate timestamps before building a timeline:
+- `start` must be >= 0 (negative values are silently accepted but produce broken output)
+- `start` must be < `end`
+- `end` must be <= `video.length`
 
 ```python
 from videodb.timeline import Timeline
@@ -126,20 +164,26 @@ job_id = conn.transcode(
 
 ### Reframe aspect ratio (for social platforms)
 
+**Warning:** `reframe()` is a slow server-side operation. For long videos it can take
+several minutes and may time out. Best practices:
+- Always limit to a short segment using `start`/`end` when possible
+- For full-length videos, use `callback_url` for async processing
+- Trim the video on a `Timeline` first, then reframe the shorter result
+
 ```python
 from videodb import ReframeMode
 
-# Fix aspect ratio for Twitter / X (landscape 16:9)
-reframed = video.reframe(target="landscape", mode=ReframeMode.smart)
+# Always prefer reframing a short segment:
+reframed = video.reframe(start=0, end=60, target="vertical", mode=ReframeMode.smart)
 
-# Instagram Reels / TikTok (vertical 9:16)
-reframed = video.reframe(target="vertical", mode=ReframeMode.smart)
+# Async reframe for full-length videos (returns None, result via webhook):
+video.reframe(target="vertical", callback_url="https://example.com/webhook")
 
-# Square (1:1)
-reframed = video.reframe(target="square")
+# Presets: "vertical" (9:16), "square" (1:1), "landscape" (16:9)
+reframed = video.reframe(start=0, end=60, target="square")
 
 # Custom dimensions
-reframed = video.reframe(target={"width": 1280, "height": 720})
+reframed = video.reframe(start=0, end=60, target={"width": 1280, "height": 720})
 ```
 
 ### Generative media
@@ -166,6 +210,17 @@ try:
 except InvalidRequestError as e:
     print(f"Upload failed: {e}")
 ```
+
+### Common pitfalls
+
+| Scenario | Error message | Solution |
+|----------|--------------|----------|
+| Indexing an already-indexed video | `Spoken word index for video already exists` | Use `video.index_spoken_words(force=True)` to skip if already indexed |
+| Scene index already exists | `Scene index with id XXXX already exists` | Extract the existing `scene_index_id` from the error with `re.search(r"id\s+([a-f0-9]+)", str(e))` |
+| Search finds no matches | `InvalidRequestError: No results found` | Catch the exception and treat as empty results (`shots = []`) |
+| Reframe times out | Blocks indefinitely on long videos | Use `start`/`end` to limit segment, or pass `callback_url` for async |
+| Negative timestamps on Timeline | Silently produces broken stream | Always validate `start >= 0` before creating `VideoAsset` |
+| `generate_video()` / `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |
 
 ## Additional docs in this plugin
 

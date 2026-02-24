@@ -167,7 +167,7 @@ video = coll.get_video(video_id)
 |--------|---------|-------------|
 | `video.generate_stream(timeline=None)` | `str` | Generate stream URL (optional timeline of `[(start, end)]` tuples) |
 | `video.play()` | `str` | Open stream in browser, returns player URL |
-| `video.index_spoken_words(language_code=None)` | `None` | Index speech for search |
+| `video.index_spoken_words(language_code=None, force=False)` | `None` | Index speech for search. Use `force=True` to skip if already indexed. |
 | `video.index_scenes(extraction_type, prompt, extraction_config={})` | `str` | Index visual scenes (returns scene_index_id) |
 | `video.index_visuals(prompt, batch_config, ...)` | `str` | Index visuals (returns scene_index_id) |
 | `video.index_audio(prompt, model_name, ...)` | `str` | Index audio with LLM (returns scene_index_id) |
@@ -190,17 +190,19 @@ video = coll.get_video(video_id)
 
 Convert a video to a different aspect ratio with optional smart object tracking. Processing is server-side.
 
+> **Warning:** Reframe is a slow server-side operation. It can take several minutes for long videos and may time out. Always use `start`/`end` to limit the segment, or pass `callback_url` for async processing.
+
 ```python
 from videodb import ReframeMode
 
-# Preset target: "vertical" (9:16), "square" (1:1), or "landscape" (16:9)
-reframed = video.reframe(target="vertical", mode=ReframeMode.smart)
+# Always prefer short segments to avoid timeouts:
+reframed = video.reframe(start=0, end=60, target="vertical", mode=ReframeMode.smart)
+
+# Async reframe for full-length videos (returns None, result via webhook):
+video.reframe(target="vertical", callback_url="https://example.com/webhook")
 
 # Custom dimensions
-reframed = video.reframe(target={"width": 1080, "height": 1080})
-
-# Reframe a specific segment
-reframed = video.reframe(start=10, end=60, target="square")
+reframed = video.reframe(start=0, end=60, target={"width": 1080, "height": 1080})
 ```
 
 #### reframe Parameters
@@ -373,6 +375,8 @@ results = video.search(
 ```
 
 > **Note:** `filter` is an explicit named parameter in `video.search()`. `scene_index_id` is passed through `**kwargs` to the API.
+
+> **Important:** `video.search()` raises `InvalidRequestError` with message `"No results found"` when there are no matches. Always wrap search calls in try/except. For scene search, use `score_threshold=0.3` or higher to filter low-relevance noise.
 
 For scene search, use `search_type=SearchType.semantic` with `index_type=IndexType.scene`. Pass `scene_index_id` when targeting a specific scene index. See [search.md](search.md) for details.
 

@@ -67,6 +67,8 @@ timeline.add_inline(clip)
 | `start` | `float` | `0` | Trim start (seconds) |
 | `end` | `float\|None` | `None` | Trim end (`None` = full) |
 
+> **Warning:** The SDK does not validate negative timestamps. Passing `start=-5` is silently accepted but produces broken or unexpected output. Always ensure `start >= 0`, `start < end`, and `end <= video.length` before creating a `VideoAsset`.
+
 ## Text Overlays
 
 Add titles, lower-thirds, or captions at any point on the timeline:
@@ -194,8 +196,8 @@ Use `video.add_subtitle()` to burn subtitles directly onto a video stream. This 
 ```python
 from videodb import SubtitleStyle
 
-# Video must have spoken words indexed first
-video.index_spoken_words()
+# Video must have spoken words indexed first (force=True skips if already done)
+video.index_spoken_words(force=True)
 
 # Add subtitles with default styling
 stream_url = video.add_subtitle()
@@ -225,8 +227,8 @@ from videodb.editor import (
     CaptionAnimation,
 )
 
-# Video must have spoken words indexed first
-video.index_spoken_words()
+# Video must have spoken words indexed first (force=True skips if already done)
+video.index_spoken_words(force=True)
 
 # Create a caption asset
 caption = CaptionAsset(
@@ -284,9 +286,9 @@ coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
 # 1. Search for key moments
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 results = video.search("product announcement", search_type=SearchType.semantic)
-shots = results.get_shots()
+shots = results.get_shots()  # may be empty if no results
 
 # 2. Build timeline
 timeline = Timeline(conn)

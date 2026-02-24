@@ -14,23 +14,41 @@ Index the transcribed speech content of a video for semantic and keyword search:
 
 ```python
 video = coll.get_video(video_id)
-video.index_spoken_words()
+
+# force=True makes indexing idempotent — skips if already indexed
+video.index_spoken_words(force=True)
 ```
 
 This transcribes the audio track and builds a searchable index over the spoken content. Required for semantic search and keyword search.
 
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `language_code` | `str\|None` | `None` | Language code of the video |
+| `segmentation_type` | `SegmentationType` | `SegmentationType.sentence` | Segmentation type (`sentence` or `llm`) |
+| `force` | `bool` | `False` | Set to `True` to skip if already indexed (avoids "already exists" error) |
+| `callback_url` | `str\|None` | `None` | Webhook URL for async notification |
+
 ### Scene Index
 
-Index visual content by generating AI descriptions of scenes:
+Index visual content by generating AI descriptions of scenes. Like spoken word indexing, this raises an error if a scene index already exists. Extract the existing `scene_index_id` from the error message.
 
 ```python
+import re
 from videodb import SceneExtractionType
 
-# Extract scenes and index them
-video.index_scenes(
-    extraction_type=SceneExtractionType.shot_based,
-    prompt="Describe the visual content, objects, actions, and setting in this scene.",
-)
+try:
+    scene_index_id = video.index_scenes(
+        extraction_type=SceneExtractionType.shot_based,
+        prompt="Describe the visual content, objects, actions, and setting in this scene.",
+    )
+except Exception as e:
+    match = re.search(r"id\s+([a-f0-9]+)", str(e))
+    if match:
+        scene_index_id = match.group(1)
+    else:
+        raise
 ```
 
 **Extraction types:**
@@ -88,20 +106,24 @@ Visual content queries matched against indexed scene descriptions. Requires a pr
 
 ```python
 from videodb import SearchType, IndexType
+from videodb.exceptions import InvalidRequestError
 
-# Index scenes first (returns an index ID)
-scene_index_id = video.index_scenes(
-    extraction_type=SceneExtractionType.shot_based,
-    prompt="Describe the visual content in this scene.",
-)
-
-# Search using semantic search against the scene index
-results = video.search(
-    query="person writing on a whiteboard",
-    search_type=SearchType.semantic,
-    index_type=IndexType.scene,
-    scene_index_id=scene_index_id,
-)
+# Search using semantic search against the scene index.
+# Use score_threshold to filter low-relevance noise (recommended: 0.3+).
+try:
+    results = video.search(
+        query="person writing on a whiteboard",
+        search_type=SearchType.semantic,
+        index_type=IndexType.scene,
+        scene_index_id=scene_index_id,
+        score_threshold=0.3,
+    )
+    shots = results.get_shots()
+except InvalidRequestError as e:
+    if "No results found" in str(e):
+        shots = []
+    else:
+        raise
 ```
 
 **Important notes:**
@@ -201,3 +223,6 @@ This indexes (if needed), searches, compiles results, and returns a stream URL.
 - **Combine index types**: Index both spoken words and scenes to enable all search types on the same video.
 - **Refine queries**: Semantic search works best with descriptive, natural language phrases rather than single keywords.
 - **Use keyword search for precision**: When you need exact term matches, keyword search avoids semantic drift.
+- **Handle "No results found"**: `video.search()` raises `InvalidRequestError` when no results match. Always wrap search calls in try/except and treat `"No results found"` as an empty result set.
+- **Filter scene search noise**: Semantic scene search can return low-relevance results for vague queries. Use `score_threshold=0.3` (or higher) to filter noise.
+- **Idempotent indexing**: Use `index_spoken_words(force=True)` to safely re-index. `index_scenes()` has no `force` parameter — wrap it in try/except and extract the existing `scene_index_id` from the error message with `re.search(r"id\s+([a-f0-9]+)", str(e))`.

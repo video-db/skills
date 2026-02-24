@@ -16,7 +16,7 @@ coll = conn.get_collection()
 meeting = coll.upload(url="https://example.com/standup-2024-01-15.mp4")
 
 # Index spoken words (required for all meeting operations)
-meeting.index_spoken_words()
+meeting.index_spoken_words(force=True)
 ```
 
 ## Transcript Extraction
@@ -268,7 +268,7 @@ meeting.refresh()
 
 # Access the recorded video
 video = coll.get_video(meeting.video_id)
-video.index_spoken_words()
+video.index_spoken_words(force=True)
 
 # Now analyze as usual
 text = video.get_transcript_text()
@@ -307,7 +307,7 @@ coll = conn.get_collection()
 
 # Upload and index
 standup = coll.upload(url="https://example.com/standup-recording.mp4")
-standup.index_spoken_words()
+standup.index_spoken_words(force=True)
 
 # Get transcript
 transcript_text = standup.get_transcript_text()
@@ -339,7 +339,7 @@ coll = conn.get_collection()
 meeting = coll.get_video("meeting-video-id")
 
 # Generate subtitles for the recording
-meeting.index_spoken_words()
+meeting.index_spoken_words(force=True)
 subtitle_url = meeting.add_subtitle()
 print(f"Meeting with subtitles: {subtitle_url}")
 
@@ -382,7 +382,7 @@ urls = [
 
 for url in urls:
     video = archive.upload(url=url)
-    video.index_spoken_words()
+    video.index_spoken_words(force=True)
     print(f"Indexed: {video.name} ({video.id})")
 
 # Now search across all meetings
