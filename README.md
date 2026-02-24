@@ -1,4 +1,4 @@
-# VideoDB Plugin for Claude Code
+# VideoDB Skills
 
 Talk to your videos using natural language. Upload, search, edit, generate subtitles, create clips, and more.
 
@@ -27,28 +27,43 @@ Talk to your videos using natural language. Upload, search, edit, generate subti
 ## Prerequisites
 
 - **Python 3.9+**
-- **VideoDB API key** -- sign up free at [console.videodb.io](https://console.videodb.io) (50 free uploads, no credit card)
+- **Claude Code** (for plugin usage) or any Claude interface
+- **VideoDB API key** — sign up free at [console.videodb.io](https://console.videodb.io) (50 free uploads, no credit card)
 
 ---
 
-## Quick Start (Claude Code Plugin)
+## Installation
 
-### 1. Install the plugin
+### Option 1: Claude Code Plugin (Recommended)
 
 ```
 /plugin marketplace add video-db/skills
-/plugin install videodb
+/plugin install videodb@videodb-skills
 ```
 
-### 2. Add your API key
+### Option 2: Manual Clone
 
-Create a `.env` file inside the `python/` directory (`python/.env`):
+```bash
+git clone https://github.com/video-db/skills.git
+```
+
+---
+
+## Quick Start
+
+### 1. Add your API key
+
+```bash
+cp python/.env.example python/.env
+```
+
+Then edit `python/.env` and add your key:
 
 ```ini
 VIDEO_DB_API_KEY=your-api-key-here
 ```
 
-### 3. Set up the Python environment
+### 2. Set up the Python environment
 
 The skill auto-runs setup on first use, or you can trigger it manually:
 
@@ -58,31 +73,44 @@ The skill auto-runs setup on first use, or you can trigger it manually:
 
 This runs `python/scripts/setup_venv.py` which creates a `.venv/` and installs all dependencies from `python/requirements.txt`.
 
+### 3. Verify the setup
+
+```bash
+.venv/bin/python python/scripts/check_connection.py
+```
+
+This confirms your API key is valid and the SDK can connect to VideoDB.
+
 ### 4. Start using it
 
 ```
-/videodb:python upload this YouTube video and give me a transcript
+/videodb:python upload https://www.youtube.com/watch?v=VIDEO_ID and give me a transcript
 ```
 
-You can also just describe what you want -- Claude will load the skill automatically when the task involves video processing.
+You can also just describe what you want — Claude will load the skill automatically when the task involves video processing.
 
 **More examples:**
 
 ```
 /videodb:python search for "product demo" in my latest video
 ```
+
 ```
 /videodb:python add subtitles to my video with white text on black background
 ```
+
 ```
 /videodb:python take clips from 10s-30s and 45s-60s, add a title card, and combine them
 ```
+
 ```
 /videodb:python generate 30 seconds of background music and overlay it on my video
 ```
+
 ```
 /videodb:python capture my screen and transcribe it in real-time
 ```
+
 ```
 /videodb:python record my next meeting and summarize it with action items
 ```
@@ -97,8 +125,8 @@ You can use VideoDB with Claude on the web by giving it the SDK reference as pro
 
 1. Create a new [Claude Project](https://claude.ai)
 2. In the project knowledge, add the contents of these files:
-   - [`python/SKILL.md`](./python/SKILL.md) -- core SDK reference and quick-start patterns
-   - [`python/reference/api-reference.md`](./python/reference/api-reference.md) -- full API reference
+   - [`python/SKILL.md`](./python/SKILL.md) — core SDK reference and quick-start patterns
+   - [`python/reference/api-reference.md`](./python/reference/api-reference.md) — full API reference
 3. Set the project system prompt to:
 
 ```
@@ -111,7 +139,7 @@ Always use `from dotenv import load_dotenv; load_dotenv()` before `videodb.conne
 
 Ask Claude to write Python scripts for your video tasks:
 
-- *"Write a Python script that uploads this YouTube video and generates a transcript."*
+- *"Write a script that uploads this YouTube video and generates a transcript: https://www.youtube.com/watch?v=VIDEO_ID"*
 - *"Create a script that searches for 'product launch' in a video and compiles the matching clips."*
 - *"Build a timeline that combines three video clips with a title overlay and background music."*
 
@@ -170,7 +198,7 @@ print(message.content[0].text)
 
 - Include `python/reference/search.md` or `python/reference/editor.md` in the system prompt when your use case focuses on search or editing
 - Add `python/reference/capture.md` when your use case involves real-time screen/audio capture
-- For token efficiency, use only `python/SKILL.md` for general tasks -- it covers the most common operations
+- For token efficiency, use only `python/SKILL.md` for general tasks — it covers the most common operations
 - Add `python/reference/generative.md` when you need AI-generated media (images, music, voice)
 
 ---
@@ -231,8 +259,8 @@ video-db/skills/
 
 The plugin includes a ready-to-run capture setup powered by the [VideoDB Capture SDK](https://github.com/video-db/videodb-capture-quickstart). It uses a two-process model:
 
-- **`python/scripts/backend.py`** -- Flask server with a Cloudflare tunnel that creates capture sessions, handles webhook events, and starts AI pipelines (transcription, audio indexing, visual indexing)
-- **`python/scripts/client.py`** -- Captures screen, mic, and system audio using `CaptureClient` and streams to VideoDB for real-time processing
+- **`python/scripts/backend.py`** — Flask server with a Cloudflare tunnel that creates capture sessions, handles webhook events, and starts AI pipelines (transcription, audio indexing, visual indexing)
+- **`python/scripts/client.py`** — Captures screen, mic, and system audio using `CaptureClient` and streams to VideoDB for real-time processing
 
 ### Quick start
 
@@ -270,6 +298,16 @@ Run these from the plugin root directory:
 # Start the capture client (screen + audio recording)
 .venv/bin/python python/scripts/client.py
 ```
+
+---
+
+## Contributing
+
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m "Add my feature"`)
+4. Push to the branch (`git push origin feature/my-feature`)
+5. Open a Pull Request
 
 ---
 
