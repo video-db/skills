@@ -85,12 +85,12 @@ Copy your API key - you'll need it in the next step.
 Open Claude Code and **in the chat interface**, type:
 
 ```
-/videodb setup the virtual environment
+/videodb setup videodb
 ```
 
-Claude will prompt you for your API key, then automatically:
-- Create the virtual environment
-- Install dependencies
+Claude will:
+- Prompt you for your API key (stored at `~/.videodb/.env`)
+- Install the SDK (`pip install videodb[capture]`)
 - Verify your connection to VideoDB
 
 > **Note:** The `/videodb` command is typed in Claude Code's chat interface, not in your terminal.
@@ -146,7 +146,7 @@ You can use VideoDB with Claude on the web by giving it the SDK reference as pro
 ```
 You are a video processing assistant using the VideoDB Python SDK.
 Use the provided reference documentation to write correct Python code.
-Always use `from dotenv import load_dotenv; load_dotenv()` before `videodb.connect()`.
+Always set VIDEO_DB_API_KEY as an environment variable before calling videodb.connect().
 ```
 
 ### Usage
@@ -160,11 +160,7 @@ Ask Claude to write Python scripts for your video tasks:
 Claude will generate standalone Python scripts you can run locally with:
 
 ```bash
-# If you have a venv setup (manual clone):
-python/.venv/bin/python your_script.py
-
-# Or use system Python:
-python3 your_script.py
+VIDEO_DB_API_KEY=your-key python your_script.py  # or `python3` if `python` is not available
 ```
 
 ---
@@ -289,10 +285,10 @@ The plugin includes a ready-to-run capture setup powered by the [VideoDB Capture
 **Manual clone setup:**
 ```bash
 # Terminal 1: start the backend
-python/.venv/bin/python python/scripts/backend.py
+python python/scripts/backend.py
 
 # Terminal 2: start the client
-python/.venv/bin/python python/scripts/client.py
+python python/scripts/client.py
 ```
 
 The backend automatically creates a Cloudflare tunnel for the webhook URL. The client requests device permissions, discovers channels, and begins streaming. Press Enter in the client terminal to stop recording.
@@ -309,19 +305,19 @@ See [capture.md](./python/reference/capture.md) for the full architecture guide,
 
 ```bash
 # Upload multiple files from a URL list
-python/.venv/bin/python python/scripts/batch_upload.py --urls urls.txt --collection "My Project"
+python python/scripts/batch_upload.py --urls urls.txt --collection "My Project"
 
 # Search inside a video and compile results
-python/.venv/bin/python python/scripts/search_and_compile.py --video-id VIDEO_ID --query "product demo"
+python python/scripts/search_and_compile.py --video-id VIDEO_ID --query "product demo"
 
 # Extract clips by timestamp ranges
-python/.venv/bin/python python/scripts/extract_clips.py --video-id VIDEO_ID --timestamps "10.0-25.0,45.0-60.0"
+python python/scripts/extract_clips.py --video-id VIDEO_ID --timestamps "10.0-25.0,45.0-60.0"
 
 # Start the capture backend (Flask + Cloudflare tunnel)
-python/.venv/bin/python python/scripts/backend.py
+python python/scripts/backend.py
 
 # Start the capture client (screen + audio recording)
-python/.venv/bin/python python/scripts/client.py
+python python/scripts/client.py
 ```
 
 ---
