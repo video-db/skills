@@ -68,43 +68,111 @@ Set-Content -Path "$HOME\.videodb\.env" -Value "VIDEO_DB_API_KEY=<user-provided-
 
 ### 4. Run Setup Script
 
-Run the virtual environment setup. The script path differs based on installation method.
+Run the virtual environment setup. The script automatically detects the installation location.
 
 **For macOS/Linux:**
 ```bash
-# Validate CLAUDE_PLUGIN_ROOT is set
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ]; then
-  echo "ERROR: CLAUDE_PLUGIN_ROOT environment variable is not set"
-  echo "This variable should be automatically set by Claude Code when loading the skill"
-  exit 1
+# Auto-detect skill root location
+SKILL_ROOT=""
+
+# Try CLAUDE_PLUGIN_ROOT first (set by Claude Code plugin system)
+if [ -n "${CLAUDE_PLUGIN_ROOT}" ]; then
+  SKILL_ROOT="${CLAUDE_PLUGIN_ROOT}"
+  echo "Using CLAUDE_PLUGIN_ROOT: ${SKILL_ROOT}"
+else
+  # Search common installation locations
+  echo "CLAUDE_PLUGIN_ROOT not set, searching common locations..."
+
+  # Check npx installation in home directory
+  if [ -d "$HOME/.agents/skills/videodb" ]; then
+    SKILL_ROOT="$HOME/.agents/skills/videodb"
+    echo "Found npx installation: ${SKILL_ROOT}"
+  # Check Claude Code plugin installation
+  elif [ -d "$HOME/.claude/skills/videodb" ]; then
+    SKILL_ROOT="$(readlink -f "$HOME/.claude/skills/videodb" 2>/dev/null || echo "$HOME/.claude/skills/videodb")"
+    echo "Found Claude Code installation: ${SKILL_ROOT}"
+  # Check local development
+  elif [ -f "./scripts/setup_venv.py" ]; then
+    SKILL_ROOT="$(pwd)"
+    echo "Using current directory: ${SKILL_ROOT}"
+  elif [ -f "./python/scripts/setup_venv.py" ]; then
+    SKILL_ROOT="$(pwd)"
+    echo "Using current directory (dev structure): ${SKILL_ROOT}"
+  else
+    echo "ERROR: Could not locate VideoDB skill installation"
+    echo "Tried: ~/.agents/skills/videodb, ~/.claude/skills/videodb, current directory"
+    echo "Please ensure the skill is properly installed"
+    exit 1
+  fi
 fi
 
-# Auto-detect installation type
-if [ -d "${CLAUDE_PLUGIN_ROOT}/python" ]; then
-  # Claude Code plugin installation (files in python/ subdirectory)
-  python3 "${CLAUDE_PLUGIN_ROOT}/python/scripts/setup_venv.py"
+# Detect installation type and run setup
+if [ -d "${SKILL_ROOT}/python/scripts" ]; then
+  # Plugin installation (files in python/ subdirectory)
+  echo "Detected plugin installation structure"
+  python3 "${SKILL_ROOT}/python/scripts/setup_venv.py"
+elif [ -d "${SKILL_ROOT}/scripts" ]; then
+  # npx installation (flat structure)
+  echo "Detected npx installation structure"
+  python3 "${SKILL_ROOT}/scripts/setup_venv.py"
 else
-  # npx skills installation (files in skill root)
-  python3 "${CLAUDE_PLUGIN_ROOT}/scripts/setup_venv.py"
+  echo "ERROR: Could not find setup_venv.py in ${SKILL_ROOT}"
+  exit 1
 fi
 ```
 
 **For Windows (PowerShell):**
 ```powershell
-# Validate CLAUDE_PLUGIN_ROOT is set
-if (-not $env:CLAUDE_PLUGIN_ROOT) {
-  Write-Error "ERROR: CLAUDE_PLUGIN_ROOT environment variable is not set"
-  Write-Error "This variable should be automatically set by Claude Code when loading the skill"
-  exit 1
+# Auto-detect skill root location
+$SKILL_ROOT = ""
+
+# Try CLAUDE_PLUGIN_ROOT first (set by Claude Code plugin system)
+if ($env:CLAUDE_PLUGIN_ROOT) {
+  $SKILL_ROOT = $env:CLAUDE_PLUGIN_ROOT
+  Write-Host "Using CLAUDE_PLUGIN_ROOT: $SKILL_ROOT"
+} else {
+  # Search common installation locations
+  Write-Host "CLAUDE_PLUGIN_ROOT not set, searching common locations..."
+
+  # Check npx installation in home directory
+  if (Test-Path "$HOME\.agents\skills\videodb") {
+    $SKILL_ROOT = "$HOME\.agents\skills\videodb"
+    Write-Host "Found npx installation: $SKILL_ROOT"
+  }
+  # Check Claude Code plugin installation
+  elseif (Test-Path "$HOME\.claude\skills\videodb") {
+    $SKILL_ROOT = "$HOME\.claude\skills\videodb"
+    Write-Host "Found Claude Code installation: $SKILL_ROOT"
+  }
+  # Check local development
+  elseif (Test-Path ".\scripts\setup_venv.py") {
+    $SKILL_ROOT = (Get-Location).Path
+    Write-Host "Using current directory: $SKILL_ROOT"
+  }
+  elseif (Test-Path ".\python\scripts\setup_venv.py") {
+    $SKILL_ROOT = (Get-Location).Path
+    Write-Host "Using current directory (dev structure): $SKILL_ROOT"
+  }
+  else {
+    Write-Error "ERROR: Could not locate VideoDB skill installation"
+    Write-Error "Tried: ~/.agents/skills/videodb, ~/.claude/skills/videodb, current directory"
+    Write-Error "Please ensure the skill is properly installed"
+    exit 1
+  }
 }
 
-# Auto-detect installation type
-if (Test-Path "$env:CLAUDE_PLUGIN_ROOT\python") {
-  # Claude Code plugin installation
-  python "$env:CLAUDE_PLUGIN_ROOT\python\scripts\setup_venv.py"
+# Detect installation type and run setup
+if (Test-Path "$SKILL_ROOT\python\scripts\setup_venv.py") {
+  # Plugin installation (files in python/ subdirectory)
+  Write-Host "Detected plugin installation structure"
+  & python "$SKILL_ROOT\python\scripts\setup_venv.py"
+} elseif (Test-Path "$SKILL_ROOT\scripts\setup_venv.py") {
+  # npx installation (flat structure)
+  Write-Host "Detected npx installation structure"
+  & python "$SKILL_ROOT\scripts\setup_venv.py"
 } else {
-  # npx skills installation
-  python "$env:CLAUDE_PLUGIN_ROOT\scripts\setup_venv.py"
+  Write-Error "ERROR: Could not find setup_venv.py in $SKILL_ROOT"
+  exit 1
 }
 ```
 
@@ -116,35 +184,73 @@ After setup completes, verify the connection using the venv's python:
 
 **For macOS/Linux:**
 ```bash
-# Validate CLAUDE_PLUGIN_ROOT is set
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ]; then
-  echo "ERROR: CLAUDE_PLUGIN_ROOT environment variable is not set"
-  exit 1
+# Auto-detect skill root location (same as step 4)
+SKILL_ROOT=""
+
+if [ -n "${CLAUDE_PLUGIN_ROOT}" ]; then
+  SKILL_ROOT="${CLAUDE_PLUGIN_ROOT}"
+else
+  # Search common locations
+  if [ -d "$HOME/.agents/skills/videodb" ]; then
+    SKILL_ROOT="$HOME/.agents/skills/videodb"
+  elif [ -d "$HOME/.claude/skills/videodb" ]; then
+    SKILL_ROOT="$(readlink -f "$HOME/.claude/skills/videodb" 2>/dev/null || echo "$HOME/.claude/skills/videodb")"
+  elif [ -f "./scripts/check_connection.py" ]; then
+    SKILL_ROOT="$(pwd)"
+  elif [ -f "./python/scripts/check_connection.py" ]; then
+    SKILL_ROOT="$(pwd)"
+  else
+    echo "ERROR: Could not locate VideoDB skill installation"
+    exit 1
+  fi
 fi
 
-if [ -d "${CLAUDE_PLUGIN_ROOT}/python" ]; then
+# Run connection check based on installation type
+if [ -f "${SKILL_ROOT}/python/.venv/bin/python" ]; then
   # Plugin installation
-  "${CLAUDE_PLUGIN_ROOT}/python/.venv/bin/python" "${CLAUDE_PLUGIN_ROOT}/python/scripts/check_connection.py"
-else
+  "${SKILL_ROOT}/python/.venv/bin/python" "${SKILL_ROOT}/python/scripts/check_connection.py"
+elif [ -f "${SKILL_ROOT}/.venv/bin/python" ]; then
   # npx installation
-  "${CLAUDE_PLUGIN_ROOT}/.venv/bin/python" "${CLAUDE_PLUGIN_ROOT}/scripts/check_connection.py"
+  "${SKILL_ROOT}/.venv/bin/python" "${SKILL_ROOT}/scripts/check_connection.py"
+else
+  echo "ERROR: Virtual environment not found. Please run setup first."
+  exit 1
 fi
 ```
 
 **For Windows (PowerShell):**
 ```powershell
-# Validate CLAUDE_PLUGIN_ROOT is set
-if (-not $env:CLAUDE_PLUGIN_ROOT) {
-  Write-Error "ERROR: CLAUDE_PLUGIN_ROOT environment variable is not set"
-  exit 1
+# Auto-detect skill root location (same as step 4)
+$SKILL_ROOT = ""
+
+if ($env:CLAUDE_PLUGIN_ROOT) {
+  $SKILL_ROOT = $env:CLAUDE_PLUGIN_ROOT
+} else {
+  # Search common locations
+  if (Test-Path "$HOME\.agents\skills\videodb") {
+    $SKILL_ROOT = "$HOME\.agents\skills\videodb"
+  } elseif (Test-Path "$HOME\.claude\skills\videodb") {
+    $SKILL_ROOT = "$HOME\.claude\skills\videodb"
+  } elseif (Test-Path ".\scripts\check_connection.py") {
+    $SKILL_ROOT = (Get-Location).Path
+  } elseif (Test-Path ".\python\scripts\check_connection.py") {
+    $SKILL_ROOT = (Get-Location).Path
+  } else {
+    Write-Error "ERROR: Could not locate VideoDB skill installation"
+    exit 1
+  }
 }
 
-if (Test-Path "$env:CLAUDE_PLUGIN_ROOT\python") {
+# Run connection check based on installation type
+if (Test-Path "$SKILL_ROOT\python\.venv\Scripts\python.exe") {
   # Plugin installation
-  & "$env:CLAUDE_PLUGIN_ROOT\python\.venv\Scripts\python.exe" "$env:CLAUDE_PLUGIN_ROOT\python\scripts\check_connection.py"
-} else {
+  & "$SKILL_ROOT\python\.venv\Scripts\python.exe" "$SKILL_ROOT\python\scripts\check_connection.py"
+} elseif (Test-Path "$SKILL_ROOT\.venv\Scripts\python.exe") {
   # npx installation
-  & "$env:CLAUDE_PLUGIN_ROOT\.venv\Scripts\python.exe" "$env:CLAUDE_PLUGIN_ROOT\scripts\check_connection.py"
+  & "$SKILL_ROOT\.venv\Scripts\python.exe" "$SKILL_ROOT\scripts\check_connection.py"
+} else {
+  Write-Error "ERROR: Virtual environment not found. Please run setup first."
+  exit 1
 }
 ```
 
@@ -340,11 +446,18 @@ except InvalidRequestError as e:
 
 ## Additional docs in this plugin
 
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/api-reference.md`
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/search.md`
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/editor.md`
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/generative.md`
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/meetings.md`
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/rtstream.md`
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/capture.md`
-- `${CLAUDE_PLUGIN_ROOT}/python/reference/use-cases.md`
+Additional reference documentation is available in the skill's `reference/` directory:
+
+- `api-reference.md` - Complete VideoDB Python SDK API reference
+- `search.md` - In-depth guide to video search (spoken word and scene-based)
+- `editor.md` - Timeline editing, assets, and composition
+- `generative.md` - AI-powered media generation (images, video, audio)
+- `meetings.md` - Meeting recording and transcription
+- `rtstream.md` - Real-time streaming capabilities
+- `capture.md` - Screen and audio capture
+- `use-cases.md` - Common video processing patterns and examples
+
+**Location based on installation type:**
+- Plugin: `<skill-root>/python/reference/`
+- npx: `<skill-root>/reference/`
+- Common paths: `~/.agents/skills/videodb/reference/` or `~/.claude/skills/videodb/python/reference/`
