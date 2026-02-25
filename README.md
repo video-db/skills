@@ -78,7 +78,7 @@ Replace `{YOUR_API_KEY_HERE}` with your actual VideoDB API key (e.g., `vdb_xxxxx
 In Claude Code, run:
 
 ```
-/videodb:python setup the virtual environment
+/videodb setup the virtual environment
 ```
 
 This creates the virtual environment and installs all dependencies.
@@ -88,7 +88,7 @@ This creates the virtual environment and installs all dependencies.
 In Claude Code, run:
 
 ```
-/videodb:python check the connection to VideoDB
+/videodb check the connection to VideoDB
 ```
 
 This confirms your API key is valid and the SDK can connect to VideoDB.
@@ -96,7 +96,7 @@ This confirms your API key is valid and the SDK can connect to VideoDB.
 ### 5. Start using it
 
 ```
-/videodb:python upload https://www.youtube.com/watch?v=VIDEO_ID and give me a transcript
+/videodb upload https://www.youtube.com/watch?v=VIDEO_ID and give me a transcript
 ```
 
 You can also just describe what you want — Claude will load the skill automatically when the task involves video processing.
@@ -104,27 +104,27 @@ You can also just describe what you want — Claude will load the skill automati
 **More examples:**
 
 ```
-/videodb:python search for "product demo" in my latest video
+/videodb search for "product demo" in my latest video
 ```
 
 ```
-/videodb:python add subtitles to my video with white text on black background
+/videodb add subtitles to my video with white text on black background
 ```
 
 ```
-/videodb:python take clips from 10s-30s and 45s-60s, add a title card, and combine them
+/videodb take clips from 10s-30s and 45s-60s, add a title card, and combine them
 ```
 
 ```
-/videodb:python generate 30 seconds of background music and overlay it on my video
+/videodb generate 30 seconds of background music and overlay it on my video
 ```
 
 ```
-/videodb:python capture my screen and transcribe it in real-time
+/videodb capture my screen and transcribe it in real-time
 ```
 
 ```
-/videodb:python record my next meeting and summarize it with action items
+/videodb record my next meeting and summarize it with action items
 ```
 
 ---
@@ -282,7 +282,7 @@ The plugin includes a ready-to-run capture setup powered by the [VideoDB Capture
 
 ### Quick start
 
-> **Note:** For manual clone users. Plugin users should use `/videodb:python` commands in Claude Code instead.
+> **Note:** For manual clone users. Plugin users should use `/videodb` commands in Claude Code instead.
 
 **Manual clone setup:**
 ```bash
@@ -301,7 +301,7 @@ See [capture.md](./python/reference/capture.md) for the full architecture guide,
 
 ## Utility Scripts
 
-> **Note:** These commands are for advanced users who manually cloned the repository. Most users should use Claude Code commands (e.g., `/videodb:python upload ...`) instead.
+> **Note:** These commands are for advanced users who manually cloned the repository. Most users should use Claude Code commands (e.g., `/videodb upload ...`) instead.
 
 **For manual clone users only** - Run these from the cloned repository directory:
 

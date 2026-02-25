@@ -2,5 +2,5 @@
   "name": "videodb",
   "description": "Process videos using VideoDB Python SDK. Upload, search, edit, generate subtitles, transcode, capture, and stream — all via natural language.",
   "version": "1.0.0",
-  "skills": "./"
+  "skills": "./python"
 }
