@@ -58,36 +58,39 @@ Then install:
 python -m pip install "videodb[capture]" || python3 -m pip install "videodb[capture]"
 ```
 
-### 3. Verify
+### 3. Export API Key
 
-Read the API key from `~/.videodb/.env` (step 1), then run:
-
-```bash
-VIDEO_DB_API_KEY=<key> python -c "import videodb; conn = videodb.connect(); coll = conn.get_collection(); print(f'Connected. Collection: {coll.id}, Videos: {len(coll.get_videos())}')"
-```
-
-Use whichever Python command was detected in step 2.
-
-## API Key
-
-An API key from https://console.videodb.io is required. Stored at `~/.videodb/.env`.
-
-Before running any VideoDB Python code, read the API key from `~/.videodb/.env` using the Read tool and pass it as an environment variable:
+Read the API key from `~/.videodb/.env` (step 1) and export it once for the session:
 
 ```bash
-VIDEO_DB_API_KEY=<key> python your_script.py
+export VIDEO_DB_API_KEY=<key>
 ```
 
-Use whichever Python command is available (`python` or `python3`).
+All subsequent Python commands in this session will pick it up automatically. No need to prefix every command.
 
-`videodb.connect()` reads `VIDEO_DB_API_KEY` from the environment automatically:
+### 4. Verify
 
 ```python
 import videodb
 
 conn = videodb.connect()
 coll = conn.get_collection()
+print(f"Connected. Collection: {coll.id}, Videos: {len(coll.get_videos())}")
 ```
+
+## Running Python code
+
+An API key from https://console.videodb.io is required. Stored at `~/.videodb/.env`.
+
+Before running any VideoDB code, read the API key from `~/.videodb/.env` using the Read tool and `export` it once:
+
+```bash
+export VIDEO_DB_API_KEY=<key>
+```
+
+Then run code inline with `python -c`. Do NOT write a script file when a short inline command works. Use whichever Python command is available (`python` or `python3`).
+
+`videodb.connect()` reads `VIDEO_DB_API_KEY` from the environment automatically.
 
 ## Quick Reference
 
@@ -268,11 +271,23 @@ except InvalidRequestError as e:
 
 Reference documentation is in the `reference/` directory adjacent to this SKILL.md file. Use the Glob tool to locate it if needed.
 
-- `api-reference.md` - Complete VideoDB Python SDK API reference
-- `search.md` - In-depth guide to video search (spoken word and scene-based)
-- `editor.md` - Timeline editing, assets, and composition
-- `generative.md` - AI-powered media generation (images, video, audio)
-- `meetings.md` - Meeting recording and transcription
-- `rtstream.md` - Real-time streaming capabilities
-- `capture.md` - Screen and audio capture
-- `use-cases.md` - Common video processing patterns and examples
+- [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
+- [reference/search.md](reference/search.md) - In-depth guide to video search (spoken word and scene-based)
+- [reference/editor.md](reference/editor.md) - Timeline editing, assets, and composition
+- [reference/generative.md](reference/generative.md) - AI-powered media generation (images, video, audio)
+- [reference/meetings.md](reference/meetings.md) - Meeting recording and transcription
+- [reference/rtstream.md](reference/rtstream.md) - Real-time streaming capabilities
+- [reference/capture.md](reference/capture.md) - Screen and audio capture
+- [reference/use-cases.md](reference/use-cases.md) - Common video processing patterns and examples
+
+## Utility scripts
+
+Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md file. Read and execute them directly instead of rewriting the logic.
+
+- [scripts/batch_upload.py](scripts/batch_upload.py) - Bulk upload from a URL list or directory
+- [scripts/search_and_compile.py](scripts/search_and_compile.py) - Search inside a video and compile matching clips into a stream
+- [scripts/extract_clips.py](scripts/extract_clips.py) - Extract clips by timestamp ranges
+- [scripts/backend.py](scripts/backend.py) - Capture backend (Flask + Cloudflare tunnel)
+- [scripts/client.py](scripts/client.py) - Capture client (screen + audio recording)
+- [scripts/check_connection.py](scripts/check_connection.py) - Verify API key and connection
+- [scripts/env_loader.py](scripts/env_loader.py) - Load API key from `~/.videodb/.env` or local `.env`
