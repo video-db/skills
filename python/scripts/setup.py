@@ -51,7 +51,7 @@ def install_videodb() -> bool:
         print(f"[setup] Installing dependencies from {requirements_file}...")
         cmd = [sys.executable, "-m", "pip", "install", "-r", str(requirements_file)]
     else:
-        print("[setup] Installing videodb...")
+        print("[setup] Installing videodb with capture support...")
         cmd = [sys.executable, "-m", "pip", "install", "videodb[capture]>=0.4.0", "python-dotenv>=1.0.0"]
     try:
         result = subprocess.run(
@@ -63,6 +63,22 @@ def install_videodb() -> bool:
         if result.returncode == 0:
             print("[setup] Dependencies installed successfully.")
             return True
+
+        # If capture installation failed (common on Linux), try core SDK
+        if "[capture]" in " ".join(cmd):
+            print("[setup] Capture installation failed. Trying core SDK (without capture)...")
+            cmd_core = [sys.executable, "-m", "pip", "install", "videodb>=0.4.0", "python-dotenv>=1.0.0"]
+            result = subprocess.run(
+                cmd_core,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            if result.returncode == 0:
+                print("[setup] Core SDK installed successfully.")
+                print("[setup] Note: Real-time capture features are not available.")
+                return True
+
         print(f"[setup] ERROR: Installation failed.", file=sys.stderr)
         print(f"  stderr: {result.stderr.strip()}", file=sys.stderr)
         return False

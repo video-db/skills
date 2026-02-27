@@ -1,8 +1,14 @@
 # VideoDB Python Skill Dependencies
 
-videodb[capture]>=0.4.0
+# Core SDK - required
+videodb>=0.4.0
 python-dotenv>=1.0.0,<2.0.0
 requests>=2.32.3,<3.0.0
+
+# Optional: Capture support (for real-time screen/audio recording)
+# Uncomment if you need capture features and are on macOS/Windows
+# May fail on some Linux distributions - use core SDK only if issues occur
+# videodb[capture]>=0.4.0
 
 # Optional: Capture backend dependencies (scripts/backend.py)
 # Only needed if using real-time screen/audio capture with webhooks

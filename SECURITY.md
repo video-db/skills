@@ -15,7 +15,7 @@ We will respond within 48 hours.
 
 All dependencies are pinned to secure version ranges:
 
-- **videodb[capture]** `>=0.4.0` - Core SDK
+- **videodb** `>=0.4.0` - Core SDK (or `videodb[capture]` for real-time capture support)
 - **python-dotenv** `>=1.0.0,<2.0.0` - Environment variables
 - **requests** `>=2.32.3,<3.0.0` - HTTP client (CVE-2024-35195 patched)
 - **flask** `>=3.1.0,<4.0.0` - Web server (optional, capture backend only)

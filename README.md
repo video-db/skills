@@ -105,8 +105,19 @@ Open Claude Code and **in the chat interface**, type:
 
 Claude will:
 - 🔑 Prompt you for your API key (stored at `~/.videodb/.env`)
-- 📦 Install the SDK (`pip install videodb[capture]`)
+- 📦 Install the SDK (see installation options below)
 - ✅ Verify your connection to VideoDB
+
+**Installation Options:**
+```bash
+# Option 1: Full installation with capture support (macOS, Windows)
+pip install "videodb[capture]>=0.4.0"
+
+# Option 2: Core SDK only (Linux, or if capture not needed)
+pip install "videodb>=0.4.0"
+```
+
+> **Note**: The `[capture]` extra includes real-time screen/audio capture dependencies that may fail on some Linux distributions. Use the core SDK if you don't need capture features or encounter installation issues.
 
 > **Note:** The `/videodb` command is typed in Claude Code's chat interface, not in your terminal.
 

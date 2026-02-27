@@ -55,8 +55,14 @@ python --version 2>/dev/null || python3 --version
 Then install:
 
 ```bash
-python -m pip install "videodb[capture]" || python3 -m pip install "videodb[capture]"
+# Option 1: Full installation with capture support (macOS, Windows)
+python -m pip install "videodb[capture]>=0.4.0" || python3 -m pip install "videodb[capture]>=0.4.0"
+
+# Option 2: Core SDK only (Linux, or if capture not needed)
+python -m pip install "videodb>=0.4.0" || python3 -m pip install "videodb>=0.4.0"
 ```
+
+> **Note**: Use the core SDK (Option 2) if you encounter installation issues on Linux or don't need real-time capture features.
 
 ### 3. Export API Key
 
