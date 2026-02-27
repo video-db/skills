@@ -70,16 +70,14 @@ When the user asks to "setup videodb" or similar:
 
 ### 1. Install SDK
 
-Detect the Python executable — try `python` first, fall back to `python3`:
-
 ```bash
-python --version 2>/dev/null || python3 --version
+pip install "videodb[capture]" python-dotenv
 ```
 
-Then install:
+If `videodb[capture]` fails on Linux, install without the capture extra:
 
 ```bash
-python -m pip install "videodb[capture]" python-dotenv || python3 -m pip install "videodb[capture]" python-dotenv
+pip install videodb python-dotenv
 ```
 
 ### 2. Verify environment
