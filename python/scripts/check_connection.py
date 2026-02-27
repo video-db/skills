@@ -11,8 +11,8 @@ Usage:
 
 import sys
 
-from videodb_env import init
-init()
+from videodb_env import load_vdb_env
+load_vdb_env()
 
 import videodb
 

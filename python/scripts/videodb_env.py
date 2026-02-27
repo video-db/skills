@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 
-def init():
+def load_vdb_env():
     try:
         import videodb  # noqa: F401
     except ImportError:

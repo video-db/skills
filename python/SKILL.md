@@ -63,34 +63,49 @@ Use this skill for VideoDB Python SDK workflows: upload, transcript, subtitle, s
 | Need to combine/trim clips | `VideoAsset` on a `Timeline` |
 | Need to generate voiceover, music, or SFX | `coll.generate_voice()`, `generate_music()`, `generate_sound_effect()` |
 
+## Running Python code
+
+`scripts/videodb_env.py` handles environment loading and SDK validation. Call `load_vdb_env()` before any VideoDB code — it checks the SDK is installed, loads `VIDEO_DB_API_KEY` from environment variable → `./.env` → `~/.videodb/.env`, and exits with clear error messages if anything is missing. All scripts in `scripts/` already call this at the top.
+
+Inline usage:
+
+```bash
+python -c "from scripts.videodb_env import load_vdb_env; load_vdb_env(); print('OK')"
+```
+
+Usage in a script file:
+
+```python
+from scripts.videodb_env import load_vdb_env
+load_vdb_env()
+
+import videodb
+conn = videodb.connect()
+```
+
+`videodb.connect()` reads `VIDEO_DB_API_KEY` from the environment automatically.
+
+Do NOT write a script file when a short inline command works. Use whichever Python command is available (`python` or `python3`).
+
+When writing inline Python (`python -c "..."`), always use properly formatted code — use semicolons to separate statements and keep it readable. For anything longer than ~3 statements, use a heredoc instead:
+
+```bash
+python3 << 'EOF'
+from scripts.videodb_env import load_vdb_env
+load_vdb_env()
+
+import videodb
+conn = videodb.connect()
+coll = conn.get_collection()
+print(f"Videos: {len(coll.get_videos())}")
+EOF
+```
+
 ## Setup
 
 When the user asks to "setup videodb" or similar:
 
-### 1. API Key
-
-Use the Read tool to read `~/.videodb/.env`.
-
-**File format** (enforced for both read and write): `KEY=value`, one per line, no quotes around the value, no spaces around `=`, no `export` prefix. Lines starting with `#` are comments. To read: split on the first `=` — left side is the key, right side is the value.
-
-If the file doesn't exist or `VIDEO_DB_API_KEY` is not present, give the user two options:
-1. Paste the key here — the agent writes it to `~/.videodb/.env`
-2. Add it manually to `~/.videodb/.env` as `VIDEO_DB_API_KEY=your-key`
-
-Get a free key at https://console.videodb.io — 50 free uploads, no credit card.
-
-To store the key:
-
-```bash
-mkdir -p ~/.videodb
-```
-
-Use the Write tool to create `~/.videodb/.env` with exactly:
-```
-VIDEO_DB_API_KEY=<user-provided-key>
-```
-
-### 2. Install SDK
+### 1. Install SDK
 
 Detect the Python executable — try `python` first, fall back to `python3`:
 
@@ -104,26 +119,25 @@ Then install:
 python -m pip install "videodb[capture]" || python3 -m pip install "videodb[capture]"
 ```
 
-### 3. Verify
+### 2. Verify environment
 
-```python
-from videodb_env import init
-init()
+Run `load_vdb_env()` to verify the SDK and API key:
 
-import videodb
-
-conn = videodb.connect()
-coll = conn.get_collection()
-print(f"Connected. Collection: {coll.id}, Videos: {len(coll.get_videos())}")
+```bash
+python -c "from scripts.videodb_env import load_vdb_env; load_vdb_env(); print('OK')" || python3 -c "from scripts.videodb_env import load_vdb_env; load_vdb_env(); print('OK')"
 ```
 
-## Running Python code
+If it prints `OK`, setup is done.
 
-`scripts/videodb_env.py` handles environment loading and SDK validation. Call `from videodb_env import init; init()` before any VideoDB code. It checks for the SDK, loads `VIDEO_DB_API_KEY` from the environment or `.env` files (`./.env`, `~/.videodb/.env`), and exits with clear error messages if anything is missing. All scripts in `scripts/` already call this at the top.
+If it fails with `VIDEO_DB_API_KEY not found`, ask the user to:
+1. Get a free API key at https://console.videodb.io (50 free uploads, no credit card)
+2. Set it up using **either** of these methods:
+   - Set it as an environment variable: `export VIDEO_DB_API_KEY=your-key`
+   - Or save it to `~/.videodb/.env` as `VIDEO_DB_API_KEY=your-key`
 
-`videodb.connect()` reads `VIDEO_DB_API_KEY` from the environment automatically.
+Then re-run to confirm.
 
-Do NOT write a script file when a short inline command works. Use whichever Python command is available (`python` or `python3`).
+**Do NOT** read, write, or handle the API key yourself. Always let the user set it.
 
 ## Quick Reference
 
