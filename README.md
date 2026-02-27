@@ -7,7 +7,6 @@
 **Talk to your videos using natural language. Upload, search, edit, generate subtitles, create clips, and more.**
 
 [![GitHub stars](https://img.shields.io/github/stars/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/issues)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fvideodb.io%2F&style=for-the-badge&label=videodb.io)](https://videodb.io)
 
 Built on the [VideoDB Python SDK](https://github.com/video-db/videodb-python) and [VideoDB Capture SDK](https://github.com/video-db/videodb-capture-quickstart)
@@ -16,7 +15,7 @@ Works with **Claude Code**, **Claude Web**, and the **Claude API**
 
 ---
 
-**[📚 Explore the Docs](https://docs.videodb.io)** • **[🐛 Report Issues](https://github.com/video-db/skills/issues)**
+**[📚 Explore the Docs](https://docs.videodb.io)**
 
 </div>
 
@@ -357,3 +356,20 @@ python python/scripts/client.py
 ## 📄 License
 
 This plugin is provided as-is for use with Claude. The VideoDB SDK is governed by its own [license](https://github.com/video-db/videodb-python/blob/main/LICENSE).
+
+---
+
+## 💬 Community & Support
+
+- **VideoDB SDK Issues:** [github.com/video-db/videodb-python/issues](https://github.com/video-db/videodb-python/issues)
+- **VideoDB Capture Issues:** [github.com/video-db/videodb-capture-quickstart/issues](https://github.com/video-db/videodb-capture-quickstart/issues)
+- **Documentation:** [docs.videodb.io](https://docs.videodb.io)
+- **Discord:** [Join our community](https://discord.gg/py9P639jGz)
+
+---
+
+<div align="center">
+
+Made with ❤️ by the VideoDB team
+
+</div>
