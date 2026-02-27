@@ -7,4 +7,3 @@ requests>=2.32.3,<3.0.0
 # Optional: Capture backend dependencies (scripts/backend.py)
 # Only needed if using real-time screen/audio capture with webhooks
 flask>=3.1.0,<4.0.0
-pycloudflared>=0.2.0,<1.0.0

@@ -2,7 +2,7 @@
 """
 Capture backend server for VideoDB Capture.
 
-Runs a Flask server with a Cloudflare tunnel that:
+Runs a Flask server that:
   - Creates capture sessions and generates client tokens
   - Handles webhook events from VideoDB (session lifecycle)
   - Starts AI pipelines (transcription, audio indexing, visual indexing)
@@ -11,9 +11,10 @@ Runs a Flask server with a Cloudflare tunnel that:
 Usage:
   .venv/bin/python scripts/backend.py
 
-The server starts on port 5002 and automatically creates a Cloudflare tunnel
-for the webhook URL. The client (scripts/client.py) connects to this backend
+The server starts on port 5002. The client (scripts/client.py) connects to this backend
 to initiate capture sessions.
+
+Note: This version uses WebSocket for real-time communication instead of CloudFlare tunnels.
 """
 
 import os
@@ -24,7 +25,6 @@ import asyncio
 import traceback
 from pathlib import Path
 from flask import Flask, request, jsonify
-from pycloudflared import try_cloudflare
 import videodb
 
 # Load environment variables from multiple locations
@@ -46,55 +46,80 @@ logger = logging.getLogger(__name__)
 # --- Configuration ---
 
 VIDEO_DB_API_KEY = os.getenv("VIDEO_DB_API_KEY")
-PORT = 5002
+PORT = int(os.getenv("BACKEND_PORT", "5002"))
+WEBHOOK_URL = os.getenv("WEBHOOK_URL", f"http://localhost:{PORT}/webhook")
 
 if not VIDEO_DB_API_KEY:
     raise ValueError("VIDEO_DB_API_KEY environment variable not set")
 
 conn = None
-public_url = None
+
+
+# --- Helper Functions ---
+
+def mask_api_key(key: str) -> str:
+    """Mask API key for logging (show only first 4 and last 4 characters)."""
+    if not key or len(key) < 8:
+        return "****"
+    return f"{key[:4]}...{key[-4:]}"
 
 
 # --- Initialization ---
 
 def setup():
-    global conn, public_url
-    print("[backend] Connecting to VideoDB...")
-    conn = videodb.connect(api_key=VIDEO_DB_API_KEY)
+    global conn
+    masked_key = mask_api_key(VIDEO_DB_API_KEY)
+    print(f"[backend] Connecting to VideoDB with API key: {masked_key}")
 
-    print(f"[backend] Starting Cloudflare Tunnel on port {PORT}...")
-    tunnel = try_cloudflare(port=PORT)
-    public_url = tunnel.tunnel
-    print(f"[backend] Cloudflare Tunnel Started: {public_url}")
+    try:
+        conn = videodb.connect(api_key=VIDEO_DB_API_KEY)
+        print("[backend] Successfully connected to VideoDB")
+    except Exception as e:
+        # Ensure API key is not exposed in error messages
+        error_msg = str(e).replace(VIDEO_DB_API_KEY, mask_api_key(VIDEO_DB_API_KEY))
+        print(f"[backend] Failed to connect to VideoDB: {error_msg}")
+        raise
+
+    print(f"[backend] Backend server starting on port {PORT}")
+    print(f"[backend] Webhook URL: {WEBHOOK_URL}")
+    print("\n" + "="*60)
+    print("IMPORTANT: For webhooks to work, ensure WEBHOOK_URL is publicly accessible.")
+    print("Options:")
+    print("  1. Use ngrok: ngrok http 5002")
+    print("  2. Use CloudFlare tunnel: cloudflared tunnel --url localhost:5002")
+    print("  3. Deploy on a server with a public IP")
+    print(f"  4. Set WEBHOOK_URL env var to your public URL")
+    print("="*60 + "\n")
 
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "tunnel": public_url})
+    return jsonify({"status": "ok", "port": PORT, "webhook_url": WEBHOOK_URL})
 
 
 @app.route("/init-session", methods=["POST"])
 def init_session():
     """Creates a capture session and returns a client token."""
     try:
-        webhook_url = f"{public_url}/webhook"
-        print(f"[backend] Creating session with webhook: {webhook_url}")
+        print(f"[backend] Creating session with webhook: {WEBHOOK_URL}")
 
         session = conn.create_capture_session(
             end_user_id="quickstart-user",
             collection_id="default",
-            callback_url=webhook_url,
+            callback_url=WEBHOOK_URL,
             metadata={"app": "capture-skill"},
         )
 
         token = conn.generate_client_token()
 
         return jsonify(
-            {"session_id": session.id, "token": token, "webhook_url": webhook_url}
+            {"session_id": session.id, "token": token, "webhook_url": WEBHOOK_URL}
         )
     except Exception as e:
-        logger.error(f"[backend] Error creating session: {e}")
-        return jsonify({"error": str(e)}), 500
+        # Mask API key in error messages
+        error_msg = str(e).replace(VIDEO_DB_API_KEY, mask_api_key(VIDEO_DB_API_KEY))
+        logger.error(f"[backend] Error creating session: {error_msg}")
+        return jsonify({"error": error_msg}), 500
 
 
 # --- WebSocket Listener ---
@@ -238,7 +263,9 @@ def webhook():
                 print(f"  Visual indexing started (socket: {ws_id})")
 
         except Exception as e:
-            print(f"[backend] Error in webhook processing: {e}")
+            # Mask API key in error messages
+            error_msg = str(e).replace(VIDEO_DB_API_KEY, mask_api_key(VIDEO_DB_API_KEY))
+            print(f"[backend] Error in webhook processing: {error_msg}")
             traceback.print_exc()
 
     elif event == "capture_session.stopping":
