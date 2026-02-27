@@ -31,9 +31,15 @@ VideoDB Skills lets your AI coding agent run end-to-end video workflows.
 
 ## Start building
 
-Get started in two steps. Open your AI coding agent (Claude Code, Cursor, Copilot) and follow along.
+Get started in three quick steps. Open your AI coding agent (Claude Code, Cursor, Copilot) and follow along.
 
-### Step 1: Setup
+### Step 1: Install the skill
+
+```bash
+npx skills add video-db/skills
+```
+
+### Step 2: Setup
 
 ```
 /videodb setup
@@ -43,7 +49,7 @@ The agent will prompt for your [VideoDB API key](https://console.videodb.io) ($2
 
 > **Cursor, Copilot, and other agents:** ask your agent to "setup videodb".
 
-### Step 2: Give your agent instructions
+### Step 3: Give your agent instructions
 
 Ask your agent to run instructions like these. The skill loads automatically.
 
@@ -72,7 +78,7 @@ Ask your agent to run instructions like these. The skill loads automatically.
 
 ---
 
-## Installation steps
+## Detailed installation steps
 
 1. Ensure prerequisites:
    - **Python 3.9+**
