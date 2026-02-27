@@ -19,7 +19,7 @@ VideoDB Capture uses a **two-process model**: a **backend** server that manages 
 └─────────────┘                         └──────────────┘
 ```
 
-**Backend** — A Flask server exposed via Cloudflare tunnel. It creates capture sessions, handles webhook events, and starts AI pipelines when a session becomes active.
+**Backend** — A Flask server that creates capture sessions, handles webhook events via WebSocket, and starts AI pipelines when a session becomes active.
 
 **Client** — A Python process using `CaptureClient` from `videodb.capture`. It requests device permissions, discovers channels, and streams audio/video to VideoDB.
 
@@ -101,11 +101,10 @@ await client.shutdown()
 
 ## Backend Setup
 
-### Flask Server with Cloudflare Tunnel
+### Flask Server for Webhook Handling
 
 ```python
 from flask import Flask, request, jsonify
-from pycloudflared import try_cloudflare
 from dotenv import load_dotenv
 from pathlib import Path
 import videodb
@@ -117,9 +116,10 @@ load_dotenv(Path.home() / ".videodb" / ".env")
 app = Flask(__name__)
 conn = videodb.connect()
 
-# Start Cloudflare tunnel for public webhook URL
-tunnel = try_cloudflare(port=5002)
-public_url = tunnel.tunnel
+# Configure webhook URL (must be publicly accessible)
+# Use ngrok, CloudFlare tunnel, or deploy on a server
+PORT = 5002
+WEBHOOK_URL = os.getenv("WEBHOOK_URL", f"http://localhost:{PORT}/webhook")
 ```
 
 ### Session Initialization Endpoint
@@ -127,18 +127,17 @@ public_url = tunnel.tunnel
 ```python
 @app.route("/init-session", methods=["POST"])
 def init_session():
-    webhook_url = f"{public_url}/webhook"
     session = conn.create_capture_session(
         end_user_id="user-123",
         collection_id="default",
-        callback_url=webhook_url,
+        callback_url=WEBHOOK_URL,
         metadata={"app": "my-app"},
     )
     token = conn.generate_client_token()
     return jsonify({
         "session_id": session.id,
         "token": token,
-        "webhook_url": webhook_url,
+        "webhook_url": WEBHOOK_URL,
     })
 ```
 

@@ -267,7 +267,7 @@ video-db/skills/
         ├── batch_upload.py           # Bulk upload from URL list or directory
         ├── search_and_compile.py     # Search + compile into stream
         ├── extract_clips.py          # Extract clips by timestamp
-        ├── backend.py                # Capture backend (Flask + Cloudflare tunnel)
+        ├── backend.py                # Capture backend (Flask server with WebSocket)
         ├── client.py                 # Capture client (screen + audio recording)
         ├── test_editor.py            # Integration test: timeline editing
         ├── test_meetings.py          # Integration test: meeting analysis
@@ -296,7 +296,7 @@ video-db/skills/
 
 The plugin includes a ready-to-run capture setup powered by the [VideoDB Capture SDK](https://github.com/video-db/videodb-capture-quickstart). It uses a two-process model:
 
-- **`python/scripts/backend.py`** — Flask server with a Cloudflare tunnel that creates capture sessions, handles webhook events, and starts AI pipelines (transcription, audio indexing, visual indexing)
+- **`python/scripts/backend.py`** — Flask server that creates capture sessions, handles webhook events via WebSocket, and starts AI pipelines (transcription, audio indexing, visual indexing)
 - **`python/scripts/client.py`** — Captures screen, mic, and system audio using `CaptureClient` and streams to VideoDB for real-time processing
 
 ### Quick start
@@ -312,7 +312,7 @@ python python/scripts/backend.py
 python python/scripts/client.py
 ```
 
-The backend automatically creates a Cloudflare tunnel for the webhook URL. The client requests device permissions, discovers channels, and begins streaming. Press Enter in the client terminal to stop recording.
+The backend starts a Flask server for webhook handling. For webhooks to work, you'll need to expose the backend publicly (using ngrok, CloudFlare tunnel, or deploying on a server). The client requests device permissions, discovers channels, and begins streaming. Press Enter in the client terminal to stop recording.
 
 See [capture.md](./python/reference/capture.md) for the full architecture guide, AI pipeline setup, and webhook event handling.
 
@@ -334,7 +334,7 @@ python python/scripts/search_and_compile.py --video-id VIDEO_ID --query "product
 # Extract clips by timestamp ranges
 python python/scripts/extract_clips.py --video-id VIDEO_ID --timestamps "10.0-25.0,45.0-60.0"
 
-# Start the capture backend (Flask + Cloudflare tunnel)
+# Start the capture backend (Flask server)
 python python/scripts/backend.py
 
 # Start the capture client (screen + audio recording)

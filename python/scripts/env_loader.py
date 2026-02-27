@@ -5,6 +5,9 @@ Loads .env files from multiple locations in order of priority:
 1. Environment variables (highest priority)
 2. ~/.videodb/.env (central location - recommended for Claude Code plugin)
 3. Local .env in skill directory (for manual clones)
+
+IMPORTANT: Never log or print the raw API key value in scripts.
+Always mask sensitive values when displaying them (e.g., "sk_abcd...xyz1").
 """
 
 import os

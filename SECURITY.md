@@ -19,18 +19,6 @@ All dependencies are pinned to secure version ranges:
 - **python-dotenv** `>=1.0.0,<2.0.0` - Environment variables
 - **requests** `>=2.32.3,<3.0.0` - HTTP client (CVE-2024-35195 patched)
 - **flask** `>=3.1.0,<4.0.0` - Web server (optional, capture backend only)
-- **pycloudflared** `>=0.2.0,<1.0.0` - Webhook tunnels (optional, capture backend only)
-
----
-
-## pycloudflared Note
-
-Used only in `scripts/backend.py` for webhook tunneling during real-time capture.
-
-**Security considerations:**
-- Downloads official cloudflared binary from Cloudflare
-- Optional - only needed for capture features
-- For production: use ngrok, localtunnel, or your own reverse proxy
 
 ---
 

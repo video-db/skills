@@ -212,8 +212,8 @@ Record screen and microphone with live transcription.
 import queue
 import asyncio
 import threading
+import os
 from flask import Flask, request, jsonify
-from pycloudflared import try_cloudflare
 from dotenv import load_dotenv
 from pathlib import Path
 import videodb
@@ -223,8 +223,8 @@ load_dotenv(Path.home() / ".videodb" / ".env")
 
 app = Flask(__name__)
 conn = videodb.connect()
-tunnel = try_cloudflare(port=5002)
-public_url = tunnel.tunnel
+PORT = 5002
+WEBHOOK_URL = os.getenv("WEBHOOK_URL", f"http://localhost:{PORT}/webhook")
 
 
 def start_ws_listener(ws_id_queue, name="Listener"):
@@ -249,7 +249,7 @@ def init_session():
     session = conn.create_capture_session(
         end_user_id="user-123",
         collection_id="default",
-        callback_url=f"{public_url}/webhook",
+        callback_url=WEBHOOK_URL,
     )
     token = conn.generate_client_token()
     return jsonify({"session_id": session.id, "token": token})
@@ -278,7 +278,7 @@ def webhook():
 
 
 if __name__ == "__main__":
-    print(f"Backend ready at {public_url}")
+    print(f"Backend ready at {WEBHOOK_URL}")
     app.run(port=5002)
 ```
 

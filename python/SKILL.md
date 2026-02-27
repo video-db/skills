@@ -288,7 +288,7 @@ Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md f
 - [scripts/batch_upload.py](scripts/batch_upload.py) - Bulk upload from a URL list or directory
 - [scripts/search_and_compile.py](scripts/search_and_compile.py) - Search inside a video and compile matching clips into a stream
 - [scripts/extract_clips.py](scripts/extract_clips.py) - Extract clips by timestamp ranges
-- [scripts/backend.py](scripts/backend.py) - Capture backend (Flask + Cloudflare tunnel)
+- [scripts/backend.py](scripts/backend.py) - Capture backend (Flask server with WebSocket support)
 - [scripts/client.py](scripts/client.py) - Capture client (screen + audio recording)
 - [scripts/check_connection.py](scripts/check_connection.py) - Verify API key and connection
 - [scripts/env_loader.py](scripts/env_loader.py) - Load API key from `~/.videodb/.env` or local `.env`
