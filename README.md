@@ -1,12 +1,28 @@
+<div align="center">
+
+<img src="https://codaio.imgix.net/docs/_s5lUnUCIU/blobs/bl-RgjcFrrJjj/d3cbc44f8584ecd42f2a97d981a144dce6a66d83ddd5864f723b7808c7d1dfbc25034f2f25e1b2188e78f78f37bcb79d3c34ca937cbb08ca8b3da1526c29da9a897ab38eb39d084fd715028b7cc60eb595c68ecfa6fa0bb125ec2b09da65664a4f172c2f" alt="VideoDB Logo" width="300">
+
 # VideoDB Skills
 
-Talk to your videos using natural language. Upload, search, edit, generate subtitles, create clips, and more.
+**Talk to your videos using natural language. Upload, search, edit, generate subtitles, create clips, and more.**
 
-> Built on the [VideoDB Python SDK](https://github.com/video-db/videodb-python) and [VideoDB Capture SDK](https://github.com/video-db/videodb-capture-quickstart) | Works with **Claude Code**, **Claude Web**, and the **Claude API**
+[![GitHub stars](https://img.shields.io/github/stars/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/issues)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fvideodb.io%2F&style=for-the-badge&label=videodb.io)](https://videodb.io)
+
+Built on the [VideoDB Python SDK](https://github.com/video-db/videodb-python) and [VideoDB Capture SDK](https://github.com/video-db/videodb-capture-quickstart)
+
+Works with **Claude Code**, **Claude Web**, and the **Claude API**
 
 ---
 
-## What You Can Do
+**[📚 Explore the Docs](https://docs.videodb.io)** • **[🐛 Report Issues](https://github.com/video-db/skills/issues)**
+
+</div>
+
+---
+
+## ✨ What You Can Do
 
 | Capability | Description |
 |---|---|
@@ -24,28 +40,30 @@ Talk to your videos using natural language. Upload, search, edit, generate subti
 
 ---
 
-## Prerequisites
+## ⚙️ Prerequisites
 
-- **Python 3.9+**
-- **Claude Code** (for plugin usage) or any Claude interface
-- **VideoDB API key** — sign up free at [console.videodb.io](https://console.videodb.io) (50 free uploads, no credit card)
+- 🐍 **Python 3.9+**
+- 🤖 **Claude Code** (for plugin usage) or any Claude interface
+- 🔑 **VideoDB API key** — sign up free at [console.videodb.io](https://console.videodb.io)
+  - 50 free uploads
+  - No credit card required
 
 **Supported Platforms:** macOS, Linux, Windows (PowerShell)
 
 ---
 
-## Installation
+## 📦 Installation
 
 ### Option 1: Claude Code Plugin (Recommended)
 
 **Step 1:** Open Claude Code and in the chat interface, type:
-```
+```bash
 /plugin marketplace add video-db/skills
 ```
 Wait for this to complete, then continue to Step 2.
 
 **Step 2:** In the Claude Code chat, type:
-```
+```bash
 /plugin install videodb@videodb-skills
 ```
 
@@ -58,80 +76,84 @@ Install for multiple AI coding assistants (Claude Code, Cursor, Copilot, etc.):
 cd ~ && npx skills add video-db/skills
 ```
 
-This installs to `~/.agents/skills/videodb` (when run from home directory) and creates symlinks for supported agents.
-
-### Option 3: Manual Clone
-
-```bash
-git clone https://github.com/video-db/skills.git
-```
+> This installs to `~/.agents/skills/videodb` (when run from home directory) and creates symlinks for supported agents.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1. Get your VideoDB API key
+### Step 1: Get your VideoDB API key
 
-Before setting up, sign up for a free account and get your API key:
+Sign up for a free account and get your API key:
 
-👉 **[Get your free API key at console.videodb.io](https://console.videodb.io)**
+<div align="center">
 
-(50 free uploads, no credit card required)
+### 👉 **[Get your free API key at console.videodb.io](https://console.videodb.io)**
+
+*50 free uploads • No credit card required*
+
+</div>
 
 Copy your API key - you'll need it in the next step.
 
-### 2. Set up the environment
+### Step 2: Set up the environment
 
 Open Claude Code and **in the chat interface**, type:
 
-```
-/videodb setup videodb
+```bash
+/videodb setup
 ```
 
 Claude will:
-- Prompt you for your API key (stored at `~/.videodb/.env`)
-- Install the SDK (`pip install videodb[capture]`)
-- Verify your connection to VideoDB
+- 🔑 Prompt you for your API key (stored at `~/.videodb/.env`)
+- 📦 Install the SDK (`pip install videodb[capture]`)
+- ✅ Verify your connection to VideoDB
 
 > **Note:** The `/videodb` command is typed in Claude Code's chat interface, not in your terminal.
 
-### 3. Start using it
+### Step 3: Start using it
 
-```
+```bash
 /videodb upload https://www.youtube.com/watch?v=VIDEO_ID and give me a transcript
 ```
 
 You can also just describe what you want — Claude will load the skill automatically when the task involves video processing.
 
-**More examples:**
+### 💡 Example Commands
 
-```
+```bash
+# Search inside videos
 /videodb search for "product demo" in my latest video
 ```
 
-```
+```bash
+# Add styled subtitles
 /videodb add subtitles to my video with white text on black background
 ```
 
-```
+```bash
+# Create compilations
 /videodb take clips from 10s-30s and 45s-60s, add a title card, and combine them
 ```
 
-```
+```bash
+# Generate and add music
 /videodb generate 30 seconds of background music and overlay it on my video
 ```
 
-```
+```bash
+# Real-time capture
 /videodb capture my screen and transcribe it in real-time
 ```
 
-```
+```bash
+# Meeting recording
 /videodb record my next meeting and summarize it with action items
 ```
 
 ---
 
-## Using with Claude Web (claude.ai)
+## 🌐 Using with Claude Web (claude.ai)
 
 You can use VideoDB with Claude on the web by giving it the SDK reference as project context.
 
@@ -165,7 +187,7 @@ VIDEO_DB_API_KEY=your-key python your_script.py  # or `python3` if `python` is n
 
 ---
 
-## Using with the Claude API
+## 🔌 Using with the Claude API
 
 Use the VideoDB skill as a system prompt for programmatic access via the [Anthropic SDK](https://docs.anthropic.com/en/api/getting-started).
 
@@ -217,7 +239,7 @@ print(message.content[0].text)
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 video-db/skills/
@@ -255,7 +277,7 @@ video-db/skills/
 
 ---
 
-## Documentation
+## 📖 Documentation
 
 | Guide | What's Inside |
 |---|---|
@@ -271,7 +293,7 @@ video-db/skills/
 
 ---
 
-## Real-Time Capture
+## 🎥 Real-Time Capture
 
 The plugin includes a ready-to-run capture setup powered by the [VideoDB Capture SDK](https://github.com/video-db/videodb-capture-quickstart). It uses a two-process model:
 
@@ -297,7 +319,7 @@ See [capture.md](./python/reference/capture.md) for the full architecture guide,
 
 ---
 
-## Utility Scripts
+## 🛠️ Utility Scripts
 
 > **Note:** These commands are for advanced users who manually cloned the repository. Most users should use Claude Code commands (e.g., `/videodb upload ...`) instead.
 
@@ -322,7 +344,7 @@ python python/scripts/client.py
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 1. Fork this repository
 2. Create a feature branch (`git checkout -b feature/my-feature`)
@@ -332,6 +354,6 @@ python python/scripts/client.py
 
 ---
 
-## License
+## 📄 License
 
 This plugin is provided as-is for use with Claude. The VideoDB SDK is governed by its own [license](https://github.com/video-db/videodb-python/blob/main/LICENSE).
