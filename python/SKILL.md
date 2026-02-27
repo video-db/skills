@@ -1,6 +1,46 @@
 ---
 name: videodb
-description: Process videos with the VideoDB Python SDK. Handles trimming, combining clips, audio overlays, background music, subtitles, transcription, voiceover, text/image overlays, transcoding, resolution change, aspect-ratio fix, resizing for social platforms, media generation, search, and real-time capture — all server-side with no ffmpeg or local encoding tools needed.
+description: |
+  What you get
+    A single API-first video stack for agents.
+    Ingest anything, process server-side, and ship playable streams without FFmpeg glue.
+
+  • Core capabilities
+
+    Ingest + Transcode
+    - Accept any format
+    - Change codec, bitrate, FPS, resolution
+    - Output a playable stream for your app (CDN + hosting)
+
+    Scene-level Search Engine
+    - Build a searchable index of your media, scene by scene
+    - Find exact moments and auto-create clips
+    - "Indexes as code": describe what you need, programmatically
+    - Manage 1000s of hours of footage cleanly
+
+    Generate + Compose
+    - Generate assets: image, audio, video, text
+    - Overlay text/images, branding, motion captions
+    - Dub videos, translate captions, add animations
+
+    Real-time RTSP
+    - Connect live streams and create understanding in real time
+    - Define events and set up alerts
+    - Ideal for security cams and monitoring workflows
+
+    Desktop Perception
+    - Capture screen, mic, and system audio for real-time context
+    - Stream your desktop live
+    - Define alerts and triggers from what's happening on screen
+    - Store episodic memory and semantic-search sessions
+    - Record local sessions for QA and review
+
+  • Try it now
+    "Ingest this file and give me a playable web stream link"
+    "Generate subtitles, burn them in, and add light background music"
+    "Index this folder and find every scene with people"
+    "Connect this RTSP URL and alert when a person enters the zone"
+    "start recording and give me a actionable summary when it ends"
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
@@ -280,14 +320,68 @@ Reference documentation is in the `reference/` directory adjacent to this SKILL.
 - [reference/capture.md](reference/capture.md) - Screen and audio capture
 - [reference/use-cases.md](reference/use-cases.md) - Common video processing patterns and examples
 
+## Screen Recording (Desktop Capture)
+
+Use `scripts/capture_bg.py` for screen and audio recording with AI transcription and visual indexing.
+
+**IMPORTANT:** Use `/usr/bin/python3` (system Python) instead of conda/anaconda Python, as the capture module requires Python 3.9+.
+
+### Start Recording
+
+Run in background mode:
+
+```bash
+export VIDEO_DB_API_KEY=<key>
+/usr/bin/python3 scripts/capture_bg.py start &
+```
+
+The recording will capture:
+- Screen video
+- Microphone audio
+- System audio
+- Real-time AI transcription
+- Visual scene descriptions
+
+### Check Status
+
+```bash
+cat /tmp/videodb_capture_state.json
+```
+
+### Stop Recording
+
+Create the stop file to signal recording to finish:
+
+```bash
+touch /tmp/videodb_capture_stop
+```
+
+Or run:
+
+```bash
+/usr/bin/python3 scripts/capture_bg.py stop
+```
+
+### Get Shareable Link
+
+After stopping, the state file contains the video URL:
+
+```bash
+cat /tmp/videodb_capture_state.json
+```
+
+Returns JSON with `player_url` for sharing.
+
 ## Utility scripts
 
 Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md file. Read and execute them directly instead of rewriting the logic.
 
+- [scripts/capture_bg.py](scripts/capture_bg.py) - **Screen recording with AI** (recommended for capture)
+- [scripts/capture.py](scripts/capture.py) - Interactive screen capture (requires terminal input)
 - [scripts/batch_upload.py](scripts/batch_upload.py) - Bulk upload from a URL list or directory
 - [scripts/search_and_compile.py](scripts/search_and_compile.py) - Search inside a video and compile matching clips into a stream
 - [scripts/extract_clips.py](scripts/extract_clips.py) - Extract clips by timestamp ranges
-- [scripts/backend.py](scripts/backend.py) - Capture backend (Flask + Cloudflare tunnel)
-- [scripts/client.py](scripts/client.py) - Capture client (screen + audio recording)
+- [scripts/backend.py](scripts/backend.py) - Capture backend server (WebSocket polling, no tunnel required)
+- [scripts/client.py](scripts/client.py) - Capture client (connects to backend)
 - [scripts/check_connection.py](scripts/check_connection.py) - Verify API key and connection
 - [scripts/env_loader.py](scripts/env_loader.py) - Load API key from `~/.videodb/.env` or local `.env`

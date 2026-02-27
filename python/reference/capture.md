@@ -2,36 +2,96 @@
 
 ## Overview
 
-VideoDB Capture uses a **two-process model**: a **backend** server that manages sessions and AI pipelines, and a **client** that runs on the user's machine to capture screen and audio.
+VideoDB Capture enables real-time screen and audio recording with AI processing.
+
+**IMPORTANT:** Use `/usr/bin/python3` (system Python 3.9+) instead of conda/anaconda Python for capture.
+
+## Quick Start (Recommended)
+
+### Background Recording with `capture_bg.py`
+
+Best for CLI/agent use — runs in background with file-based stop control:
+
+**Start recording:**
+```bash
+export VIDEO_DB_API_KEY=<key>
+/usr/bin/python3 scripts/capture_bg.py start &
+```
+
+**Check status:**
+```bash
+cat /tmp/videodb_capture_state.json
+```
+
+**Stop recording:**
+```bash
+touch /tmp/videodb_capture_stop
+```
+
+**Get shareable link:** After stopping, read `/tmp/videodb_capture_state.json` for `player_url`.
+
+## Other Approaches
+
+1. **Interactive** (`capture.py`) — Waits for Enter key to stop (requires terminal)
+2. **Two-process** (`backend.py` + `client.py`) — Separate backend for AI pipelines
+
+All use **WebSocket polling** instead of webhooks, so no external tunnel (Cloudflare, ngrok) is required.
 
 ```
-┌─────────────┐     webhook events     ┌──────────────┐
-│   VideoDB    │ ────────────────────>  │   Backend    │
-│   Cloud      │ <────────────────────  │   (Flask)    │
-└─────────────┘     API calls           └──────────────┘
-       ^                                       ^
-       │                                       │
-       │  streams                              │  /init-session
-       │                                       │
-┌─────────────┐                         ┌──────────────┐
-│   Capture    │ ──────────────────────> │   Client     │
-│   Client     │     HTTP request        │   App        │
-└─────────────┘                         └──────────────┘
+┌─────────────┐     WebSocket (AI results)    ┌──────────────┐
+│   VideoDB    │ ─────────────────────────────> │   Backend    │
+│   Cloud      │ <───────────────────────────── │   (Python)   │
+└─────────────┘     API calls + polling        └──────────────┘
+       ^                                              ^
+       │                                              │
+       │  streams                                     │  HTTP
+       │                                              │
+┌─────────────┐                                ┌──────────────┐
+│   Capture    │                                │   Client     │
+│   Client     │                                │   App        │
+└─────────────┘                                └──────────────┘
 ```
 
-**Backend** — A Flask server exposed via Cloudflare tunnel. It creates capture sessions, handles webhook events, and starts AI pipelines when a session becomes active.
+## Quick Start
 
-**Client** — A Python process using `CaptureClient` from `videodb.capture`. It requests device permissions, discovers channels, and streams audio/video to VideoDB.
+### Option 1: Single Process (Recommended)
+
+The simplest approach — one script handles everything:
+
+```bash
+python scripts/capture.py
+```
+
+This will:
+1. Create a capture session
+2. Request microphone and screen permissions
+3. Start recording
+4. Run AI pipelines (transcription, visual indexing)
+5. Export to a shareable video when you press Enter
+
+### Option 2: Two Process
+
+For more control, run backend and client separately:
+
+**Terminal 1 — Backend:**
+```bash
+python scripts/backend.py
+```
+
+**Terminal 2 — Client:**
+```bash
+python scripts/client.py
+```
 
 ## Quick Reference
 
 ### Create a Capture Session
 
 ```python
+# No callback_url needed — we poll instead
 session = conn.create_capture_session(
     end_user_id="user-123",
     collection_id="default",
-    callback_url="https://your-server.com/webhook",
     metadata={"app": "my-app"},
 )
 print(f"Session ID: {session.id}")
@@ -99,95 +159,92 @@ await client.stop_session()
 await client.shutdown()
 ```
 
-## Backend Setup
+## Backend Setup (WebSocket Polling)
 
-### Flask Server with Cloudflare Tunnel
+### Local Flask Server (No Tunnel Required)
 
 ```python
-from flask import Flask, request, jsonify
-from pycloudflared import try_cloudflare
-from dotenv import load_dotenv
+from flask import Flask, jsonify
 from pathlib import Path
 import videodb
-import os
-
-# Load API key from ~/.videodb/.env
-load_dotenv(Path.home() / ".videodb" / ".env")
+import threading
+import time
 
 app = Flask(__name__)
 conn = videodb.connect()
+active_sessions = {}
 
-# Start Cloudflare tunnel for public webhook URL
-tunnel = try_cloudflare(port=5002)
-public_url = tunnel.tunnel
-```
-
-### Session Initialization Endpoint
-
-```python
 @app.route("/init-session", methods=["POST"])
 def init_session():
-    webhook_url = f"{public_url}/webhook"
+    # Create session without callback_url
     session = conn.create_capture_session(
         end_user_id="user-123",
         collection_id="default",
-        callback_url=webhook_url,
         metadata={"app": "my-app"},
     )
     token = conn.generate_client_token()
+
+    # Start background polling for this session
+    threading.Thread(
+        target=poll_and_start_ai,
+        args=(session.id,),
+        daemon=True
+    ).start()
+
     return jsonify({
         "session_id": session.id,
         "token": token,
-        "webhook_url": webhook_url,
     })
 ```
 
-### Webhook Handler
+### Polling for Session Status
+
+Instead of webhooks, poll the session status:
 
 ```python
-@app.route("/webhook", methods=["POST"])
-def webhook():
-    data = request.json
-    event = data.get("event")
+def poll_and_start_ai(session_id):
+    """Poll session status and start AI pipelines when active."""
+    max_wait = 60  # seconds
+    start_time = time.time()
 
-    if event == "capture_session.active":
-        # Session is streaming -- start AI pipelines
-        session = conn.get_capture_session(data["capture_session_id"])
-        start_ai_pipelines(session)
+    while time.time() - start_time < max_wait:
+        try:
+            session = conn.get_capture_session(session_id)
 
-    elif event == "capture_session.stopping":
-        print("Session stopping...")
+            if session.status == "active" and session_id not in active_sessions:
+                active_sessions[session_id] = True
+                start_ai_pipelines(session)
+                break
 
-    elif event == "capture_session.stopped":
-        print("Session stopped. All streams finalized.")
+            elif session.status in ["stopped", "exported"]:
+                handle_session_end(session)
+                break
 
-    elif event == "capture_session.exported":
-        export_data = data.get("data", {})
-        video_id = export_data.get("exported_video_id")
-        stream_url = export_data.get("stream_url")
-        print(f"Exported! Video ID: {video_id}, Stream: {stream_url}")
+        except Exception:
+            pass  # Session might not be ready yet
 
-    return jsonify({"received": True})
+        time.sleep(1)
 ```
 
-### Retrieve Session in Webhook
+### Retrieve RTStreams
 
 ```python
-session = conn.get_capture_session(capture_session_id)
+session = conn.get_capture_session(session_id)
 
 mics = session.get_rtstream("mic")
 displays = session.get_rtstream("screen")
 system_audios = session.get_rtstream("system_audio")
 ```
 
-### Webhook Events
+### Session States
 
-| Event | When | Action |
-|-------|------|--------|
-| `capture_session.active` | Session starts streaming | Start AI pipelines (transcription, indexing) |
-| `capture_session.stopping` | Stop requested | Finalize streams |
-| `capture_session.stopped` | All streams finalized | Cleanup resources |
-| `capture_session.exported` | Recording exported to video | Access `exported_video_id`, `stream_url`, `player_url` |
+| Status | Description |
+|--------|-------------|
+| `created` | Session created, waiting for client |
+| `active` | Client streaming, start AI pipelines |
+| `stopping` | Stop requested, finalizing streams |
+| `stopped` | All streams finalized |
+| `exported` | Recording exported to video |
 
 ## Client Setup
 
@@ -336,7 +393,7 @@ start_ws_listener(q, name="VisualWatcher")
 ws_id = q.get(timeout=10)
 
 rtstream.index_visuals(
-    prompt="In one sentence, describe what is on screen",
+    prompt="Describe what is happening on screen",
     ws_connection_id=ws_id,
 )
 ```
@@ -356,22 +413,22 @@ A capture session follows this lifecycle:
   └───────┬───────┘
           │  client.start_session()
           v
-  ┌───────────────┐     webhook: capture_session.active
+  ┌───────────────┐     poll: status == "active"
   │    active      │ ──> Start AI pipelines
   └───────┬───────┘
           │  client.stop_session()
           v
-  ┌───────────────┐     webhook: capture_session.stopping
+  ┌───────────────┐     poll: status == "stopping"
   │   stopping     │ ──> Finalize streams
   └───────┬───────┘
           │
           v
-  ┌───────────────┐     webhook: capture_session.stopped
+  ┌───────────────┐     poll: status == "stopped"
   │   stopped      │ ──> All streams finalized
   └───────┬───────┘
           │  (if store=True)
           v
-  ┌───────────────┐     webhook: capture_session.exported
+  ┌───────────────┐     poll: status == "exported"
   │   exported     │ ──> Access video_id, stream_url, player_url
   └───────────────┘
 ```
@@ -386,3 +443,12 @@ The `batch_config` parameter controls how audio and visual indexing segments con
 | `value` | `int` | seconds (e.g., `30`) | Interval for each batch |
 
 Example: `{"type": "time", "value": 30}` processes audio in 30-second chunks.
+
+## Scripts
+
+| Script | Description |
+|--------|-------------|
+| `scripts/capture_bg.py` | **Background capture with file-based stop (recommended)** |
+| `scripts/capture.py` | Interactive capture (waits for Enter key) |
+| `scripts/backend.py` | Backend server with AI pipelines |
+| `scripts/client.py` | Capture client (connects to backend) |
