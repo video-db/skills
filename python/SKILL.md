@@ -79,7 +79,7 @@ python --version 2>/dev/null || python3 --version
 Then install:
 
 ```bash
-python -m pip install "videodb[capture]" || python3 -m pip install "videodb[capture]"
+python -m pip install "videodb[capture]" python-dotenv || python3 -m pip install "videodb[capture]" python-dotenv
 ```
 
 ### 2. Verify environment
