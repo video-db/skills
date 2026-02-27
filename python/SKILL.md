@@ -308,7 +308,6 @@ Reference documentation is in the `reference/` directory adjacent to this SKILL.
 - [reference/search.md](reference/search.md) - In-depth guide to video search (spoken word and scene-based)
 - [reference/editor.md](reference/editor.md) - Timeline editing, assets, and composition
 - [reference/generative.md](reference/generative.md) - AI-powered media generation (images, video, audio)
-- [reference/meetings.md](reference/meetings.md) - Meeting recording and transcription
 - [reference/rtstream.md](reference/rtstream.md) - Real-time streaming capabilities
 - [reference/capture.md](reference/capture.md) - Screen and audio capture
 - [reference/use-cases.md](reference/use-cases.md) - Common video processing patterns and examples
