@@ -1,6 +1,6 @@
 ---
 name: videodb
-description: Process videos with the VideoDB Python SDK. Handles trimming, combining clips, audio overlays, background music, subtitles, transcription, voiceover, text/image overlays, transcoding, resolution change, aspect-ratio fix, resizing for social platforms, media generation, search, and real-time capture — all server-side with no ffmpeg or local encoding tools needed.
+description: Use this skill whenever you have any task related to video. Can ingest all kinds of video content (file, url, live streams), extract frames, Complex editing tasks (audio overlays, text overlays, image overlays with multi timeline support and config options), Transcoding, Resolution change, aspect-ratio fix, resizing, Media AI Generation - Video, Audio, Images, Building Visual, Semantic and Temporal Understanding of Videos and Search within Videos, Streaming on Demand.
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
