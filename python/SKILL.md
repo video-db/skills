@@ -1,13 +1,13 @@
 ---
 name: videodb
-description: Process videos with the VideoDB Python SDK. Handles trimming, combining clips, audio overlays, background music, subtitles, transcription, voiceover, text/image overlays, transcoding, resolution change, aspect-ratio fix, resizing for social platforms, media generation, search, and real-time capture — all server-side with no ffmpeg or local encoding tools needed.
+description: Process YouTube videos and video files with the VideoDB Python SDK. Upload from YouTube URLs or local files, search inside videos by speech or scenes, generate transcripts and subtitles, edit timelines with overlays, transcode and reframe videos, generate AI media, and capture screen/audio in real-time — all server-side with no ffmpeg or local encoding tools needed.
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
 
 # VideoDB Python Skill
 
-Use this skill for VideoDB Python SDK workflows: upload, transcript, subtitle, search, timeline editing, generative media, and real-time capture.
+Use this skill for processing YouTube videos and video files with the VideoDB Python SDK: upload from YouTube URLs or local files, generate transcripts and subtitles, search inside videos, edit timelines, generate AI media, transcode/reframe videos, and capture screen/audio in real-time.
 
 **Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (transitions, speed changes, crop/zoom, colour grading, volume mixing).
 
