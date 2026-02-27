@@ -9,9 +9,7 @@ argument-hint: "[task description]"
 
 Use this skill for processing YouTube videos and video files with the VideoDB Python SDK: upload from YouTube URLs or local files, generate transcripts and subtitles, search inside videos, edit timelines, generate AI media, transcode/reframe videos, and capture screen/audio in real-time.
 
-**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (transitions, speed changes, crop/zoom, colour grading, volume mixing).
-
-### When to use what
+## When to use VideoDB
 
 | Problem | VideoDB solution |
 |---------|-----------------|
@@ -22,6 +20,8 @@ Use this skill for processing YouTube videos and video files with the VideoDB Py
 | Need to add subtitles | `video.add_subtitle()` or `CaptionAsset` |
 | Need to combine/trim clips | `VideoAsset` on a `Timeline` |
 | Need to generate voiceover, music, or SFX | `coll.generate_voice()`, `generate_music()`, `generate_sound_effect()` |
+
+> **Note**: VideoDB handles trimming, combining clips, audio overlays with fade-in/fade-out, subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing, transcription, and media generation server-side. Prefer VideoDB operations when available. For unsupported operations (video transitions like crossfades, speed changes, crop/zoom, color grading, volume mixing), see reference/editor.md limitations.
 
 ## Setup
 
