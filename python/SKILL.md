@@ -1,67 +1,30 @@
 ---
 name: videodb
-description: |
-  What you get
-    A single API-first video stack for agents.
-    Ingest anything, process server-side, and ship playable streams without FFmpeg glue.
-
-  • Core capabilities
-
-    Ingest + Transcode
-    - Accept any format
-    - Change codec, bitrate, FPS, resolution
-    - Output a playable stream for your app (CDN + hosting)
-
-    Scene-level Search Engine
-    - Build a searchable index of your media, scene by scene
-    - Find exact moments and auto-create clips
-    - "Indexes as code": describe what you need, programmatically
-    - Manage 1000s of hours of footage cleanly
-
-    Generate + Compose
-    - Generate assets: image, audio, video, text
-    - Overlay text/images, branding, motion captions
-    - Dub videos, translate captions, add animations
-
-    Real-time RTSP
-    - Connect live streams and create understanding in real time
-    - Define events and set up alerts
-    - Ideal for security cams and monitoring workflows
-
-    Desktop Perception
-    - Capture screen, mic, and system audio for real-time context
-    - Stream your desktop live
-    - Define alerts and triggers from what's happening on screen
-    - Store episodic memory and semantic-search sessions
-    - Record local sessions for QA and review
-
-  • Try it now
-    "Ingest this file and give me a playable web stream link"
-    "Generate subtitles, burn them in, and add light background music"
-    "Index this folder and find every scene with people"
-    "Connect this RTSP URL and alert when a person enters the zone"
-    "start recording and give me a actionable summary when it ends"
+description: Process videos with the VideoDB Python SDK. Handles trimming, combining clips, audio overlays, background music, subtitles, transcription, voiceover, text/image overlays, transcoding, resolution change, aspect-ratio fix, resizing for social platforms, media generation, search, and real-time capture — all server-side with no ffmpeg or local encoding tools needed.
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
 
 # VideoDB Python Skill
 
-Use this skill for VideoDB Python SDK workflows: upload, transcript, subtitle, search, timeline editing, generative media, and real-time capture.
+A single API-first video stack for agents. Ingest anything, process server-side, and ship playable streams without FFmpeg glue.
 
-**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (transitions, speed changes, crop/zoom, colour grading, volume mixing).
+### Core capabilities
 
-### When to use what
+- **Ingest + Transcode** — Accept any format, change codec/bitrate/FPS/resolution, output a playable stream (CDN + hosting)
+- **Scene-level Search Engine** — Build a searchable index scene by scene, find exact moments and auto-create clips, manage 1000s of hours of footage
+- **Generate + Compose** — Generate image/audio/video/text assets, overlay text/images/branding/motion captions, dub videos, translate captions
+- **Real-time RTSP** — Connect live streams, define events and alerts, ideal for security cams and monitoring
+- **Desktop Perception** — Capture screen/mic/system audio, stream desktop live, define alerts and triggers, store episodic memory and search sessions
 
-| Problem | VideoDB solution |
-|---------|-----------------|
-| Platform rejects video aspect ratio or resolution | `video.reframe()` or `conn.transcode()` with `VideoConfig` |
-| Need to resize video for Twitter/Instagram/TikTok | `video.reframe(target="vertical")` or `target="square"` |
-| Need to change resolution (e.g. 1080p → 720p) | `conn.transcode()` with `VideoConfig(resolution=720)` |
-| Need to overlay audio/music on video | `AudioAsset` on a `Timeline` |
-| Need to add subtitles | `video.add_subtitle()` or `CaptionAsset` |
-| Need to combine/trim clips | `VideoAsset` on a `Timeline` |
-| Need to generate voiceover, music, or SFX | `coll.generate_voice()`, `generate_music()`, `generate_sound_effect()` |
+### Try it now
+
+- "Ingest this file and give me a playable web stream link"
+- "Generate subtitles, burn them in, and add light background music"
+- "Index this folder and find every scene with people"
+- "Connect this RTSP URL and alert when a person enters the zone"
+- "Start recording and give me an actionable summary when it ends"
+
 
 ## Setup
 
@@ -377,3 +340,18 @@ Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md f
 - [scripts/backend.py](scripts/backend.py) - Capture backend server (WebSocket polling, no tunnel required)
 - [scripts/client.py](scripts/client.py) - Capture client (connects to backend)
 - [scripts/check_connection.py](scripts/check_connection.py) - Verify API key and connection
+
+
+**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (transitions, speed changes, crop/zoom, colour grading, volume mixing).
+
+### When to use what
+
+| Problem | VideoDB solution |
+|---------|-----------------|
+| Platform rejects video aspect ratio or resolution | `video.reframe()` or `conn.transcode()` with `VideoConfig` |
+| Need to resize video for Twitter/Instagram/TikTok | `video.reframe(target="vertical")` or `target="square"` |
+| Need to change resolution (e.g. 1080p → 720p) | `conn.transcode()` with `VideoConfig(resolution=720)` |
+| Need to overlay audio/music on video | `AudioAsset` on a `Timeline` |
+| Need to add subtitles | `video.add_subtitle()` or `CaptionAsset` |
+| Need to combine/trim clips | `VideoAsset` on a `Timeline` |
+| Need to generate voiceover, music, or SFX | `coll.generate_voice()`, `generate_music()`, `generate_sound_effect()` |
