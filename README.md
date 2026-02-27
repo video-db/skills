@@ -45,7 +45,16 @@ npx skills add video-db/skills
 /videodb setup
 ```
 
-The agent will prompt for your [VideoDB API key](https://console.videodb.io) ($20 free credits, no credit card required), install the SDK, and verify the connection.
+The agent will guide setup for your [VideoDB API key](https://console.videodb.io) ($20 free credits, no credit card required), install the SDK, and verify the connection.
+
+If needed, you can also set the API key in your current terminal session:
+
+```bash
+export VIDEO_DB_API_KEY=sk-xxx
+```
+
+This is optional when your key is already available via `.env`.
+Use only `VIDEO_DB_API_KEY=...` (without `export`) when writing to `.env` files.
 
 > **Cursor, Copilot, and other agents:** ask your agent to "setup videodb".
 
