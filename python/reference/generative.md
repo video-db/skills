@@ -79,6 +79,9 @@ music = coll.generate_music(
 )
 
 print(music.id)
+# Get playback URL
+playback_url = music.generate_url()
+print(f"Music URL: {playback_url}")
 ```
 
 | Parameter | Type | Default | Description |
@@ -96,6 +99,10 @@ sfx = coll.generate_sound_effect(
     prompt="thunderstorm with heavy rain and distant thunder",
     duration=10,
 )
+
+# Get playback URL
+sfx_url = sfx.generate_url()
+print(f"Sound effect URL: {sfx_url}")
 ```
 
 | Parameter | Type | Default | Description |
@@ -114,6 +121,10 @@ voice = coll.generate_voice(
     text="Welcome to our product demo. Today we'll walk through the key features.",
     voice_name="Default",
 )
+
+# Get playback URL
+voice_url = voice.generate_url()
+print(f"Voice URL: {voice_url}")
 ```
 
 | Parameter | Type | Default | Description |
@@ -124,6 +135,14 @@ voice = coll.generate_voice(
 | `callback_url` | `str\|None` | `None` | URL to receive async callback |
 
 All three audio methods return an `Audio` object with `.id`, `.name`, `.length`, and `.collection_id`.
+
+**Important**: To get the playback URL for any `Audio` object, use the `.generate_url()` method:
+
+```python
+audio_url = audio.generate_url()  # Returns a signed playback URL
+```
+
+> **Note**: Audio objects do NOT have a `.stream_url` property. Always use `.generate_url()` method to retrieve the playback URL.
 
 ## Text Generation (LLM Integration)
 
@@ -314,6 +333,10 @@ print(result["output"]["topics"])
 
 - **Generated media is persistent**: All generated content is stored in your collection and can be reused.
 - **Three audio methods**: Use `generate_music()` for background music, `generate_sound_effect()` for SFX, and `generate_voice()` for text-to-speech. There is no unified `generate_audio()` method.
+- **Getting URLs differs by media type**:
+  - **Audio**: Use `audio.generate_url()` to get playback URL (NO `.stream_url` property exists)
+  - **Video**: Use `video.generate_stream()` to get HLS stream URL
+  - **Image**: Use `image.generate_url()` to get download URL
 - **Text generation is collection-level**: `coll.generate_text()` does not have access to video content automatically. Fetch the transcript with `video.get_transcript_text()` and pass it in the prompt.
 - **Model tiers**: `"basic"` is fastest, `"pro"` is balanced, `"ultra"` is highest quality. Use `"pro"` for most analysis tasks.
 - **Combine generation types**: Generate images for overlays, music for backgrounds, and voice for narration, then compose using timelines (see [editor.md](editor.md)).
