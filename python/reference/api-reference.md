@@ -25,6 +25,7 @@ conn = videodb.connect(
 | `conn.upload(source, media_type, name, ...)` | `Video\|Audio\|Image` | Upload to default collection |
 | `conn.record_meeting(meeting_url, bot_name, ...)` | `Meeting` | Record a meeting |
 | `conn.create_capture_session(end_user_id, collection_id, ...)` | `CaptureSession` | Create a capture session |
+| `conn.generate_client_token()` | `str` | Generate authentication token for CaptureClient |
 | `conn.youtube_search(query, result_threshold, duration)` | `list[dict]` | Search YouTube |
 | `conn.transcode(source, callback_url, mode, ...)` | `str` | Transcode video (returns job ID) |
 | `conn.get_transcode_details(job_id)` | `dict` | Get transcode job status and details |

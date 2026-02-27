@@ -39,9 +39,12 @@ def main() -> None:
     coll = conn.get_collection()
     print(f"[test_meetings] Collection: {coll.id}")
 
-    # Upload a sample video with speech content
-    sample_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    print("[test_meetings] Uploading sample meeting video...")
+    # Upload a sample video with speech content (configurable via VIDEODB_TEST_VIDEO_URL)
+    sample_url = os.environ.get(
+        "VIDEODB_TEST_VIDEO_URL",
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Default test video
+    )
+    print(f"[test_meetings] Uploading sample meeting video from {sample_url}...")
     meeting = coll.upload(url=sample_url)
     print(f"[test_meetings] Uploaded: {meeting.name} (id={meeting.id}, length={meeting.length:.1f}s)")
 

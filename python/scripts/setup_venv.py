@@ -13,6 +13,7 @@ Usage:
 """
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -203,7 +204,6 @@ def main() -> None:
     else:
         if venv_dir.exists():
             print("[setup_venv] .venv/ exists but is corrupt or incomplete. Recreating...")
-            import shutil
             shutil.rmtree(venv_dir)
 
         create_venv(venv_dir)

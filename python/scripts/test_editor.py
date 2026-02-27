@@ -40,9 +40,12 @@ def main() -> None:
     coll = conn.get_collection()
     print(f"[test_editor] Collection: {coll.id}")
 
-    # Upload a short sample video
-    sample_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    print("[test_editor] Uploading sample video...")
+    # Upload a short sample video (configurable via VIDEODB_TEST_VIDEO_URL)
+    sample_url = os.environ.get(
+        "VIDEODB_TEST_VIDEO_URL",
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Default test video
+    )
+    print(f"[test_editor] Uploading sample video from {sample_url}...")
     video = coll.upload(url=sample_url)
     print(f"[test_editor] Uploaded: {video.name} (id={video.id}, length={video.length:.1f}s)")
 

@@ -284,6 +284,7 @@ Reference documentation is in the `reference/` directory adjacent to this SKILL.
 
 Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md file. Read and execute them directly instead of rewriting the logic.
 
+- [scripts/setup_venv.py](scripts/setup_venv.py) - Create and configure virtual environment with dependencies
 - [scripts/batch_upload.py](scripts/batch_upload.py) - Bulk upload from a URL list or directory
 - [scripts/search_and_compile.py](scripts/search_and_compile.py) - Search inside a video and compile matching clips into a stream
 - [scripts/extract_clips.py](scripts/extract_clips.py) - Extract clips by timestamp ranges

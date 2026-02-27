@@ -26,9 +26,17 @@ def load_env():
                 return
             except ImportError:
                 # Fallback: manually parse .env if python-dotenv is not yet installed
-                for _line in env_file.read_text().splitlines():
-                    _line = _line.strip()
-                    if _line and not _line.startswith("#") and "=" in _line:
-                        _key, _, _val = _line.partition("=")
-                        os.environ.setdefault(_key.strip(), _val.strip())
+                try:
+                    for _line in env_file.read_text().splitlines():
+                        _line = _line.strip()
+                        if _line and not _line.startswith("#") and "=" in _line:
+                            _key, _, _val = _line.partition("=")
+                            _key = _key.strip()
+                            # Validate key format: non-empty and valid env var name
+                            if _key and _key.replace("_", "").replace("-", "").isalnum():
+                                os.environ.setdefault(_key, _val.strip())
+                except Exception as e:
+                    # If parsing fails, continue to next env file location
+                    print(f"Warning: Failed to parse {env_file}: {e}")
+                    continue
                 return
