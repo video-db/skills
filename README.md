@@ -248,7 +248,6 @@ video-db/skills/
 ├── README.md
 └── python/
     ├── SKILL.md                      # Skill definition (loaded by Claude Code)
-    ├── requirements.txt              # Python dependencies
     ├── .env.example                  # Environment variable template
     ├── reference/
     │   ├── api-reference.md          # Complete API reference
@@ -260,18 +259,14 @@ video-db/skills/
     │   ├── capture.md                # Real-time capture architecture guide
     │   └── use-cases.md              # End-to-end workflow examples
     └── scripts/
-        ├── env_loader.py             # Environment loader utility
-        ├── setup_venv.py             # Virtual environment setup
-        ├── setup.py                  # Dependency checker
+        ├── videodb_env.py            # Environment loading and SDK validation
         ├── check_connection.py       # API key verification
         ├── batch_upload.py           # Bulk upload from URL list or directory
         ├── search_and_compile.py     # Search + compile into stream
         ├── extract_clips.py          # Extract clips by timestamp
         ├── backend.py                # Capture backend (Flask + Cloudflare tunnel)
         ├── client.py                 # Capture client (screen + audio recording)
-        ├── test_editor.py            # Integration test: timeline editing
-        ├── test_meetings.py          # Integration test: meeting analysis
-        └── test_rtstream.py          # Integration test: streaming
+        └── capture_bg.py             # Background screen capture with AI
 ```
 
 ---

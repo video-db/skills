@@ -73,7 +73,13 @@ Use the Read tool to read `~/.videodb/.env`.
 
 **File format** (enforced for both read and write): `KEY=value`, one per line, no quotes around the value, no spaces around `=`, no `export` prefix. Lines starting with `#` are comments. To read: split on the first `=` — left side is the key, right side is the value.
 
-If the file doesn't exist or `VIDEO_DB_API_KEY` is not present, ask the user for their key (free at https://console.videodb.io — 50 free uploads, no credit card). Then store it:
+If the file doesn't exist or `VIDEO_DB_API_KEY` is not present, give the user two options:
+1. Paste the key here — the agent writes it to `~/.videodb/.env`
+2. Add it manually to `~/.videodb/.env` as `VIDEO_DB_API_KEY=your-key`
+
+Get a free key at https://console.videodb.io — 50 free uploads, no credit card.
+
+To store the key:
 
 ```bash
 mkdir -p ~/.videodb
@@ -98,19 +104,12 @@ Then install:
 python -m pip install "videodb[capture]" || python3 -m pip install "videodb[capture]"
 ```
 
-### 3. Export API Key
-
-Read the API key from `~/.videodb/.env` (step 1) and export it once for the session:
-
-```bash
-export VIDEO_DB_API_KEY=<key>
-```
-
-All subsequent Python commands in this session will pick it up automatically. No need to prefix every command.
-
-### 4. Verify
+### 3. Verify
 
 ```python
+from videodb_env import init
+init()
+
 import videodb
 
 conn = videodb.connect()
@@ -120,17 +119,11 @@ print(f"Connected. Collection: {coll.id}, Videos: {len(coll.get_videos())}")
 
 ## Running Python code
 
-An API key from https://console.videodb.io is required. Stored at `~/.videodb/.env`.
-
-Before running any VideoDB code, read the API key from `~/.videodb/.env` using the Read tool and `export` it once:
-
-```bash
-export VIDEO_DB_API_KEY=<key>
-```
-
-Then run code inline with `python -c`. Do NOT write a script file when a short inline command works. Use whichever Python command is available (`python` or `python3`).
+`scripts/videodb_env.py` handles environment loading and SDK validation. Call `from videodb_env import init; init()` before any VideoDB code. It checks for the SDK, loads `VIDEO_DB_API_KEY` from the environment or `.env` files (`./.env`, `~/.videodb/.env`), and exits with clear error messages if anything is missing. All scripts in `scripts/` already call this at the top.
 
 `videodb.connect()` reads `VIDEO_DB_API_KEY` from the environment automatically.
+
+Do NOT write a script file when a short inline command works. Use whichever Python command is available (`python` or `python3`).
 
 ## Quick Reference
 
@@ -376,6 +369,7 @@ Returns JSON with `player_url` for sharing.
 
 Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md file. Read and execute them directly instead of rewriting the logic.
 
+- [scripts/videodb_env.py](scripts/videodb_env.py) - Environment loading and SDK validation (called by all scripts)
 - [scripts/capture_bg.py](scripts/capture_bg.py) - **Screen recording with AI** (recommended for capture)
 - [scripts/capture.py](scripts/capture.py) - Interactive screen capture (requires terminal input)
 - [scripts/batch_upload.py](scripts/batch_upload.py) - Bulk upload from a URL list or directory
@@ -384,4 +378,3 @@ Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md f
 - [scripts/backend.py](scripts/backend.py) - Capture backend server (WebSocket polling, no tunnel required)
 - [scripts/client.py](scripts/client.py) - Capture client (connects to backend)
 - [scripts/check_connection.py](scripts/check_connection.py) - Verify API key and connection
-- [scripts/env_loader.py](scripts/env_loader.py) - Load API key from `~/.videodb/.env` or local `.env`

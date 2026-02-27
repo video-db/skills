@@ -16,27 +16,18 @@ for the webhook URL. The client (scripts/client.py) connects to this backend
 to initiate capture sessions.
 """
 
-import os
 import logging
 import threading
 import queue
 import asyncio
 import traceback
-from pathlib import Path
 from flask import Flask, request, jsonify
 from pycloudflared import try_cloudflare
-import videodb
 
-# Load environment variables from multiple locations
-try:
-    from env_loader import load_env
-    load_env()
-except ImportError:
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-    except ImportError:
-        pass
+from videodb_env import init
+init()
+
+import videodb
 
 app = Flask(__name__)
 
@@ -45,11 +36,7 @@ logger = logging.getLogger(__name__)
 
 # --- Configuration ---
 
-VIDEO_DB_API_KEY = os.getenv("VIDEO_DB_API_KEY")
 PORT = 5002
-
-if not VIDEO_DB_API_KEY:
-    raise ValueError("VIDEO_DB_API_KEY environment variable not set")
 
 conn = None
 public_url = None
@@ -60,7 +47,7 @@ public_url = None
 def setup():
     global conn, public_url
     print("[backend] Connecting to VideoDB...")
-    conn = videodb.connect(api_key=VIDEO_DB_API_KEY)
+    conn = videodb.connect()
 
     print(f"[backend] Starting Cloudflare Tunnel on port {PORT}...")
     tunnel = try_cloudflare(port=PORT)

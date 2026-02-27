@@ -17,18 +17,16 @@ Prerequisites:
 import asyncio
 import sys
 
+from videodb_env import init
+init()
+
 try:
     import requests
 except ImportError:
-    print("[client] Missing dependency: requests. Run setup first.")
+    print("[client] Missing dependency: requests. Run: pip install requests")
     sys.exit(1)
 
-try:
-    from videodb.capture import CaptureClient
-except ImportError:
-    print("[client] Missing dependency: videodb[capture]. Run setup first:")
-    print("  .venv/bin/pip install 'videodb[capture]>=0.4.0'")
-    sys.exit(1)
+from videodb.capture import CaptureClient
 
 BACKEND_URL = "http://localhost:5002"
 

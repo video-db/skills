@@ -1,8 +1,0 @@
-# Socket Security Configuration
-
-approved_packages:
-  pycloudflared:
-    version: ">=0.2.0,<1.0.0"
-    reason: "Required for webhook tunneling in capture backend (scripts/backend.py). Optional dependency - only needed for real-time capture features."
-    alternatives: "ngrok, localtunnel, or custom reverse proxy for production"
-    scope: "development"

@@ -12,37 +12,20 @@ Requirements:
   pip install "videodb[capture]"
 """
 
-import os
 import sys
 import asyncio
 import threading
 import queue
 import time
 import traceback
-from pathlib import Path
 
-# Load environment variables
-try:
-    from env_loader import load_env
-    load_env()
-except ImportError:
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path.home() / ".videodb" / ".env")
-    except ImportError:
-        pass
+from videodb_env import init
+init()
 
 import videodb
 from videodb.capture import CaptureClient
 
 # --- Configuration ---
-
-VIDEO_DB_API_KEY = os.getenv("VIDEO_DB_API_KEY")
-if not VIDEO_DB_API_KEY:
-    print("ERROR: VIDEO_DB_API_KEY not set")
-    print("  Set it in ~/.videodb/.env or export it:")
-    print("  export VIDEO_DB_API_KEY=your-key")
-    sys.exit(1)
 
 # Global connection and state
 conn = None
@@ -54,7 +37,7 @@ def setup():
     """Connect to VideoDB."""
     global conn
     print("[capture] Connecting to VideoDB...")
-    conn = videodb.connect(api_key=VIDEO_DB_API_KEY)
+    conn = videodb.connect()
     print("[capture] Connected!")
 
 

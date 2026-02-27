@@ -12,20 +12,14 @@ Usage:
 """
 
 import argparse
-import os
 import sys
-from pathlib import Path
 
-# Load environment variables from multiple locations
-try:
-    from env_loader import load_env
-    load_env()
-except ImportError:
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-    except ImportError:
-        pass
+from videodb_env import init
+init()
+
+import videodb
+from videodb import SearchType
+from videodb.exceptions import InvalidRequestError
 
 
 def ensure_indexed(video, search_type: str) -> None:
@@ -68,19 +62,6 @@ def main() -> None:
         print("[search_compile] ERROR: Provide --video-id or --collection-id.", file=sys.stderr)
         sys.exit(1)
 
-    api_key = os.environ.get("VIDEO_DB_API_KEY", "")
-    if not api_key:
-        print("[search_compile] ERROR: VIDEO_DB_API_KEY is not set.", file=sys.stderr)
-        sys.exit(1)
-
-    try:
-        import videodb
-        from videodb import SearchType
-        from videodb.exceptions import InvalidRequestError
-    except ImportError:
-        print("[search_compile] ERROR: videodb is not installed. Run scripts/setup_venv.py first.", file=sys.stderr)
-        sys.exit(1)
-
     search_type_map = {
         "semantic": SearchType.semantic,
         "keyword": SearchType.keyword,
@@ -98,7 +79,7 @@ def main() -> None:
             raise
 
     try:
-        conn = videodb.connect(api_key=api_key)
+        conn = videodb.connect()
 
         if args.video_id:
             coll = conn.get_collection()

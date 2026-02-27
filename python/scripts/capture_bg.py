@@ -10,7 +10,6 @@ Usage:
 The recording runs until you run 'stop' or the stop file is created.
 """
 
-import os
 import sys
 import asyncio
 import threading
@@ -19,18 +18,13 @@ import time
 import json
 from pathlib import Path
 
-# Load environment variables
-try:
-    from dotenv import load_dotenv
-    load_dotenv(Path.home() / ".videodb" / ".env")
-except ImportError:
-    pass
+from videodb_env import init
+init()
 
 import videodb
 from videodb.capture import CaptureClient
 
 # --- Configuration ---
-VIDEO_DB_API_KEY = os.getenv("VIDEO_DB_API_KEY")
 STATE_FILE = Path("/tmp/videodb_capture_state.json")
 STOP_FILE = Path("/tmp/videodb_capture_stop")
 
@@ -39,7 +33,7 @@ conn = None
 
 def setup():
     global conn
-    conn = videodb.connect(api_key=VIDEO_DB_API_KEY)
+    conn = videodb.connect()
 
 
 def start_ws_listener(ws_id_queue, name="Listener"):
@@ -246,12 +240,6 @@ async def run_capture():
 
 
 def cmd_start():
-    if not VIDEO_DB_API_KEY:
-        print("ERROR: VIDEO_DB_API_KEY not set")
-        print("  Set it in ~/.videodb/.env or export it:")
-        print("  export VIDEO_DB_API_KEY=your-key")
-        sys.exit(1)
-
     print("=" * 60)
     print("  VideoDB Capture (Background Mode)")
     print("=" * 60 + "\n")

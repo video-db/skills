@@ -9,40 +9,17 @@ Usage:
   python scripts/check_connection.py
 """
 
-import os
 import sys
-from pathlib import Path
 
-# Load environment variables from multiple locations
-try:
-    from env_loader import load_env
-    load_env()
-except ImportError:
-    # Fallback if env_loader is not available
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-    except ImportError:
-        pass
+from videodb_env import init
+init()
+
+import videodb
 
 
 def main() -> None:
-    api_key = os.environ.get("VIDEO_DB_API_KEY", "")
-    if not api_key:
-        print("[check_connection] FAIL: VIDEO_DB_API_KEY is not set.")
-        print("  Set it with: export VIDEO_DB_API_KEY=\"your-api-key\"")
-        print("  Get a key from: https://console.videodb.io")
-        sys.exit(1)
-
     try:
-        import videodb
-    except ImportError:
-        print("[check_connection] FAIL: videodb is not installed.")
-        print("  Run: python scripts/setup_venv.py")
-        sys.exit(1)
-
-    try:
-        conn = videodb.connect(api_key=api_key)
+        conn = videodb.connect()
         coll = conn.get_collection()
         videos = coll.get_videos()
         print(f"[check_connection] SUCCESS: Connected to VideoDB.")

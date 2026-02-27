@@ -11,20 +11,12 @@ Usage:
 """
 
 import argparse
-import os
 import sys
-from pathlib import Path
 
-# Load environment variables from multiple locations
-try:
-    from env_loader import load_env
-    load_env()
-except ImportError:
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-    except ImportError:
-        pass
+from videodb_env import init
+init()
+
+import videodb
 
 
 def parse_timestamps(raw: str) -> list[tuple[float, float]]:
@@ -66,19 +58,8 @@ def main() -> None:
         print("[extract_clips] ERROR: No valid timestamps provided.", file=sys.stderr)
         sys.exit(1)
 
-    api_key = os.environ.get("VIDEO_DB_API_KEY", "")
-    if not api_key:
-        print("[extract_clips] ERROR: VIDEO_DB_API_KEY is not set.", file=sys.stderr)
-        sys.exit(1)
-
     try:
-        import videodb
-    except ImportError:
-        print("[extract_clips] ERROR: videodb is not installed. Run scripts/setup_venv.py first.", file=sys.stderr)
-        sys.exit(1)
-
-    try:
-        conn = videodb.connect(api_key=api_key)
+        conn = videodb.connect()
         coll = conn.get_collection()
         video = coll.get_video(args.video_id)
         print(f"[extract_clips] Video: {video.name} ({video.id}), duration: {video.length:.1f}s")

@@ -12,20 +12,13 @@ Usage:
 """
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
-# Load environment variables from multiple locations
-try:
-    from env_loader import load_env
-    load_env()
-except ImportError:
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-    except ImportError:
-        pass
+from videodb_env import init
+init()
+
+import videodb
 
 
 def main() -> None:
@@ -38,17 +31,6 @@ def main() -> None:
 
     if not args.urls and not args.files:
         print("[batch_upload] ERROR: Provide --urls or --files.", file=sys.stderr)
-        sys.exit(1)
-
-    api_key = os.environ.get("VIDEO_DB_API_KEY", "")
-    if not api_key:
-        print("[batch_upload] ERROR: VIDEO_DB_API_KEY is not set.", file=sys.stderr)
-        sys.exit(1)
-
-    try:
-        import videodb
-    except ImportError:
-        print("[batch_upload] ERROR: videodb is not installed. Run scripts/setup_venv.py first.", file=sys.stderr)
         sys.exit(1)
 
     # Gather upload sources
@@ -79,7 +61,7 @@ def main() -> None:
     print(f"[batch_upload] {len(sources)} source(s) to upload.")
 
     try:
-        conn = videodb.connect(api_key=api_key)
+        conn = videodb.connect()
 
         if args.collection:
             # Find or create collection
