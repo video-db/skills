@@ -44,8 +44,32 @@ def check_videodb_installed() -> bool:
         return False
 
 
+def is_in_venv() -> bool:
+    """Check if running inside a virtual environment."""
+    return (
+        hasattr(sys, 'real_prefix') or
+        (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix) or
+        os.environ.get('VIRTUAL_ENV') is not None
+    )
+
+
 def install_videodb() -> bool:
     """Install dependencies from requirements.txt (or fall back to videodb alone)."""
+    # Check if in virtual environment (required for PEP 668 compliance)
+    if not is_in_venv():
+        print("[setup] ERROR: Not in a virtual environment.")
+        print("[setup] Modern Python installations prevent system-wide package installation (PEP 668).")
+        print()
+        print("[setup] Please create and activate a virtual environment first:")
+        print("  python3 -m venv .venv")
+        print("  source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate")
+        print("  python scripts/setup.py")
+        print()
+        print("[setup] Or use the automated setup that creates a venv for you:")
+        print("  python scripts/setup_venv.py")
+        print()
+        return False
+
     requirements_file = Path(__file__).resolve().parent.parent / "requirements.txt"
     if requirements_file.is_file():
         print(f"[setup] Installing dependencies from {requirements_file}...")

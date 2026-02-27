@@ -119,6 +119,13 @@ pip install "videodb>=0.4.0"
 
 > **Note**: The `[capture]` extra includes real-time screen/audio capture dependencies that may fail on some Linux distributions. Use the core SDK if you don't need capture features or encounter installation issues.
 
+> **Important**: Modern Python installations require a virtual environment. If setup fails with "externally-managed-environment" error, create a virtual environment first:
+> ```bash
+> python3 -m venv .venv
+> source .venv/bin/activate  # Windows: .venv\Scripts\activate
+> python scripts/setup.py
+> ```
+
 > **Note:** The `/videodb` command is typed in Claude Code's chat interface, not in your terminal.
 
 ### Step 3: Start using it
