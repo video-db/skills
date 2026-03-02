@@ -17,8 +17,8 @@ Prerequisites:
 import asyncio
 import sys
 
-from videodb_env import load_vdb_env
-load_vdb_env()
+from dotenv import load_dotenv
+load_dotenv()
 
 try:
     import requests

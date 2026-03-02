@@ -85,12 +85,6 @@ for shot in results.get_shots():
 results.play()
 ```
 
-Or use the helper script:
-
-```bash
-python scripts/batch_upload.py --urls urls.txt --collection "Training Videos"
-```
-
 ## Add Professional Polish to Raw Footage
 
 Upload raw footage, add subtitles, and generate a thumbnail:
@@ -143,12 +137,6 @@ print(f"Found {len(shots)} matching segments")
 for i, shot in enumerate(shots):
     stream_url = shot.generate_stream()
     print(f"Clip {i+1}: {shot.start:.1f}s - {shot.end:.1f}s -> {stream_url}")
-```
-
-Or use the helper script:
-
-```bash
-python scripts/extract_clips.py --video-id <id> --timestamps "10.0-25.0,45.0-60.0,120.0-135.0"
 ```
 
 ## Generate AI-Enhanced Video Content

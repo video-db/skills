@@ -24,8 +24,8 @@ import traceback
 from flask import Flask, request, jsonify
 from pycloudflared import try_cloudflare
 
-from videodb_env import load_vdb_env
-load_vdb_env()
+from dotenv import load_dotenv
+load_dotenv()
 
 import videodb
 

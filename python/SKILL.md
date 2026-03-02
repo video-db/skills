@@ -28,25 +28,21 @@ A single API-first video stack for agents. Ingest anything, process server-side,
 
 ## Running Python code
 
-`scripts/videodb_env.py` handles environment loading and SDK validation. Call `load_vdb_env()` before any VideoDB code — it checks the SDK is installed, loads `VIDEO_DB_API_KEY` from environment variable → `./.env` → `~/.videodb/.env`, and exits with clear error messages if anything is missing. All scripts in `scripts/` already call this at the top.
-
-Inline usage:
-
-```bash
-python -c "from scripts.videodb_env import load_vdb_env; load_vdb_env(); print('OK')"
-```
-
-Usage in a script file:
+Before running any VideoDB code, change to the project directory and load environment variables:
 
 ```python
-from scripts.videodb_env import load_vdb_env
-load_vdb_env()
+from dotenv import load_dotenv
+load_dotenv()
 
 import videodb
 conn = videodb.connect()
 ```
 
-`videodb.connect()` reads `VIDEO_DB_API_KEY` from the environment automatically.
+This reads `VIDEO_DB_API_KEY` from:
+1. Environment (if already exported)
+2. Project's `.env` file in current directory
+
+If the key is missing, `videodb.connect()` raises `AuthenticationError` automatically.
 
 Do NOT write a script file when a short inline command works.
 
@@ -54,8 +50,8 @@ When writing inline Python (`python -c "..."`), always use properly formatted co
 
 ```bash
 python << 'EOF'
-from scripts.videodb_env import load_vdb_env
-load_vdb_env()
+from dotenv import load_dotenv
+load_dotenv()
 
 import videodb
 conn = videodb.connect()
@@ -80,23 +76,14 @@ If `videodb[capture]` fails on Linux, install without the capture extra:
 pip install videodb python-dotenv
 ```
 
-### 2. Verify environment
+### 2. Configure API key
 
-Run `load_vdb_env()` to verify the SDK and API key:
+The user must set `VIDEO_DB_API_KEY` using **either** method:
 
-```bash
-python -c "from scripts.videodb_env import load_vdb_env; load_vdb_env(); print('OK')"
-```
+- **Export in terminal** (before starting Claude): `export VIDEO_DB_API_KEY=your-key`
+- **Project `.env` file**: Save `VIDEO_DB_API_KEY=your-key` in the project's `.env` file
 
-If it prints `OK`, setup is done.
-
-If it fails with `VIDEO_DB_API_KEY not found`, ask the user to:
-1. Get a free API key at https://console.videodb.io (50 free uploads, no credit card)
-2. Set it up using **either** of these methods:
-   - Set it as an environment variable: `export VIDEO_DB_API_KEY=your-key`
-   - Or save it to `~/.videodb/.env` as `VIDEO_DB_API_KEY=your-key`
-
-Then re-run to confirm.
+Get a free API key at https://console.videodb.io (50 free uploads, no credit card).
 
 **Do NOT** read, write, or handle the API key yourself. Always let the user set it.
 
@@ -340,15 +327,10 @@ Returns JSON with `player_url` for sharing.
 
 Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md file. Read and execute them directly instead of rewriting the logic.
 
-- [scripts/videodb_env.py](scripts/videodb_env.py) - Environment loading and SDK validation (called by all scripts)
 - [scripts/capture_bg.py](scripts/capture_bg.py) - **Screen recording with AI** (recommended for capture)
 - [scripts/capture.py](scripts/capture.py) - Interactive screen capture (requires terminal input)
-- [scripts/batch_upload.py](scripts/batch_upload.py) - Bulk upload from a URL list or directory
-- [scripts/search_and_compile.py](scripts/search_and_compile.py) - Search inside a video and compile matching clips into a stream
-- [scripts/extract_clips.py](scripts/extract_clips.py) - Extract clips by timestamp ranges
 - [scripts/backend.py](scripts/backend.py) - Capture backend server (WebSocket polling, no tunnel required)
 - [scripts/client.py](scripts/client.py) - Capture client (connects to backend)
-- [scripts/check_connection.py](scripts/check_connection.py) - Verify API key and connection
 
 
 **Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (transitions, speed changes, crop/zoom, colour grading, volume mixing).

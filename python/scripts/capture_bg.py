@@ -18,8 +18,8 @@ import time
 import json
 from pathlib import Path
 
-from videodb_env import load_vdb_env
-load_vdb_env()
+from dotenv import load_dotenv
+load_dotenv()
 
 import videodb
 from videodb.capture import CaptureClient

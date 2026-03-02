@@ -208,15 +208,16 @@ for shot in results.get_shots():
 
 > **Note:** Collection-level search only supports `SearchType.semantic`. Using `SearchType.keyword` or `SearchType.scene` with `coll.search()` will raise `NotImplementedError`. For keyword or scene search, use `video.search()` on individual videos instead.
 
-## Search + Compilation Workflow
+## Search + Compile
 
-For a complete automated workflow, use the helper script:
+Index, search, and compile matching segments into a single playable stream:
 
-```bash
-python scripts/search_and_compile.py --video-id <id> --query "your query"
+```python
+video.index_spoken_words(force=True)
+results = video.search(query="your query", search_type=SearchType.semantic)
+stream_url = results.compile()
+print(stream_url)
 ```
-
-This indexes (if needed), searches, compiles results, and returns a stream URL.
 
 ## Tips
 
