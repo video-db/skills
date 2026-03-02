@@ -1,10 +1,11 @@
+
 [![GitHub stars](https://img.shields.io/github/stars/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/stargazers)
 [![Issues](https://img.shields.io/github/issues/video-db/videodb-python.svg?style=for-the-badge)](https://github.com/video-db/videodb-python/issues)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fvideodb.io%2F&style=for-the-badge&label=videodb.io)](https://videodb.io)
 
 <div align="center">
 
-<img width="1856" height="576" alt="github_banner_skills" src="https://github.com/user-attachments/assets/a99b59d1-62de-43be-afcd-af5347372db6" width="800"/>
+<img width="1200" height="372" alt="banner" src="https://github.com/user-attachments/assets/fdbf3879-dcd6-443c-93e0-9a7e1bfdfa90" />
 
 
 **The only video skill your agent needs.**
