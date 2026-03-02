@@ -1,6 +1,6 @@
 ---
 name: videodb
-description: See, Understand, Act on video and audio. See: ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand: extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act: transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
+description: See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
@@ -11,10 +11,10 @@ argument-hint: "[task description]"
 
 Use this skill when you need to:
 
-## 1) Desktop Perception (top use case)
+## 1) Desktop Perception
 - Start/stop a **desktop session** capturing **screen, mic, and system audio**
 - Stream **live context** and store **episodic session memory**
-- Run **real-time alerts/triggers** on what’s happening on screen
+- Run **real-time alerts/triggers** on what’s spoken and what's happening on screen
 - Produce **session summaries**, a searchable timeline, and **playable evidence links**
 
 ## 2) Video ingest + stream
@@ -22,7 +22,7 @@ Use this skill when you need to:
 - Transcode/normalize: **codec, bitrate, fps, resolution, aspect ratio**
 
 ## 3) Index + search (timestamps + evidence)
-- Build **scene**, **transcript**, and **semantic** indexes
+- Build **visual**, **spoken**, and **keyword** indexes
 - Search and return exact moments with **timestamps** and **playable evidence**
 - Auto-create **clips** from search results
 
@@ -34,7 +34,7 @@ Use this skill when you need to:
 
 ## 5) Live streams (RTSP) + monitoring
 - Connect **RTSP/live feeds**
-- Run **real-time understanding** and emit **events/alerts** for monitoring workflows
+- Run **real-time visual and spoken understanding** and emit **events/alerts** for monitoring workflows
 
 ---
 
