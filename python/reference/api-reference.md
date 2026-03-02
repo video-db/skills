@@ -24,11 +24,11 @@ conn = videodb.connect(
 | `conn.check_usage()` | `dict` | Get account usage stats |
 | `conn.upload(source, media_type, name, ...)` | `Video\|Audio\|Image` | Upload to default collection |
 | `conn.record_meeting(meeting_url, bot_name, ...)` | `Meeting` | Record a meeting |
-| `conn.create_capture_session(end_user_id, collection_id, ...)` | `CaptureSession` | Create a capture session |
+| `conn.create_capture_session(...)` | `CaptureSession` | Create a capture session (see [capture-reference.md](capture-reference.md)) |
 | `conn.youtube_search(query, result_threshold, duration)` | `list[dict]` | Search YouTube |
 | `conn.transcode(source, callback_url, mode, ...)` | `str` | Transcode video (returns job ID) |
 | `conn.get_transcode_details(job_id)` | `dict` | Get transcode job status and details |
-| `conn.connect_websocket(collection_id)` | `WebSocketConnection` | Connect to WebSocket service |
+| `conn.connect_websocket(collection_id)` | `WebSocketConnection` | Connect to WebSocket (see [capture-reference.md](capture-reference.md)) |
 
 ### Transcode
 
@@ -122,9 +122,9 @@ coll = conn.get_collection()
 | `coll.generate_text(prompt, model_name="basic", response_type="text")` | `dict` | LLM text generation — access result via `["output"]` |
 | `coll.dub_video(video_id, language_code)` | `Video` | Dub video into another language |
 | `coll.record_meeting(meeting_url, bot_name, ...)` | `Meeting` | Record a live meeting |
-| `coll.create_capture_session(end_user_id, callback_url, ...)` | `CaptureSession` | Create a capture session |
-| `coll.get_capture_session(capture_session_id)` | `CaptureSession` | Retrieve an existing capture session |
-| `coll.connect_rtstream(url, name, ...)` | `RTStream` | Connect to a live stream |
+| `coll.create_capture_session(...)` | `CaptureSession` | Create a capture session (see [capture-reference.md](capture-reference.md)) |
+| `coll.get_capture_session(...)` | `CaptureSession` | Retrieve capture session (see [capture-reference.md](capture-reference.md)) |
+| `coll.connect_rtstream(url, name, ...)` | `RTStream` | Connect to a live stream (see [rtstream-reference.md](rtstream-reference.md)) |
 | `coll.make_public()` | `None` | Make collection public |
 | `coll.make_private()` | `None` | Make collection private |
 | `coll.delete_video(video_id)` | `None` | Delete a video |
@@ -446,238 +446,11 @@ meeting = coll.record_meeting(
 | `meeting.refresh()` | `Meeting` | Refresh data from server |
 | `meeting.wait_for_status(target_status, timeout=14400, interval=120)` | `bool` | Poll until status reached |
 
-## RTStream Object
+## RTStream & Capture
 
-```python
-rtstream = coll.connect_rtstream(url="rtmp://...", name="My Stream")
-```
+For RTStream (live ingestion, indexing, transcription), see [rtstream-reference.md](rtstream-reference.md).
 
-### RTStream Methods
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `rtstream.start()` | `None` | Begin ingestion |
-| `rtstream.stop()` | `None` | Stop ingestion |
-| `rtstream.generate_stream(start, end)` | `str` | Stream recorded segment (Unix timestamps) |
-| `rtstream.export(name=None)` | `RTStreamExportResult` | Export to permanent video |
-| `rtstream.index_scenes(extraction_type, ...)` | `RTStreamSceneIndex` | Index visual scenes |
-| `rtstream.index_spoken_words(prompt, ...)` | `RTStreamSceneIndex` | Index spoken words |
-| `rtstream.search(query, index_id=None, ...)` | `RTStreamSearchResult` | Search recorded content |
-| `rtstream.start_transcript(ws_connection_id)` | `dict` | Start live transcription |
-| `rtstream.get_transcript(page, page_size)` | `dict` | Get transcript pages |
-| `rtstream.stop_transcript()` | `dict` | Stop transcription |
-
-## CaptureSession
-
-```python
-session = conn.create_capture_session(
-    end_user_id="user-123",           # Identifier for the end user
-    collection_id="default",          # Target collection for the recording
-    callback_url="https://...",       # Webhook URL for session events
-    ws_connection_id=None,            # WebSocket connection ID for real-time events
-    metadata={"app": "my-app"},       # Optional metadata dict
-)
-# or
-session = conn.get_capture_session(capture_session_id)
-```
-
-### Connection Methods (Capture)
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `conn.create_capture_session(end_user_id, collection_id, callback_url, ws_connection_id, metadata)` | `CaptureSession` | Create a new capture session |
-| `conn.get_capture_session(capture_session_id)` | `CaptureSession` | Retrieve an existing capture session |
-| `conn.generate_client_token()` | `str` | Generate a client-side authentication token |
-
-### CaptureSession Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `session.id` | `str` | Unique capture session ID |
-
-### CaptureSession Methods
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `session.get_rtstream(type)` | `list[RTStream]` | Get RTStreams by type: `"mic"`, `"screen"`, or `"system_audio"` |
-
-## CaptureClient
-
-The client runs on the user's machine and handles permissions, channel discovery, and streaming.
-
-```python
-from videodb.capture import CaptureClient
-
-client = CaptureClient(client_token=token)
-```
-
-### CaptureClient Methods
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `await client.request_permission(type)` | `None` | Request device permission (`"microphone"`, `"screen_capture"`) |
-| `await client.list_channels()` | `Channels` | Discover available audio/video channels |
-| `await client.start_session(capture_session_id, channels, primary_video_channel_id)` | `None` | Start streaming selected channels |
-| `await client.stop_session()` | `None` | Gracefully stop the capture session |
-| `await client.shutdown()` | `None` | Clean up client resources |
-
-### start_session Parameters
-
-```python
-await client.start_session(
-    capture_session_id=session.id,          # Session ID from backend
-    channels=selected_channels,             # List of Channel objects to stream
-    primary_video_channel_id=display.id,    # Primary video channel ID (optional)
-)
-```
-
-## Channels
-
-Returned by `client.list_channels()`. Groups available devices by type.
-
-```python
-channels = await client.list_channels()
-```
-
-### Channel Groups
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `channels.mics` | `ChannelGroup` | Available microphones |
-| `channels.displays` | `ChannelGroup` | Available screen displays |
-| `channels.system_audio` | `ChannelGroup` | Available system audio sources |
-
-### ChannelGroup Methods & Properties
-
-| Member | Type | Description |
-|--------|------|-------------|
-| `group.default` | `Channel` | Default channel in the group (or `None`) |
-| `group.all()` | `list[Channel]` | All channels in the group |
-
-### Channel Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `ch.id` | `str` | Unique channel ID |
-| `ch.type` | `str` | Channel type (`"mic"`, `"display"`, `"system_audio"`) |
-| `ch.name` | `str` | Human-readable channel name |
-| `ch.store` | `bool` | Whether to persist the recording (set to `True` to save) |
-
-## RTStream Capture Pipelines
-
-RTStream objects are retrieved from the capture session after the `capture_session.active` webhook fires.
-
-```python
-mics = session.get_rtstream("mic")
-displays = session.get_rtstream("screen")
-system_audios = session.get_rtstream("system_audio")
-```
-
-### RTStream AI Pipeline Methods
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `rtstream.start_transcript(ws_connection_id)` | `dict` | Start live transcription, stream results to WebSocket |
-| `rtstream.index_audio(prompt, ws_connection_id, batch_config, model_name)` | `str` | Start audio indexing with LLM summarization |
-| `rtstream.index_visuals(prompt, ws_connection_id)` | `str` | Start visual indexing of screen content |
-| `rtstream.stop_transcript()` | `dict` | Stop live transcription |
-
-### index_audio Parameters
-
-```python
-rtstream.index_audio(
-    prompt="Summarize what is being discussed",
-    ws_connection_id=ws_id,
-    batch_config={"type": "time", "value": 30},  # Batch every 30 seconds
-    model_name=None,  # Optional LLM model override
-)
-```
-
-### batch_config Options
-
-| Key | Type | Description |
-|-----|------|-------------|
-| `type` | `str` | Batch strategy: `"time"` (fixed interval) |
-| `value` | `int` | Interval in seconds (e.g., `30` for every 30 seconds) |
-
-### index_visuals Parameters
-
-```python
-rtstream.index_visuals(
-    prompt="In one sentence, describe what is on screen",
-    ws_connection_id=ws_id,
-)
-```
-
-## WebSocket
-
-Connect to receive real-time AI results from transcription and indexing pipelines.
-
-```python
-ws_wrapper = conn.connect_websocket()
-ws = await ws_wrapper.connect()
-ws_id = ws.connection_id
-```
-
-### WebSocket Object
-
-| Property / Method | Type | Description |
-|-------------------|------|-------------|
-| `ws.connection_id` | `str` | Unique connection ID (pass to AI pipeline methods) |
-| `ws.receive()` | `AsyncIterator[dict]` | Async iterator yielding real-time messages |
-
-### Message Format
-
-```python
-{
-    "channel": "transcript" | "audio_index" | "scene_index" | "visual_index",
-    "data": {
-        "text": "...",
-        # additional fields vary by channel
-    }
-}
-```
-
-### WebSocket Channels
-
-| Channel | Source | Description |
-|---------|--------|-------------|
-| `transcript` | `start_transcript()` | Live speech-to-text results |
-| `audio_index` | `index_audio()` | LLM-generated audio summaries |
-| `scene_index` | `index_visuals()` | AI descriptions of visual content |
-| `visual_index` | `index_visuals()` | AI descriptions of visual content (alias) |
-
-## Webhook Events
-
-Register a `callback_url` when creating a capture session to receive lifecycle events.
-
-| Event | Payload Fields | Description |
-|-------|---------------|-------------|
-| `capture_session.active` | `capture_session_id` | Session started streaming; start AI pipelines |
-| `capture_session.stopping` | `capture_session_id` | Stop was requested; streams finalizing |
-| `capture_session.stopped` | `capture_session_id` | All streams finalized |
-| `capture_session.exported` | `data.exported_video_id`, `data.stream_url`, `data.player_url` | Recording exported as a permanent video |
-
-### Webhook Payload Structure
-
-```python
-# All events
-{
-    "event": "capture_session.active",
-    "capture_session_id": "cs_abc123",
-}
-
-# Export event includes additional data
-{
-    "event": "capture_session.exported",
-    "capture_session_id": "cs_abc123",
-    "data": {
-        "exported_video_id": "v_xyz789",
-        "stream_url": "https://...",
-        "player_url": "https://...",
-    }
-}
-```
+For capture sessions (desktop recording, CaptureClient, channels), see [capture-reference.md](capture-reference.md).
 
 ## Enums & Constants
 

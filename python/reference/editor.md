@@ -264,12 +264,14 @@ stream_url = editor_tl.generate_stream()
 
 ## Compiling & Streaming
 
-After assembling a timeline, compile it into a streamable URL:
+After assembling a timeline, compile it into a streamable URL. Streams are generated instantly - no render wait times.
 
 ```python
 stream_url = timeline.generate_stream()
 print(f"Stream: {stream_url}")
 ```
+
+For more streaming options (segment streams, search-to-stream, audio playback), see [streaming.md](streaming.md).
 
 ## Complete Workflow Examples
 

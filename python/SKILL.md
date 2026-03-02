@@ -304,68 +304,46 @@ Reference documentation is in the `reference/` directory adjacent to this SKILL.
 - [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
 - [reference/search.md](reference/search.md) - In-depth guide to video search (spoken word and scene-based)
 - [reference/editor.md](reference/editor.md) - Timeline editing, assets, and composition
+- [reference/streaming.md](reference/streaming.md) - HLS streaming and instant playback
 - [reference/generative.md](reference/generative.md) - AI-powered media generation (images, video, audio)
-- [reference/rtstream.md](reference/rtstream.md) - Real-time streaming capabilities
-- [reference/capture.md](reference/capture.md) - Screen and audio capture
+- [reference/rtstream.md](reference/rtstream.md) - Live stream ingestion workflow (RTSP/RTMP)
+- [reference/rtstream-reference.md](reference/rtstream-reference.md) - RTStream SDK methods and AI pipelines
+- [reference/capture.md](reference/capture.md) - Desktop capture workflow
+- [reference/capture-reference.md](reference/capture-reference.md) - Capture SDK and WebSocket events
 - [reference/use-cases.md](reference/use-cases.md) - Common video processing patterns and examples
 
 ## Screen Recording (Desktop Capture)
 
-Use `scripts/capture_bg.py` for screen and audio recording with AI transcription and visual indexing.
+Use `ws_listener.py` to capture WebSocket events during recording sessions. Desktop capture supports **macOS** only.
 
-### Start Recording
+### Quick Start
 
-Run in background mode:
+1. **Start listener**: `python scripts/ws_listener.py &`
+2. **Get WebSocket ID**: `cat /tmp/videodb_ws_id`
+3. **Run capture code** (see reference/capture.md for full workflow)
+4. **Events written to**: `/tmp/videodb_events.jsonl`
 
-```bash
-python scripts/capture_bg.py start &
+### Query Events
+
+```python
+import json
+events = [json.loads(l) for l in open("/tmp/videodb_events.jsonl")]
+
+# Get all transcripts
+transcripts = [e["data"]["text"] for e in events if e.get("channel") == "transcript"]
+
+# Get visual descriptions from last 5 minutes
+import time
+cutoff = time.time() - 300
+recent_visual = [e for e in events 
+                 if e.get("channel") == "visual_index" and e["unix_ts"] > cutoff]
 ```
 
-The recording will capture:
-- Screen video
-- Microphone audio
-- System audio
-- Real-time AI transcription
-- Visual scene descriptions
+### Utility Scripts
 
-### Check Status
+- [scripts/ws_listener.py](scripts/ws_listener.py) - WebSocket event listener (dumps to JSONL)
 
-```bash
-cat /tmp/videodb_capture_state.json
-```
-
-### Stop Recording
-
-Create the stop file to signal recording to finish:
-
-```bash
-touch /tmp/videodb_capture_stop
-```
-
-Or run:
-
-```bash
-python scripts/capture_bg.py stop
-```
-
-### Get Shareable Link
-
-After stopping, the state file contains the video URL:
-
-```bash
-cat /tmp/videodb_capture_state.json
-```
-
-Returns JSON with `player_url` for sharing.
-
-## Utility scripts
-
-Ready-to-run scripts are in the `scripts/` directory adjacent to this SKILL.md file. Read and execute them directly instead of rewriting the logic.
-
-- [scripts/capture_bg.py](scripts/capture_bg.py) - **Screen recording with AI** (recommended for capture)
-- [scripts/capture.py](scripts/capture.py) - Interactive screen capture (requires terminal input)
-- [scripts/backend.py](scripts/backend.py) - Capture backend server (WebSocket polling, no tunnel required)
-- [scripts/client.py](scripts/client.py) - Capture client (connects to backend)
+For complete capture workflow, see [reference/capture.md](reference/capture.md).
 
 
 **Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (transitions, speed changes, crop/zoom, colour grading, volume mixing).
