@@ -67,7 +67,7 @@ Before running any VideoDB code, change to the project directory and load enviro
 
 ```python
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(".env")
 
 import videodb
 conn = videodb.connect()
@@ -86,7 +86,7 @@ When writing inline Python (`python -c "..."`), always use properly formatted co
 ```bash
 python << 'EOF'
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(".env")
 
 import videodb
 conn = videodb.connect()
