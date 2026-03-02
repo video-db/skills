@@ -1,29 +1,64 @@
 ---
 name: videodb
-description: Use this skill whenever you have any task related to video. Can ingest all kinds of video content (file, url, live streams), extract frames, Complex editing tasks (audio overlays, text overlays, image overlays with multi timeline support and config options), Transcoding, Resolution change, aspect-ratio fix, resizing, Media AI Generation - Video, Audio, Images, Building Visual, Semantic and Temporal Understanding of Videos and Search within Videos, Streaming on Demand.
+description: See, Understand, Act on video and audio. See: ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand: extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act: transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
 
-# VideoDB Python Skill
+# VideoDB Skill
 
-A single API-first video stack for agents. Ingest anything, process server-side, and ship playable streams without FFmpeg glue.
+**Perception + memory + actions for video, live streams, and desktop sessions.**
 
-### Core capabilities
+Use this skill when you need to:
 
-- **Ingest + Transcode** — Accept any format, change codec/bitrate/FPS/resolution, output a playable stream (CDN + hosting)
-- **Scene-level Search Engine** — Build a searchable index scene by scene, find exact moments and auto-create clips, manage 1000s of hours of footage
-- **Generate + Compose** — Generate image/audio/video/text assets, overlay text/images/branding/motion captions, dub videos, translate captions
-- **Real-time RTSP** — Connect live streams, define events and alerts, ideal for security cams and monitoring
-- **Desktop Perception** — Capture screen/mic/system audio, stream desktop live, define alerts and triggers, store episodic memory and search sessions
+## 1) Desktop Perception (top use case)
+- Start/stop a **desktop session** capturing **screen, mic, and system audio**
+- Stream **live context** and store **episodic session memory**
+- Run **real-time alerts/triggers** on what’s happening on screen
+- Produce **session summaries**, a searchable timeline, and **playable evidence links**
 
-### Try it now
+## 2) Video ingest + stream
+- Ingest a **file or URL** and return a **playable web stream link**
+- Transcode/normalize: **codec, bitrate, fps, resolution, aspect ratio**
 
-- "Ingest this file and give me a playable web stream link"
-- "Generate subtitles, burn them in, and add light background music"
-- "Index this folder and find every scene with people"
-- "Connect this RTSP URL and alert when a person enters the zone"
-- "Start recording and give me an actionable summary when it ends"
+## 3) Index + search (timestamps + evidence)
+- Build **scene**, **transcript**, and **semantic** indexes
+- Search and return exact moments with **timestamps** and **playable evidence**
+- Auto-create **clips** from search results
+
+## 4) Timeline editing + generation
+- Subtitles: **generate**, **translate**, **burn-in**
+- Overlays: **text/image/branding**, motion captions
+- Audio: **background music**, **voiceover**, **dubbing**
+- Programmatic composition and exports via **timeline operations**
+
+## 5) Live streams (RTSP) + monitoring
+- Connect **RTSP/live feeds**
+- Run **real-time understanding** and emit **events/alerts** for monitoring workflows
+
+---
+
+## Common inputs
+- Local **file path**, public **URL**, or **RTSP URL**
+- Desktop capture request: **start / stop / summarize session**
+- Desired operations: get context for understanding, transcode spec, index spec, search query, clip ranges, timeline edits, alert rules
+
+## Common outputs
+- **Stream URL**
+- Search results with **timestamps** and **evidence links**
+- Generated assets: subtitles, audio, images, clips
+- **Event/alert payloads** for live streams
+- Desktop **session summaries** and memory entries
+
+---
+
+## Canonical prompts (examples)
+- “Start desktop capture and alert when a password field appears.”
+- “Record my session and produce an actionable summary when it ends.”
+- “Ingest this file and return a playable stream link.”
+- “Index this folder and find every scene with people, return timestamps.”
+- “Generate subtitles, burn them in, and add light background music.”
+- “Connect this RTSP URL and alert when a person enters the zone.”
 
 
 ## Running Python code
