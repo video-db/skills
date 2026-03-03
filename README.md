@@ -84,13 +84,13 @@ export VIDEO_DB_API_KEY=sk-xxx
 
 Ask your agent to run instructions like these. The skill loads automatically.
 
-- *"Upload https://www.youtube.com/watch?v=FgrO9ADPZSA and give me a summary"*
-- *"Search for 'product demo' in my latest video"*
-- *"Add subtitles with white text on black background"*
-- *"Take clips from 10s-30s and 45s-60s, add a title card, and combine them"*
-- *"Capture my screen and tell me what's happening in real-time"*
-- *"Start recording my meeting and give me a summary of actionable points at the end"*
-- *"Generate background music and overlay it on my video"*
+- "Upload https://www.youtube.com/watch?v=MnrJzXM7a6o and give me a sharable stream link"
+- "Take clips from 10s-30s and 45s-60s and compile them"
+- "Generate a background music, and add to this Clip"
+- "Add subtitles to original video with white text on black background"
+- "Find every scene showing 'phone close-up' or 'product on screen'"
+- "Capture my screen for the next two minutes and write a report of what i'm doing along with any insights or suggestions"*
+- "Here is the rtsp link for my IP Camera <rtsp url>, monitor and log the alert to text file along with timestamp whenever a person enters into the room"
 
 
 ---
