@@ -73,10 +73,14 @@ The agent will guide setup for your [VideoDB API key](https://console.videodb.io
 
 > For Cursor, Copilot, and other agents, ask your agent to **"setup videodb"**
 
-If needed, you can set API key in your current terminal session:
+Set your API key using either method:
 
 ```bash
+# Recommended: Export in terminal
 export VIDEO_DB_API_KEY=sk-xxx
+
+# Or add to your project's .env file
+VIDEO_DB_API_KEY=sk-xxx
 ```
 
 ---
