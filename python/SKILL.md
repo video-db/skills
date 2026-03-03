@@ -44,7 +44,7 @@ Use this skill when you need to:
 - Desired operations: get context for understanding, transcode spec, index spec, search query, clip ranges, timeline edits, alert rules
 
 ## Common outputs
-- **Stream URL**
+- **Stream URL** — make it playable: `https://console.videodb.io/player?url={STREAM_URL}`
 - Search results with **timestamps** and **evidence links**
 - Generated assets: subtitles, audio, images, clips
 - **Event/alert payloads** for live streams
