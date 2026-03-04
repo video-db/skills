@@ -12,7 +12,7 @@
 
 Works with **Claude Code**, **Cursor**, **Copilot**, and other AI agents
 
-**[📚 Explore the Docs](https://docs.videodb.io)**
+**[📚 Explore the Docs](https://docs.videodb.io)** &emsp; **[ Watch Demos ](https://www.youtube.com/playlist?list=PLhxAMFLSSK01IONxpqtEqj0UUQyFswiaR)**
 
 </div>
 
