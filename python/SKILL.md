@@ -207,18 +207,22 @@ except InvalidRequestError as e:
 
 ### Timeline editing
 
-**Important:** Always validate timestamps before building a timeline:
-- `start` must be >= 0 (negative values are silently accepted but produce broken output)
-- `start` must be < `end`
-- `end` must be <= `video.length`
+Use the Editor API to compose videos, images, audio, and text. See [reference/editor.md](reference/editor.md) for full workflow.
 
 ```python
-from videodb.timeline import Timeline
-from videodb.asset import VideoAsset, TextAsset, TextStyle
+from videodb.editor import Timeline, Track, Clip, VideoAsset, ImageAsset, AudioAsset, Fit
 
 timeline = Timeline(conn)
-timeline.add_inline(VideoAsset(asset_id=video.id, start=10, end=30))
-timeline.add_overlay(0, TextAsset(text="The End", duration=3, style=TextStyle(fontsize=36)))
+timeline.resolution = "1280x720"
+
+video_track = Track()
+video_track.add_clip(0, Clip(asset=VideoAsset(id=video.id, start=10), duration=20))
+
+audio_track = Track()
+audio_track.add_clip(0, Clip(asset=AudioAsset(id=music.id, volume=0.2), duration=20))
+
+timeline.add_track(video_track)
+timeline.add_track(audio_track)
 stream_url = timeline.generate_stream()
 ```
 
@@ -303,7 +307,8 @@ Reference documentation is in the `reference/` directory adjacent to this SKILL.
 
 - [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
 - [reference/search.md](reference/search.md) - In-depth guide to video search (spoken word and scene-based)
-- [reference/editor.md](reference/editor.md) - Timeline editing, assets, and composition
+- [reference/editor.md](reference/editor.md) - Timeline editing workflow guide (4-layer model, use cases, examples)
+- [reference/editor-reference.md](reference/editor-reference.md) - Editor code reference (constructors, parameters, enums)
 - [reference/streaming.md](reference/streaming.md) - HLS streaming and instant playback
 - [reference/generative.md](reference/generative.md) - AI-powered media generation (images, video, audio)
 - [reference/rtstream.md](reference/rtstream.md) - Live stream ingestion workflow (RTSP/RTMP)
@@ -346,7 +351,7 @@ recent_visual = [e for e in events
 For complete capture workflow, see [reference/capture.md](reference/capture.md).
 
 
-**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (transitions, speed changes, crop/zoom, colour grading, volume mixing).
+**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, volume control, fade transitions, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (speed changes, crop/zoom, colour grading, keyframe animation).
 
 ### When to use what
 
@@ -355,7 +360,8 @@ For complete capture workflow, see [reference/capture.md](reference/capture.md).
 | Platform rejects video aspect ratio or resolution | `video.reframe()` or `conn.transcode()` with `VideoConfig` |
 | Need to resize video for Twitter/Instagram/TikTok | `video.reframe(target="vertical")` or `target="square"` |
 | Need to change resolution (e.g. 1080p → 720p) | `conn.transcode()` with `VideoConfig(resolution=720)` |
-| Need to overlay audio/music on video | `AudioAsset` on a `Timeline` |
-| Need to add subtitles | `video.add_subtitle()` or `CaptionAsset` |
-| Need to combine/trim clips | `VideoAsset` on a `Timeline` |
+| Need to overlay audio/music on video | `AudioAsset` on an Editor `Timeline` with volume control |
+| Need to add subtitles | `video.add_subtitle()` or `CaptionAsset` on Editor `Timeline` |
+| Need to combine/trim clips | `VideoAsset` on an Editor `Timeline` |
+| Need to compose images with voiceover | `ImageAsset` + `AudioAsset` on separate Editor tracks |
 | Need to generate voiceover, music, or SFX | `coll.generate_voice()`, `generate_music()`, `generate_sound_effect()` |
