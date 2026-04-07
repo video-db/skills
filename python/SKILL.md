@@ -306,6 +306,8 @@ except InvalidRequestError as e:
 Reference documentation is in the `reference/` directory adjacent to this SKILL.md file. Use the Glob tool to locate it if needed.
 
 - [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
+- [reference/index.md](reference/index.md) - Scene indexing & extraction workflow (index, extract frames, read back, manage)
+- [reference/index-reference.md](reference/index-reference.md) - Scene index code reference (methods, SceneCollection/Scene/Frame classes)
 - [reference/search.md](reference/search.md) - In-depth guide to video search (spoken word and scene-based)
 - [reference/editor.md](reference/editor.md) - Timeline editing workflow guide (4-layer model, use cases, examples)
 - [reference/editor-reference.md](reference/editor-reference.md) - Editor code reference (constructors, parameters, enums)

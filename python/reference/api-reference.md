@@ -182,7 +182,14 @@ video = coll.get_video(video_id)
 | `video.add_subtitle(style=SubtitleStyle())` | `str` | Add subtitles (returns stream URL) |
 | `video.generate_thumbnail(time=None)` | `str\|Image` | Generate thumbnail |
 | `video.get_thumbnails()` | `list[Image]` | Get all thumbnails |
-| `video.extract_scenes(extraction_type, extraction_config)` | `SceneCollection` | Extract scenes |
+| `video.extract_scenes(extraction_type, extraction_config, force, callback_url)` | `SceneCollection` | Extract scenes with frame images |
+| `video.get_scene_index(scene_index_id)` | `list[dict]\|None` | Get scene index records (`start`, `end`, `description`) |
+| `video.list_scene_index()` | `list` | List all scene indexes |
+| `video.delete_scene_index(scene_index_id)` | `None` | Delete a scene index |
+| `video.list_scene_collection()` | `list` | List all scene collections |
+| `video.get_scene_collection(collection_id)` | `SceneCollection\|None` | Get scene collection with frames |
+| `video.delete_scene_collection(collection_id)` | `None` | Delete a scene collection |
+| `video.get_scenes()` | `list\|None` | **Deprecated.** Use `get_scene_index()` instead |
 | `video.reframe(start, end, target, mode, callback_url)` | `Video\|None` | Reframe video aspect ratio |
 | `video.clip(prompt, content_type, model_name)` | `str` | Generate clip from prompt (returns stream URL) |
 | `video.insert_video(video, timestamp)` | `str` | Insert video at timestamp |
@@ -266,6 +273,56 @@ image = coll.get_image(image_id)
 |--------|---------|-------------|
 | `image.generate_url()` | `str` | Generate signed URL |
 | `image.delete()` | `None` | Delete the image |
+
+## Scene Objects
+
+For workflow guide, see [index.md](index.md). For full details, see [index-reference.md](index-reference.md).
+
+### SceneCollection
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `.id` | `str` | Unique collection ID |
+| `.video_id` | `str` | Parent video ID |
+| `.config` | `dict` | Extraction configuration |
+| `.scenes` | `list[Scene]` | List of Scene objects |
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `.delete()` | `None` | Delete this collection |
+
+### Scene
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `.id` | `str` | Unique scene ID |
+| `.start` | `float` | Start time (seconds) |
+| `.end` | `float` | End time (seconds) |
+| `.description` | `str` | Text description |
+| `.frames` | `list[Frame]` | Frame objects with image URLs |
+| `.metadata` | `dict` | Scene metadata |
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `.describe(prompt, model_name)` | `str` | Generate AI description |
+| `.to_json()` | `dict` | Serialize to dict |
+
+### Frame (extends Image)
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `.id` | `str` | Unique frame ID |
+| `.url` | `str` | Viewable image URL |
+| `.frame_time` | `float` | Timestamp in video (seconds) |
+| `.description` | `str` | Text description |
+| `.scene_id` | `str` | Parent scene ID |
+| `.video_id` | `str` | Parent video ID |
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `.generate_url()` | `str` | Generate signed URL |
+| `.describe(prompt, model_name)` | `str` | Generate AI description |
+| `.to_json()` | `dict` | Serialize to dict |
 
 ## Timeline & Editor
 

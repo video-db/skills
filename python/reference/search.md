@@ -69,6 +69,8 @@ video.index_scenes(
 )
 ```
 
+To read back all scene descriptions (without searching), extract frame images, or manage scene indexes and collections, see [index.md](index.md).
+
 ## Search Types
 
 ### Semantic Search

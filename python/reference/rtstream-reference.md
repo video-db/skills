@@ -312,6 +312,8 @@ Transcript results arrive on the `transcript` WebSocket channel.
 
 ## RTStreamSceneIndex
 
+> **RTStream vs Video scene APIs:** These have the same method names but return different types. `rtstream.get_scene_index(id)` returns an `RTStreamSceneIndex` object with `.get_scenes()`, `.start()`, `.stop()`. `video.get_scene_index(id)` returns a flat `list[dict]` with `start`, `end`, `description`. `rtstream.index_scenes()` returns `RTStreamSceneIndex`. `video.index_scenes()` returns a `str` (scene_index_id). Do not mix these. For Video scene APIs, see [index.md](index.md).
+
 When you call `index_audio()` or `index_visuals()`, the method returns an `RTStreamSceneIndex` object. This object represents the running index and provides methods for managing scenes and alerts.
 
 ```python

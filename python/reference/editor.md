@@ -369,3 +369,9 @@ The editor handles composition, not visual effects processing. These operations 
 - **Download**: use `timeline.download_stream(stream_url)` to download the rendered video.
 - **Large timelines**: if the timeline JSON exceeds 100KB, the SDK automatically uploads it as a file before rendering.
 - **Supported fonts**: Clear Sans (default), Noto Sans Devanagari, Noto Sans Gurmukhi, Noto Sans Gujarati, Noto Sans Kannada.
+
+## Gotchas
+
+- **Clip duration must not exceed asset length**: `Clip(duration=X)` where X > the source asset's `.length` causes `Clip duration: X greater than video/audio length: Y`. Always store and check exact lengths after generation. Use `math.floor(length * 100) / 100` — never `round()`, which can round up past the actual length.
+- **`.length` may return a string**: Voice, audio, and video objects can return `.length` as a string. Always cast with `float(asset.length)` before doing arithmetic.
+- **`track.add_clip()` start is an integer**: The `start` parameter is in whole seconds. Plan segment boundaries at whole-second marks — sub-second precision is lost.
