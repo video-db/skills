@@ -99,6 +99,8 @@ except Exception as e:
         raise
 ```
 
+For reading back all scene descriptions (without searching), extracting frame images, or managing scene indexes and collections, see [index.md](index.md).
+
 ## Search Types
 
 ### Semantic Search

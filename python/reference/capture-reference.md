@@ -119,18 +119,20 @@ Use `ws_listener.py` to dump all WebSocket events to a JSONL file for later anal
 
 ```bash
 # Start with --clear to clear old events (recommended for new sessions)
-python scripts/ws_listener.py --clear &
+python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> &
 
 # Append to existing events (for reconnects)
-python scripts/ws_listener.py &
+python scripts/ws_listener.py --cwd=<PROJECT_ROOT> &
 ```
+
+`--cwd=<PROJECT_ROOT>` loads `.env` from the given path instead of the current working directory. This ensures the correct API key is found regardless of where the script is launched from.
 
 Or specify a custom output directory:
 
 ```bash
-python scripts/ws_listener.py --clear /path/to/output &
+python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> /path/to/output &
 # Or via environment variable:
-VIDEODB_EVENTS_DIR=/path/to/output python scripts/ws_listener.py --clear &
+VIDEODB_EVENTS_DIR=/path/to/output python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> &
 ```
 
 The script outputs `WS_ID=<connection_id>` on the first line, then listens indefinitely.

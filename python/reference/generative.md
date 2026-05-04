@@ -395,3 +395,4 @@ print(result["output"]["topics"])
 - **Combine generation types**: Generate images for overlays, music for backgrounds, and voice for narration, then compose using timelines (see [editor.md](editor.md)).
 - **Prompt quality matters**: Descriptive, specific prompts produce better results across all generation types.
 - **Aspect ratios for images**: Choose from `"1:1"`, `"9:16"`, `"16:9"`, `"4:3"`, or `"3:4"`.
+- **`generate_music()` may return shorter audio**: `generate_music(duration=N)` does not guarantee exactly N seconds. Always check `music.length` after generation. If shorter than needed, loop by placing multiple `AudioAsset` clips on the music track at staggered start times.

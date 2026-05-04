@@ -8,7 +8,7 @@ For code-level details (SDK methods, event structures, AI pipelines), see [captu
 
 ## Quick Start
 
-1. **Start WebSocket listener**: `python scripts/ws_listener.py --clear &`
+1. **Start WebSocket listener**: `python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> &`
 2. **Run capture code** (see Complete Capture Workflow below)
 3. **Events written to**: `/tmp/videodb_events.jsonl`
 
@@ -74,19 +74,20 @@ Do NOT kill the WebSocket listener before receiving the export event, or you wil
 
 ```bash
 # Start listener in background (append to existing events)
-python scripts/ws_listener.py &
+python scripts/ws_listener.py --cwd=<PROJECT_ROOT> &
 
 # Start listener with clear (new session, clears old events)
-python scripts/ws_listener.py --clear &
+python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> &
 
 # Custom output directory
-python scripts/ws_listener.py --clear /path/to/events &
+python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> /path/to/events &
 
 # Stop the listener
 kill $(cat /tmp/videodb_ws_pid)
 ```
 
 **Options:**
+- `--cwd=PATH`: Load `.env` from PATH instead of the current working directory. Use this to ensure the correct API key is loaded regardless of where the script is launched from.
 - `--clear`: Clear the events file before starting. Use when starting a new capture session.
 
 **Output files:**

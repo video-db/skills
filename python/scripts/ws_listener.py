@@ -9,6 +9,8 @@ Arguments:
   output_dir  Directory for output files (default: /tmp or VIDEODB_EVENTS_DIR env var)
 
 Options:
+  --cwd=PATH  Load .env from PATH instead of the current working directory.
+              Use this when launching from a directory other than the project root.
   --clear     Clear the events file before starting (use when starting a new session)
 
 Output files:
@@ -20,9 +22,9 @@ Output (first line, for parsing):
   WS_ID=<connection_id>
 
 Examples:
-  python scripts/ws_listener.py &                    # Run in background
-  python scripts/ws_listener.py --clear              # Clear events and start fresh
-  python scripts/ws_listener.py --clear /tmp/mydir   # Custom dir with clear
+  python scripts/ws_listener.py --cwd=/path/to/project &
+  python scripts/ws_listener.py --clear --cwd=/path/to/project
+  python scripts/ws_listener.py --clear /tmp/mydir   # Custom output dir
   kill $(cat /tmp/videodb_ws_pid)                    # Stop the listener
 """
 import os
@@ -34,33 +36,39 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
-load_dotenv()
-
-import videodb
 
 # Retry config
 MAX_RETRIES = 10
 INITIAL_BACKOFF = 1  # seconds
 MAX_BACKOFF = 60     # seconds
 
-# Parse arguments
 def parse_args():
     clear = False
     output_dir = None
-    
+    cwd = None
+
     args = sys.argv[1:]
     for arg in args:
         if arg == "--clear":
             clear = True
+        elif arg.startswith("--cwd="):
+            cwd = arg.split("=", 1)[1]
         elif not arg.startswith("-"):
             output_dir = arg
-    
+
     if output_dir is None:
         output_dir = os.environ.get("VIDEODB_EVENTS_DIR", "/tmp")
-    
-    return clear, Path(output_dir)
 
-CLEAR_EVENTS, OUTPUT_DIR = parse_args()
+    return clear, Path(output_dir), cwd
+
+CLEAR_EVENTS, OUTPUT_DIR, USER_CWD = parse_args()
+
+if USER_CWD:
+    load_dotenv(Path(USER_CWD) / ".env")
+else:
+    load_dotenv()
+
+import videodb
 EVENTS_FILE = OUTPUT_DIR / "videodb_events.jsonl"
 WS_ID_FILE = OUTPUT_DIR / "videodb_ws_id"
 PID_FILE = OUTPUT_DIR / "videodb_ws_pid"
