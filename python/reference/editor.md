@@ -4,7 +4,9 @@ VideoDB provides a non-destructive timeline editor for composing videos from mul
 
 ## Prerequisites
 
-Videos, audio, and images **must be uploaded** to a collection before they can be used as timeline assets. For caption overlays, the video must also be **indexed for spoken words**.
+1. **Resolve names to IDs first**: If you have asset names instead of IDs, use the assets API to find them. See [asset_discovery.md](asset_discovery.md).
+2. **Upload before use**: Videos, audio, and images must be uploaded to a collection before they can be used as timeline assets.
+3. **Index for captions**: For caption overlays, the video must also be indexed for spoken words.
 
 ## Core Concepts
 
