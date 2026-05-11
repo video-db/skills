@@ -1,4 +1,5 @@
 
+[![License][license-shield]][license-url]
 [![GitHub stars](https://img.shields.io/github/stars/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/stargazers)
 [![Issues](https://img.shields.io/github/issues/video-db/videodb-python.svg?style=for-the-badge)](https://github.com/video-db/videodb-python/issues)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fvideodb.io%2F&style=for-the-badge&label=videodb.io)](https://videodb.io)
@@ -141,3 +142,6 @@ See → Understand → Act, as an API, for video and audio.
 Made with ❤️ by the VideoDB team
 
 </div>
+
+[license-shield]: https://img.shields.io/github/license/video-db/skills.svg?style=for-the-badge
+[license-url]: https://github.com/video-db/skills/blob/main/LICENSE
