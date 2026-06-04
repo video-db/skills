@@ -125,6 +125,43 @@ voice = coll.generate_voice(
 
 All three audio methods return an `Audio` object with `.id`, `.name`, `.length`, and `.collection_id`.
 
+## Slow Operations: Use `callback_url` to Avoid Timeouts
+
+The following generative operations are **expensive and frequently exceed the socket timeout** when invoked synchronously:
+
+| Operation | Typical latency | Recommendation |
+|-----------|-----------------|----------------|
+| `coll.generate_music(...)` | 30 s – 2 min | Pass `callback_url` |
+| `coll.generate_video(...)` | 1 – 5 min | Pass `callback_url` |
+| `coll.dub_video(...)` | 2 – 5 min | **Always** pass `callback_url` — sync dubs routinely time out |
+| `video.reframe(...)` (full length) | minutes | Pass `callback_url`, or limit with `start`/`end` |
+
+### Async pattern
+
+Kick the job off with a callback and tell the user what to expect:
+
+```python
+dubbed = coll.dub_video(
+    video_id=video.id,
+    language_code="es",
+    callback_url="https://example.com/videodb-callback",
+)
+
+output = [{
+    "type": "text",
+    "status_message": "Dub started",
+    "text": (
+        f"Started Spanish dub for **{video.name}**. "
+        f"This typically takes 2–5 minutes — you'll be notified via the callback when it's ready.\n\n"
+        f"- Job: `{getattr(dubbed, 'id', 'unknown')}`"
+    )
+}]
+```
+
+### If a sync call times out
+
+If `RequestTimeoutError` is raised, do **not** re-run the same synchronous call — switch to the async callback pattern above, or reduce the work (shorter segment, fewer seconds of generated audio).
+
 ## Text Generation (LLM Integration)
 
 Use `coll.generate_text()` to run LLM analysis. This is a **Collection-level** method -- pass any context (transcripts, descriptions) directly in the prompt string.
@@ -225,6 +262,45 @@ for entry in translated:
 ```
 
 **Supported languages** include: `en`, `es`, `fr`, `de`, `it`, `pt`, `ja`, `ko`, `zh`, `hi`, `ar`, and more.
+
+### Prerequisite: transcript must exist
+
+`translate_transcript`, `dub_video`, `generate_voice` from a script derived from transcript, and any `generate_text` call that feeds in `video.get_transcript_text()` all require the video to have spoken content.
+
+If the video has no speech (music video, silent footage, b-roll), the API returns an error like **`No spoken data found`**. Pre-check before invoking transcript-dependent operations and return a clean message:
+
+```python
+try:
+    transcript_text = video.get_transcript_text()
+except Exception as e:
+    msg = str(e)
+    if "No spoken data" in msg or "transcript" in msg.lower():
+        output = [{
+            "type": "text",
+            "status_message": "No speech to work with",
+            "text": (
+                f"I found **{video.name}**, but it contains no spoken content, "
+                "so I can't transcribe, translate, summarize, or dub it."
+            )
+        }]
+        transcript_text = None
+    else:
+        # Try indexing once as recovery, then bail cleanly
+        try:
+            video.index_spoken_words(force=True)
+            transcript_text = video.get_transcript_text()
+        except Exception as ee:
+            output = [{
+                "type": "text",
+                "status_message": "Transcript unavailable",
+                "text": f"Could not build a transcript for **{video.name}**: {ee}"
+            }]
+            transcript_text = None
+
+if transcript_text:
+    # proceed with translate / dub / summarise / etc.
+    ...
+```
 
 ## Complete Workflow Examples
 
