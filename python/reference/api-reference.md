@@ -4,18 +4,19 @@ Requires `videodb>=0.5.0`.
 
 ## Contents
 
-- Connection: methods, transcode, `VideoConfig`, `AudioConfig`
-- Collections: methods, upload parameters
-- Video object: properties, methods, reframe
-- Audio object, Image object
-- Understanding & Index objects (v2)
-- Scene objects (v1): `SceneCollection`, `Scene`, `Frame`
-- Timeline & Editor: assets and styles
-- Video search parameters and the v2/v1 routing rules
-- Search response objects: `SearchResponse`, `AskResponse`, `SearchResult`, `Shot`
-- Meeting object
-- RTStream & capture
-- Enums and constants
+- Connection (methods, transcode, VideoConfig, AudioConfig)
+- Collections (methods, upload parameters)
+- Video Object (properties, methods, reframe)
+- Audio Object
+- Image Object
+- Understanding & Index Objects (v2)
+- Scene Objects
+- Timeline & Editor (assets and styles)
+- Video Search Parameters
+- Search Response Objects
+- Meeting Object
+- RTStream & Capture
+- Enums & Constants (SearchType, IndexCapability, FieldGroup, SceneExtractionType)
 - Exceptions
 
 ## Connection

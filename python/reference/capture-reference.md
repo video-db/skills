@@ -6,14 +6,14 @@ Code-level details for VideoDB capture sessions. For workflow guide, see [captur
 
 ## Contents
 
-- WebSocket events and channels
-- Event persistence and the JSONL format
-- WebSocket connection
+- WebSocket Events (channels, lifecycle events, event structures)
+- Event Persistence (ws_listener usage, JSONL format, reading events)
+- WebSocket Connection
 - CaptureSession
 - CaptureClient
-- Channels
-- RTStreams and AI pipelines
-- Session lifecycle
+- Channels (mics, displays, system audio)
+- RTStreams and AI Pipelines
+- Session Lifecycle
 
 ## WebSocket Events
 

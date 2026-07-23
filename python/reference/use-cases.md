@@ -6,13 +6,13 @@ Common workflows and what VideoDB enables. For code details, see [api-reference.
 
 ## Contents
 
-- Video search and highlights
-- Video enhancement
-- Real-time capture (desktop/meeting)
-- Live stream intelligence (RTSP/RTMP)
-- Content moderation and safety
-- Platform integration
-- Workflow summary
+- Video Search & Highlights (highlight reels, searchable libraries, analytics)
+- Video Enhancement
+- Real-Time Capture (Desktop/Meeting)
+- Live Stream Intelligence (RTSP/RTMP)
+- Content Moderation & Safety
+- Platform Integration
+- Workflow Summary
 
 ## Video Search & Highlights
 

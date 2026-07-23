@@ -8,17 +8,18 @@ Requires `videodb>=0.5.0`.
 
 - Imports
 - Method availability matrix
-- Signatures
-- Search router: how `search()` picks an engine
-- Filter syntax
+- Signatures (search, ask, semantic_search, query, aggregate)
+- Search router (old_params, new_params, unsupported_params)
+- Filter syntax (field/op/value, operators, and/or/not)
 - Sorting
 - `return_fields`
-- `SearchResponse`, `AskResponse`, `SearchResult`, `Shot`
+- `SearchResponse`
+- `AskResponse`
+- `SearchResult`
+- `Shot`
 - Aggregate payload shape
 - `legacy_search()`
 - Server warnings
-
----
 
 ## Imports
 

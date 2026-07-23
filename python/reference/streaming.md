@@ -5,12 +5,12 @@ VideoDB generates streams on-demand, returning HLS-compatible URLs that play ins
 ## Contents
 
 - Prerequisites
-- Core concepts
-- Streaming a single video
-- Streaming timeline compositions
-- Streaming search results
-- Audio playback
-- Complete workflow examples
+- Core Concepts (stream generation, HLS)
+- Streaming a Single Video
+- Streaming Timeline Compositions
+- Streaming Search Results
+- Audio Playback
+- Complete Workflow Examples
 - Tips
 
 ## Prerequisites

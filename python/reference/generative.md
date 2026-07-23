@@ -5,12 +5,12 @@ VideoDB provides AI-powered generation of images, videos, music, sound effects, 
 ## Contents
 
 - Prerequisites
-- Image generation
-- Video generation
-- Audio generation: music, sound effects, voice
-- Text generation (LLM)
-- Dubbing and translation
-- Complete workflow examples
+- Image Generation
+- Video Generation
+- Audio Generation (music, sound effects, voice)
+- Text Generation (LLM Integration)
+- Dubbing and Translation (dub_video, translate_transcript)
+- Complete Workflow Examples
 - Tips
 
 ## Prerequisites

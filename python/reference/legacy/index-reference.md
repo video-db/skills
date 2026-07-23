@@ -11,14 +11,14 @@ Code-level details for VideoDB scene indexing and extraction. For workflow guide
 ## Contents
 
 - Imports
-- Video scene methods
+- Video Scene Methods
 - index_scenes
 - extract_scenes
-- Extraction types and configs
+- Extraction Types and Configs
 - SceneCollection
 - Scene
 - Frame
-- Scene index record
+- Scene Index Record
 
 ## Imports
 

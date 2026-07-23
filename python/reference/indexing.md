@@ -11,17 +11,15 @@ Runnable notebooks covering every analyzer, segmentation and sampling, multi-ana
 ## Contents
 
 - The three stages
-- Minimal end-to-end example
-- Stage 1: understanding (analyzers, segmentation, sampling, structured output, chaining, reading output)
-- Stage 2: indexing (source forms, `use_for`, `fields`, status)
+- Minimal end-to-end
+- Stage 1: Understanding (analyzers, segmentation, sampling, VLM config, structured output, chaining)
+- Stage 2: Indexing (source forms, use_for, fields, build status)
 - Index names across a collection
 - Inspecting an index
 - Managing runs and indexes
 - Scope: video vs collection
-- Cost and latency
+- Cost and latency (frame count, interval, model tier)
 - Gotchas
-
----
 
 ## The three stages
 

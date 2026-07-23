@@ -8,10 +8,11 @@ For code-level details (SDK methods, parameters, examples), see [rtstream-refere
 
 ## Contents
 
-- Use cases
-- Quick start
-- RTStream sources (RTSP/RTMP, capture sessions)
-- Understanding & indexing (v2)
+- Overview
+- Use Cases
+- Quick Start
+- RTStream Sources
+- Understanding & Indexing (v2)
 - Legacy RTStream indexing (v1)
 - Scripts
 

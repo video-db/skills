@@ -10,20 +10,18 @@ A runnable end-to-end notebook covering all five methods is in the [indexing-v2 
 
 ## Contents
 
-- Choosing a method
-- `search()` — natural language, automatic index selection
+- Choosing a method (decision table)
+- `search()`
 - Deepsearch sessions
-- `ask()` — synthesised answers
-- `semantic_search()` — target an index
-- `query()` — exact filters
-- `aggregate()` — counts and facets
+- `ask()`
+- `semantic_search()`
+- `query()`
+- `aggregate()`
 - Hydrating results with `return_fields`
 - From results to playable streams
 - Collection scope
-- Legacy routing
+- Legacy routing (which keywords route where)
 - Tips
-
----
 
 ## Choosing a method
 

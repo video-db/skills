@@ -8,13 +8,11 @@ For the v2 pipeline, see [indexing.md](indexing.md) and [search.md](search.md). 
 
 ## Contents
 
-- Breaking changes in 0.5.0
-- Method mapping
+- Breaking changes in 0.5.0 (return type, routing, removed symbols)
+- Method mapping (v1 call to v2 equivalent)
 - Concept mapping
 - What has no v2 equivalent
 - Porting recipe
-
----
 
 ## Breaking changes in 0.5.0
 

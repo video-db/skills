@@ -7,11 +7,11 @@ For code-level details (constructors, parameters, enums), see [editor-reference.
 ## Contents
 
 - Prerequisites
-- The 4-layer model: asset, clip, track, timeline
-- What you can build
+- The 4-Layer Model (asset, clip, track, timeline)
+- What You Can Build
 - Workflow
-- Key concepts: double start, z-order, fit modes, volume, transitions, captions
-- Complete workflow examples
+- Key Concepts (double start, z-order, fit modes, volume, transitions, captions)
+- Complete Workflow Examples
 - Limitations
 - Tips
 - Gotchas

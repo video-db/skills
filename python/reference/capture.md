@@ -3,9 +3,9 @@
 ## Contents
 
 - Overview
-- Quick start
-- Complete capture workflow
-- Shutdown sequence
+- Quick Start
+- Complete Capture Workflow (13 steps, listener to export)
+- Shutdown Sequence
 - Scripts
 
 ## Overview

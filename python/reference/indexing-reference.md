@@ -7,21 +7,21 @@ Requires `videodb>=0.5.0`.
 ## Contents
 
 - Imports
-- Video methods (understanding and indexing)
+- Video methods (understand, index, get, list, delete)
 - `understand()` parameters
-- Analyzer spec and per-type configuration
+- Analyzer spec (9 types, artifact names, per-type config, schema syntax)
 - Segmentation, sampling, transform
-- `Understanding` class
-- `UnderstandingAnalyzer` class
-- `index()` parameters and source forms
-- Field groups and capabilities
-- `Index` class
-- `FieldSchema`, `IndexRecord`, `RecordPage`
+- `Understanding`
+- `UnderstandingAnalyzer`
+- `index()` parameters
+- Field groups and capabilities (IndexCapability, FieldGroup, field value types)
+- `Index`
+- `FieldSchema`
+- `IndexRecord`
+- `RecordPage`
 - Custom temporal records
 - Status vocabularies
-- Errors
-
----
+- Errors (synchronous validation messages, ValueError, TimeoutError)
 
 ## Imports
 

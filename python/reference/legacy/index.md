@@ -14,14 +14,14 @@ For code-level details (method signatures, class properties, extraction configs)
 
 ## Contents
 
-- Two concepts: scene index vs scene collection
-- Indexing scenes
-- Reading back descriptions
-- Extracting scenes with frames
-- Describing scenes and frames
-- Managing indexes and collections
+- Two Concepts (scene index vs scene collection)
+- Indexing Scenes
+- Reading Back Descriptions
+- Extracting Scenes with Frames
+- Describing Scenes and Frames
+- Managing Indexes and Collections
 - Video vs RTStream
-- Deprecated: video.get_scenes()
+- Deprecated: `video.get_scenes()`
 
 ## Two Concepts
 

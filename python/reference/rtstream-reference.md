@@ -6,20 +6,20 @@ Based on [docs.videodb.io](https://docs.videodb.io/pages/ingest/live-streams/rea
 
 ## Contents
 
-- Collection RTStream methods
-- RTStream methods
-- Starting and stopping
-- Generating streams
-- Exporting to video
-- Understanding & indexing (v2): `understand()`, `RTStreamUnderstanding`, `index()`, `RTStreamIndex`
-- AI pipelines (v1): audio indexing, visual indexing, batch config
+- Collection RTStream Methods
+- RTStream Methods
+- Starting and Stopping
+- Generating Streams
+- Exporting to Video
+- Understanding & Indexing (v2) (understand, RTStreamUnderstanding, index, RTStreamIndex)
+- AI Pipelines (v1) (audio indexing, visual indexing, batch config)
+- Batch Config Summary
 - Transcription
-- `RTStreamSceneIndex` (v1)
-- Events and alerts
-- WebSocket integration
-- Complete workflow
-
----
+- RTStreamSceneIndex (v1)
+- Events
+- Alerts (create, list, enable, disable, delivery)
+- WebSocket Integration
+- Complete Workflow
 
 ## Collection RTStream Methods
 

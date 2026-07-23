@@ -11,11 +11,11 @@ Search allows you to find specific moments inside videos using natural language 
 ## Contents
 
 - Prerequisites
-- Indexing: spoken word and scene
-- Search types
-- Working with results
-- Cross-collection search
-- Search and compile
+- Indexing
+- Search Types
+- Working with Results
+- Cross-Collection Search
+- Search + Compile
 - Tips
 
 ## Prerequisites
