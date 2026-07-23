@@ -190,7 +190,7 @@ filter=[
 ]
 ```
 
-Common operators: `==`, `in`, `contains`, and numeric comparisons. Dotted paths address nested data, and a condition matches when **any** element along a list path satisfies it.
+Operators on a string field, read live from `field_schema`: `==`, `!=`, `contains`, `in`, `exists`. Numeric and array fields differ — check `index.field_schema[field].operators` rather than assuming. Dotted paths address nested data, and a condition matches when **any** element along a list path satisfies it.
 
 Conditions compose with `and`, `or`, and `not`:
 
@@ -236,6 +236,8 @@ for row in rows:
 ```
 
 `count` is the default and the only metric confirmed in use. Other aggregate metrics may be available — `metric` is forwarded to the indexing service unchanged — but verify before relying on one.
+
+> **Check the counting unit when `group_by` crosses a list.** Dotted paths collect values from every element of a list, so it is not obvious whether grouping on something like `frames.detections.label` counts *scenes containing* the label or *detections of* it — and the two differ by an order of magnitude for an object visible across many frames. Unverified either way; confirm against a known clip before reporting the number. Grouping on a top-level field such as `activity` has no such ambiguity.
 
 > `aggregate()` returns the **raw server payload** typed as `dict | list[dict]`, not a `SearchResult`. There is no `.get_shots()` or `.compile()` on it, and no guarantee of a `results` key — guard with `isinstance` as above rather than subscripting blindly.
 

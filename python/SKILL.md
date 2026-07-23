@@ -159,10 +159,13 @@ understanding = video.understand(
 
 # A run with a failed or skipped analyzer ends `partial`, which the SDK does not
 # treat as terminal — wait_until_complete() would poll to TimeoutError. Poll the
-# analyzers instead.
+# analyzers instead. The `analyzers and` guard is load-bearing: a refresh can
+# transiently return an empty list, and all([]) is True, which would exit the
+# loop while the run is still going.
 deadline = time.time() + 3600
 while time.time() < deadline:
-    if all(a.is_complete for a in understanding.refresh().list_analyzers()):
+    analyzers = understanding.refresh().list_analyzers()
+    if analyzers and all(a.is_complete for a in analyzers):
         break
     time.sleep(15)
 

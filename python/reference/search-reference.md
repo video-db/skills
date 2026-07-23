@@ -182,10 +182,12 @@ filter=[{"field": "activity", "op": "==", "value": "conversation"},
 | Operator | Meaning |
 |----------|---------|
 | `==` | Exact match |
-| `in` | Value is one of a list |
+| `!=` | Not equal |
 | `contains` | Substring or array membership |
+| `in` | Value is one of a list |
+| `exists` | Field is present |
 
-Numeric comparison operators are also available per field — read `index.field_schema[field].operators` for the authoritative list rather than guessing.
+That set was read live off a `string` field: `field_schema["outputs"].operators` returned `['==', '!=', 'contains', 'in', 'exists']`. Numeric and array fields expose different sets, so **read `index.field_schema[field].operators` for the authoritative list** rather than assuming these five apply everywhere.
 
 Boolean composition uses `and`, `or`, and `not` as keys wrapping further conditions:
 
@@ -343,7 +345,9 @@ for row in rows:
     print(row)
 ```
 
-The envelope form looks like this; `warnings` is present only on dict responses:
+**Observed live, the bare-list form is what came back** — `aggregate(index_name=..., group_by=..., metric="count")` returned a plain `list` of grouped rows with no `results` key at all, e.g. `[{"outputs": "A man in a striped polo shirt...", "count": 1}, ...]`. Do not subscript blindly; the guard above is not defensive padding.
+
+An envelope form is also possible, in which case `warnings` may be present:
 
 ```json
 {

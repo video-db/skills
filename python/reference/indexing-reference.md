@@ -110,7 +110,7 @@ Each entry in `analyzers`:
 | `faces` | `faces` | `identities`, `detections`, `faces` |
 | `audio_event_detection` | `audio_events` | `events`, `labels`, `audio_events` |
 
-Aliases accepted by the server and normalised to the names above: `transcript`, `spoken_word`, and `speech_transcription` → `spoken_words`; `scene`, `scene_vlm`, `vlm_scene_understanding` → `vlm`; `objects` → `object_detection`; `face_detection` → `faces`; `brands` → `brand_detection`; `activity` → `activity_recognition`; `location`, `location_understanding` → `location_detection`; `audio_events` → `audio_event_detection`.
+> **`analyzer.type` does not echo back what you sent.** Verified live: submitting `{"type": "spoken_words"}` produces an analyzer whose `.type` reads `speech_transcription` — the server's internal name. So **never match on `analyzer.type`**; `[a for a in analyzers if a.type == "spoken_words"]` returns nothing. Match on `analyzer.name`, which is the value you set.
 
 ### Per-type `config`
 
@@ -385,6 +385,7 @@ Read `.operators` to discover valid `query()` conditions at runtime instead of g
 | `.start` | `float` | Start time (seconds) |
 | `.end` | `float` | End time (seconds) |
 | `.data` | `dict` | Indexed field values |
+| `.metadata` | `dict` | Per-scene metadata (present in the raw payload alongside `scene_id`) |
 
 `.segment_id`, `.start_sec`, and `.end_sec` are deprecated aliases of `.scene_id`, `.start`, and `.end`. Both spellings are populated, so older code keeps working.
 

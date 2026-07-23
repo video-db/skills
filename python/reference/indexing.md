@@ -54,9 +54,12 @@ understanding = video.understand(
 )
 
 # A `partial` run is not terminal to the SDK — poll the analyzers, not the run.
+# `analyzers and` is load-bearing: a refresh can transiently return an empty
+# list, and all([]) is True, which would exit while the run is still going.
 deadline = time.time() + 3600
 while time.time() < deadline:
-    if all(a.is_complete for a in understanding.refresh().list_analyzers()):
+    analyzers = understanding.refresh().list_analyzers()
+    if analyzers and all(a.is_complete for a in analyzers):
         break
     time.sleep(15)
 
@@ -521,6 +524,9 @@ Prompt specificity matters more than frame count for retrieval quality. A prompt
 
 - **Terminal statuses differ.** `Understanding.is_successful` means `status == "done"`; `Index.is_successful` means `status == "ready"`. Use the properties rather than comparing strings.
 - **A run reports `done` only when every analyzer succeeded.** One failed or skipped analyzer makes the run `partial`, which the SDK does not treat as terminal — see the warning under Waiting. Gate on `analyzer.is_successful` before indexing each artifact.
+- **Never match on `analyzer.type`.** It echoes the server's internal name, not what you sent: a `spoken_words` analyzer reports `.type == "speech_transcription"`. Match on `analyzer.name`, which is yours.
+- **Guard the polling loop against an empty list.** `all([])` is `True`, so `all(a.is_complete for a in ...)` exits immediately if a refresh transiently returns no analyzers — and the next `index()` then fails with `Analyzer ... not done`. Check the list is non-empty first.
+- **Indexing is slower than you expect.** A 102-second clip with 5-second segmentation and three analyzers ran well past 30 minutes. `wait_until_complete()` defaults to a 1800-second timeout, which a modest video can exceed — prefer `callback_url` for anything long.
 - **`list_analyzers()` reads a local cache** and makes no network call. Call `understanding.refresh()` first if you didn't just wait on it.
 - **`get_analyzer()` raises `ValueError`** when the name doesn't match — it does not return `None`.
 - **`Understanding` has no `get_output()`.** Use `understanding.get_analyzer_output(name)` or `analyzer.get_output()`.
