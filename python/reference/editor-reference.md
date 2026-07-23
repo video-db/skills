@@ -4,6 +4,18 @@ Code-level details for VideoDB's timeline editor. For workflow guide, see [edito
 
 ---
 
+## Contents
+
+- Imports
+- Assets: Video, Image, Audio, Text, Caption
+- Clip
+- Track
+- Timeline
+- Enums: Fit, Position, Filter, CaptionAnimation, alignment
+- Helper classes: Transition, Offset, Crop, Font, Border, Shadow
+- Supported fonts
+- Complete examples
+
 ## Imports
 
 ```python

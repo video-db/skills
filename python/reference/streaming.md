@@ -2,6 +2,17 @@
 
 VideoDB generates streams on-demand, returning HLS-compatible URLs that play instantly in any standard video player. No render times or export waits - edits, searches, and compositions stream immediately.
 
+## Contents
+
+- Prerequisites
+- Core concepts
+- Streaming a single video
+- Streaming timeline compositions
+- Streaming search results
+- Audio playback
+- Complete workflow examples
+- Tips
+
 ## Prerequisites
 
 Videos **must be uploaded** to a collection before streams can be generated. For search-based streams, the video must also be **indexed** (spoken words and/or scenes). See [search.md](search.md) for indexing details.

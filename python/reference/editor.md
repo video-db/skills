@@ -4,6 +4,18 @@ VideoDB Editor lets you compose videos programmatically using a 4-layer architec
 
 For code-level details (constructors, parameters, enums), see [editor-reference.md](editor-reference.md).
 
+## Contents
+
+- Prerequisites
+- The 4-layer model: asset, clip, track, timeline
+- What you can build
+- Workflow
+- Key concepts: double start, z-order, fit modes, volume, transitions, captions
+- Complete workflow examples
+- Limitations
+- Tips
+- Gotchas
+
 ## Prerequisites
 
 All media **must be uploaded** to a collection before it can be used as an asset. For auto-generated captions, the source video must also be **indexed for spoken words** via `video.index_spoken_words()`.

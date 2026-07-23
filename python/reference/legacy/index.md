@@ -1,10 +1,27 @@
-# Scene Indexing & Extraction Guide
+# Scene Indexing & Extraction Guide (v1)
+
+> **LEGACY — do not use for new code.** This page documents the v1 scene-index API. Every method here **still works in SDK 0.5.0 and is not deprecated** — nothing raises `DeprecationWarning`. The server may attach migration notices to `response.warnings`, surfaced as Python `UserWarning`. Read this only when maintaining existing v1 code.
+>
+> New code: [../indexing.md](../indexing.md) → [../search.md](../search.md). To port existing code: [../migration.md](../migration.md).
 
 VideoDB provides two distinct ways to analyze visual content in videos: **Scene Indexes** (AI-generated text descriptions) and **Scene Collections** (extracted frames with image URLs). Use indexes when you need searchable descriptions or text analysis. Use collections when you need to see the actual frames.
+
+`extract_scenes()` and scene collections have **no v2 equivalent** — they remain the only way to get viewable frame image URLs, and are still current for that purpose.
 
 For code-level details (method signatures, class properties, extraction configs), see [index-reference.md](index-reference.md).
 
 ---
+
+## Contents
+
+- Two concepts: scene index vs scene collection
+- Indexing scenes
+- Reading back descriptions
+- Extracting scenes with frames
+- Describing scenes and frames
+- Managing indexes and collections
+- Video vs RTStream
+- Deprecated: video.get_scenes()
 
 ## Two Concepts
 
@@ -215,7 +232,7 @@ video.delete_scene_collection(collection_id)
 | `get_scene_index(id)` | Returns `list[dict]` (flat records) | Returns `RTStreamSceneIndex` object with `.get_scenes()` |
 | `list_scene_index()` / `list_scene_indexes()` | Returns `list` | Returns `List[RTStreamSceneIndex]` |
 
-For RTStream scene APIs, see [rtstream-reference.md](rtstream-reference.md).
+For RTStream scene APIs, see [../rtstream-reference.md](../rtstream-reference.md).
 
 ---
 
