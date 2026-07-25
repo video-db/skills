@@ -1,5 +1,13 @@
 # Capture Guide
 
+## Contents
+
+- Overview
+- Quick Start
+- Complete Capture Workflow (13 steps, listener to export)
+- Shutdown Sequence
+- Scripts
+
 ## Overview
 
 VideoDB Capture enables real-time screen and audio recording with AI processing. Desktop capture currently supports **macOS** only.

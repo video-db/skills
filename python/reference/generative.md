@@ -2,6 +2,17 @@
 
 VideoDB provides AI-powered generation of images, videos, music, sound effects, voice, and text content. All generation methods are on the **Collection** object.
 
+## Contents
+
+- Prerequisites
+- Image Generation
+- Video Generation
+- Audio Generation (music, sound effects, voice)
+- Text Generation (LLM Integration)
+- Dubbing and Translation (dub_video, translate_transcript)
+- Complete Workflow Examples
+- Tips
+
 ## Prerequisites
 
 You need a connection and a collection reference before calling any generation method:
@@ -161,29 +172,40 @@ print(result["output"])  # access the actual text/dict
 
 Combine scene extraction with text generation:
 
+Run analyzers, read their output, and pass both the spoken and the visual context into the prompt. `generate_text()` has no access to the video — whatever you want it to reason about must be in the prompt string.
+
 ```python
-from videodb import SceneExtractionType
-
-# First index scenes
-video.index_scenes(
-    extraction_type=SceneExtractionType.time_based,
-    extraction_config={"time": 10},
-    prompt="Describe the visual content in this scene.",
+understanding = video.understand(
+    analyzers=[
+        {"type": "spoken_words", "name": "transcript"},
+        {"type": "vlm", "name": "scene",
+         "config": {"prompt": "Describe the visual content in this scene."}},
+    ],
+    segmentation={"type": "time", "seconds": 10},
 )
+understanding.wait_until_complete(timeout=3600, poll_interval=15)
 
-# Get transcript for spoken context
+output = understanding.get_analyzer("scene").get_output()
+scenes = output.get("scenes", output) if isinstance(output, dict) else output
+
+visual_context = "\n".join(
+    f"[{s['start']:.0f}s] {(s.get('data') or {}).get('scene_description', '')}"
+    for s in scenes or []
+)
 transcript_text = video.get_transcript_text()
 
-# Analyze with collection LLM
 result = coll.generate_text(
     prompt=(
-        f"Given this video transcript:\n{transcript_text}\n\n"
-        "Based on the spoken and visual content, describe the main topics covered."
+        f"Transcript:\n{transcript_text}\n\n"
+        f"Visual timeline:\n{visual_context}\n\n"
+        "Using both the spoken and visual content, describe the main topics covered."
     ),
     model_name="pro",
 )
 print(result["output"])
 ```
+
+See [indexing.md](indexing.md) for the full understanding pipeline.
 
 ## Dubbing and Translation
 

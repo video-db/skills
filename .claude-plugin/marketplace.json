@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "videodb",
-      "description": "Process videos using VideoDB Python SDK. Upload, search, edit, generate subtitles, transcode, capture, and stream — all via natural language.",
+      "description": "Process videos using VideoDB Python SDK. Upload, understand, index, search, ask questions, aggregate, edit, generate subtitles, transcode, capture, and stream — all via natural language.",
       "source": "./"
     }
   ]

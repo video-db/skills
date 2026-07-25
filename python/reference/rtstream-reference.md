@@ -4,7 +4,22 @@ Code-level details for RTStream operations. For workflow guide, see [rtstream.md
 
 Based on [docs.videodb.io](https://docs.videodb.io/pages/ingest/live-streams/realtime-apis.md).
 
----
+## Contents
+
+- Collection RTStream Methods
+- RTStream Methods
+- Starting and Stopping
+- Generating Streams
+- Exporting to Video
+- Understanding & Indexing (v2) (understand, RTStreamUnderstanding, index, RTStreamIndex)
+- AI Pipelines (v1) (audio indexing, visual indexing, batch config)
+- Batch Config Summary
+- Transcription
+- RTStreamSceneIndex (v1)
+- Events
+- Alerts (create, list, enable, disable, delivery)
+- WebSocket Integration
+- Complete Workflow
 
 ## Collection RTStream Methods
 
@@ -86,10 +101,18 @@ for rts in rtstreams:
 | `rtstream.stop()` | `None` | Stop ingestion |
 | `rtstream.generate_stream(start, end)` | `str` | Stream recorded segment (Unix timestamps) |
 | `rtstream.export(name=None)` | `RTStreamExportResult` | Export to permanent video |
-| `rtstream.index_visuals(prompt, ...)` | `RTStreamSceneIndex` | Create visual index with AI analysis |
-| `rtstream.index_audio(prompt, ...)` | `RTStreamSceneIndex` | Create audio index with LLM summarization |
-| `rtstream.list_scene_indexes()` | `List[RTStreamSceneIndex]` | List all scene indexes on the stream |
-| `rtstream.get_scene_index(index_id)` | `RTStreamSceneIndex` | Get a specific scene index |
+| `rtstream.understand(segmentation, analyzers, store, ws_connection_id)` | `RTStreamUnderstanding` | **(v2)** Start a continuous understanding run |
+| `rtstream.get_understanding(understanding_id)` | `RTStreamUnderstanding` | **(v2)** Get a run by ID |
+| `rtstream.list_understanding()` | `List[RTStreamUnderstanding]` | **(v2)** List runs — note the singular name |
+| `rtstream.index(source, name, use_for)` | `RTStreamIndex` | **(v2)** Materialize an understanding output into an index |
+| `rtstream.get_index(index_id)` | `RTStreamIndex` | **(v2)** Get an index by ID |
+| `rtstream.list_indexes()` | `List[RTStreamIndex]` | **(v2)** List indexes on the stream |
+| `rtstream.index_visuals(prompt, ...)` | `RTStreamSceneIndex` | **(v1)** Create visual index with AI analysis |
+| `rtstream.index_audio(prompt, ...)` | `RTStreamSceneIndex` | **(v1)** Create audio index with LLM summarization |
+| `rtstream.index_scenes(...)` | `RTStreamSceneIndex` | **(v1)** Create a scene index |
+| `rtstream.index_spoken_words(...)` | `RTStreamSceneIndex` | **(v1)** Index spoken words |
+| `rtstream.list_scene_indexes()` | `List[RTStreamSceneIndex]` | **(v1)** List all scene indexes on the stream |
+| `rtstream.get_scene_index(index_id)` | `RTStreamSceneIndex` | **(v1)** Get a specific scene index |
 | `rtstream.search(query, ...)` | `RTStreamSearchResult` | Search indexed content |
 | `rtstream.start_transcript(ws_connection_id, engine)` | `dict` | Start live transcription |
 | `rtstream.get_transcript(page, page_size, start, end, since)` | `dict` | Get transcript pages |
@@ -159,7 +182,105 @@ print(f"Duration: {export_result.duration}s")
 
 ---
 
-## AI Pipelines
+## Understanding & Indexing (v2)
+
+The live-stream counterpart of `video.understand()` / `video.index()`. See [indexing-reference.md](indexing-reference.md) for the video pipeline and the shared analyzer vocabulary.
+
+### `rtstream.understand()`
+
+```python
+understanding = rtstream.understand(
+    segmentation={"type": "time", "window": "10s"},
+    analyzers=[{
+        "type": "vlm",
+        "name": "scene",
+        "sampling": {"frame_count": 5},
+        "config": {"prompt": "Describe what is happening.", "model": "basic"},
+    }],
+    store=True,
+    ws_connection_id=ws_id,
+)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `segmentation` | `dict` | `{}` | Time segmentation, e.g. `{"type": "time", "window": "10s"}` — `window` is a **string with a unit** |
+| `analyzers` | `list[dict]` | `[]` | Exactly one `vlm` analyzer is supported initially |
+| `store` | `bool` | `True` | Persist output so it can be indexed later |
+| `ws_connection_id` | `str\|None` | `None` | WebSocket connection for real-time updates |
+
+### `RTStreamUnderstanding`
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `.id` | `str` | Understanding run ID |
+| `.rtstream_id` | `str` | Parent stream |
+| `.status` | `str` | Run status |
+| `.store` | `bool` | Whether output is persisted |
+| `.segmentation` | `dict` | Segmentation config in use |
+| `.analyzers` | `list` | Analyzer specs |
+| `.outputs` | `dict` | Output descriptors, keyed by analyzer name — pass one to `rtstream.index()` |
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `.refresh()` | `RTStreamUnderstanding` | Re-fetch state |
+| `.start()` | `None` | Start or resume the run |
+| `.stop()` | `None` | Stop the run |
+| `.get_records(start, end, output="scene", page=1, page_size=100)` | `dict` | Read analyzer output for a time range |
+
+### `rtstream.index()`
+
+```python
+index = rtstream.index(source=understanding.outputs["scene"], name="scene")
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `source` | `dict` | required | An understanding output descriptor, e.g. `understanding.outputs["scene"]` |
+| `name` | `str\|None` | `None` | Index name |
+| `use_for` | `list\|None` | `["semantic"]` | Retrieval capabilities |
+
+### `RTStreamIndex`
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `.id` | `str` | Index ID |
+| `.rtstream_id` | `str` | Parent stream |
+| `.name` | `str` | Index name |
+| `.status` | `str` | Index status |
+| `.use_for` | `list` | Capabilities; defaults to `["semantic"]` |
+| `.source_understanding_id` | `str` | Understanding run it was built from |
+| `.output` | `str` | Analyzer output name, default `"scene"` |
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `.refresh()` | `RTStreamIndex` | Re-fetch state |
+| `.start()` | `None` | Start or resume indexing |
+| `.stop()` | `None` | Stop indexing |
+| `.get_records(start=None, end=None, page=1, page_size=100)` | `dict` | Read indexed records |
+| `.create_alert(event_id, callback_url, ws_connection_id=None)` | `str` | Attach an event alert |
+| `.list_alerts()` | `list` | List alerts on this index |
+| `.enable_alert(alert_id)` | `None` | Enable an alert |
+| `.disable_alert(alert_id)` | `None` | Disable an alert |
+
+Alerts work identically on `RTStreamIndex` (v2) and `RTStreamSceneIndex` (v1) — same signatures, same event objects. See the Alerts section below.
+
+### Differences from the video pipeline
+
+| | Video | RTStream |
+|---|-------|----------|
+| Analyzers per run | many, chainable via `inputs` | exactly one `vlm` |
+| Segmentation | `{"type": "time", "seconds": 10}` (int) | `{"type": "time", "window": "10s"}` (string) |
+| Lifecycle | runs to completion, `wait_until_complete()` | continuous, `start()` / `stop()` |
+| Reading records | `index.records(limit, cursor)` → `RecordPage` | `index.get_records(start, end, page, page_size)` → `dict` |
+| List runs | `video.list_understandings()` | `rtstream.list_understanding()` (singular) |
+| `use_for` default | `semantic`, `query`, `aggregate` | `["semantic"]` |
+
+---
+
+## AI Pipelines (v1)
+
+The v1 pipelines below still work and are not deprecated. They remain the documented path for **audio indexing** and **live transcription**, which the v2 stream pipeline does not yet cover. For visual understanding on new code, prefer the v2 section above.
 
 AI pipelines process live streams and send results via WebSocket.
 
@@ -310,9 +431,11 @@ Transcript results arrive on the `transcript` WebSocket channel.
 
 ---
 
-## RTStreamSceneIndex
+## RTStreamSceneIndex (v1)
 
-> **RTStream vs Video scene APIs:** These have the same method names but return different types. `rtstream.get_scene_index(id)` returns an `RTStreamSceneIndex` object with `.get_scenes()`, `.start()`, `.stop()`. `video.get_scene_index(id)` returns a flat `list[dict]` with `start`, `end`, `description`. `rtstream.index_scenes()` returns `RTStreamSceneIndex`. `video.index_scenes()` returns a `str` (scene_index_id). Do not mix these. For Video scene APIs, see [index.md](index.md).
+> The v2 equivalent is `RTStreamIndex`, above. Both expose the same alert methods.
+
+> **RTStream vs Video scene APIs:** These have the same method names but return different types. `rtstream.get_scene_index(id)` returns an `RTStreamSceneIndex` object with `.get_scenes()`, `.start()`, `.stop()`. `video.get_scene_index(id)` returns a flat `list[dict]` with `start`, `end`, `description`. `rtstream.index_scenes()` returns `RTStreamSceneIndex`. `video.index_scenes()` returns a `str` (scene_index_id). Do not mix these. For Video scene APIs, see [legacy/index.md](legacy/index.md).
 
 When you call `index_audio()` or `index_visuals()`, the method returns an `RTStreamSceneIndex` object. This object represents the running index and provides methods for managing scenes and alerts.
 
@@ -542,12 +665,20 @@ rtstream.stop()
 export_result = rtstream.export(name="Weekly Standup Recording")
 print(f"Exported video: {export_result.video_id}")
 
-# 4. Index the exported video for search
+# 4. Understand and index the exported video (v2)
 video = coll.get_video(export_result.video_id)
-video.index_spoken_words(force=True)
+understanding = video.understand(
+    analyzers=[{"type": "spoken_words", "name": "transcript"}],
+)
+understanding.wait_until_complete(timeout=3600, poll_interval=15)
+
+transcript = understanding.get_analyzer("transcript")
+video.index(source=transcript, name="transcript").wait_until_complete()
 
 # 5. Search for action items
 results = video.search("action items and next steps")
-stream_url = results.compile()
-print(f"Action items clip: {stream_url}")
+if results.response_type in ("shots", "deepsearch") and len(results):
+    print(f"Action items clip: {results.compile()}")
 ```
+
+`video.search()` routes to v2, so the exported video needs a **v2** index. Indexing it with `video.index_spoken_words()` instead would build a v1 index that `search()` cannot read — use `video.legacy_search()` if you deliberately want the v1 path.
