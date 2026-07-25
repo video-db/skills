@@ -1,6 +1,6 @@
 ---
 name: videodb
-description: See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
+description: See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- run analyzers over speech, scenes, objects, OCR, brands and activity; build searchable indexes; then search moments, ask questions about a video, filter and aggregate results with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
@@ -21,10 +21,11 @@ Use this skill when you need to:
 - Ingest a **file or URL** and return a **playable web stream link**
 - Transcode/normalize: **codec, bitrate, fps, resolution, aspect ratio**
 
-## 3) Index + search (timestamps + evidence)
-- Build **visual**, **spoken**, and **keyword** indexes
-- Search and return exact moments with **timestamps** and **playable evidence**
-- Auto-create **clips** from search results
+## 3) Understand + index + retrieve (timestamps + evidence)
+- **Understand**: run analyzers over speech, scenes, objects, OCR, brands, activity
+- **Index**: turn analyzer artifacts into semantic, filterable, and aggregatable indexes
+- **Retrieve**: search moments, ask questions, filter exactly, count and group — with **timestamps** and **playable evidence**
+- Auto-create **clips** from results
 
 ## 4) Timeline editing + generation
 - Subtitles: **generate**, **translate**, **burn-in**
@@ -102,14 +103,16 @@ When the user asks to "setup videodb" or similar:
 ### 1. Install SDK
 
 ```bash
-pip install "videodb[capture]" python-dotenv
+pip install "videodb[capture]>=0.5.0" python-dotenv
 ```
 
 If `videodb[capture]` fails on Linux, install without the capture extra:
 
 ```bash
-pip install videodb python-dotenv
+pip install "videodb>=0.5.0" python-dotenv
 ```
+
+The `>=0.5.0` pin matters — the understand/index/ask/aggregate APIs do not exist in earlier versions.
 
 ### 2. Configure API key
 
@@ -137,6 +140,75 @@ video = coll.upload(url="https://www.youtube.com/watch?v=VIDEO_ID")
 video = coll.upload(file_path="/path/to/video.mp4")
 ```
 
+### Understand → index → retrieve (default path)
+
+Three stages. Run analyzers to produce **artifacts**, index each artifact, then retrieve.
+
+```python
+import time
+
+# 1. Understand. Naming each analyzer keeps `analyzer.name` meaningful downstream.
+understanding = video.understand(
+    analyzers=[
+        {"type": "spoken_words", "name": "transcript"},
+        {"type": "vlm", "name": "scene",
+         "config": {"prompt": "Describe the scene and any on-screen text."}},
+    ],
+    segmentation={"type": "shot", "threshold": 30},
+)
+
+# A run with a failed or skipped analyzer ends `partial`, which the SDK does not
+# treat as terminal — wait_until_complete() would poll to TimeoutError. Poll the
+# analyzers instead. The `analyzers and` guard is load-bearing: a refresh can
+# transiently return an empty list, and all([]) is True, which would exit the
+# loop while the run is still going.
+deadline = time.time() + 3600
+while time.time() < deadline:
+    analyzers = understanding.refresh().list_analyzers()
+    if analyzers and all(a.is_complete for a in analyzers):
+        break
+    time.sleep(15)
+
+# 2. Index each artifact that succeeded.
+for analyzer in understanding.list_analyzers():
+    if analyzer.is_successful:
+        video.index(source=analyzer, name=analyzer.name).wait_until_complete()
+
+# 3. Retrieve.
+response = video.search("discussion about pricing")
+for shot in response.shots:
+    print(f"[{shot.start:.1f}s - {shot.end:.1f}s] {shot.text}")
+if response.response_type in ("shots", "deepsearch") and len(response):
+    stream_url = response.compile()   # raises SearchError otherwise
+```
+
+Analyzer types: `spoken_words` (→ artifact `transcript`), `vlm` (→ `scene`), `object_detection` (→ `objects`), `ocr`, `brand_detection` (→ `brands`), `activity_recognition` (→ `activity`), `location_detection` (→ `location`), `faces`, `audio_event_detection`. They are plain strings — there is no SDK enum.
+
+See [reference/indexing.md](reference/indexing.md) for segmentation, sampling, field configuration, and cost tuning.
+
+### Retrieval
+
+`search(query)` is the default — it plans the retrieval and picks the indexes itself. Reach past it when you need something specific:
+
+```python
+# Target a specific index, with a relevance floor
+video.semantic_search("a customer holding the product", index_names=["scene"], score_threshold=0.7)
+
+# Exact filtering, no natural-language interpretation
+video.query(index_name="objects",
+            filter=[{"field": "frames.detections.label", "op": "contains", "value": "car"}])
+
+# Counts and facets — returns the raw server payload, not a SearchResult
+video.aggregate(index_name="objects", group_by="frames.detections.label", metric="count")
+
+# A written answer plus the moments it came from
+answer = video.ask("What did they say about pricing?", include_sources=True)
+```
+
+All five exist on `Collection` too, fanning out across every indexed video. See [reference/search.md](reference/search.md).
+
+**`search()` now returns `SearchResponse`, not `SearchResult`.** `get_shots()`, `compile()`, `play()`, and iteration all work, but there is no `.stream_url` on it — use `.compile()`.
+
 ### Transcript + subtitle
 
 ```python
@@ -146,64 +218,24 @@ text = video.get_transcript_text()
 stream_url = video.add_subtitle()
 ```
 
-### Search inside videos
+`index_spoken_words()` is the correct call here even on 0.5.0 — `add_subtitle()` and `CaptionAsset(src="auto")` read the v1 spoken-word index. A v2 `spoken_words` artifact does not substitute for it. This is the one place v1 indexing is still the right answer.
+
+### Legacy indexing (existing codebases)
 
 ```python
-from videodb.exceptions import InvalidRequestError
+# v1 API — still supported in 0.5.0, not deprecated. New code should use the v2 path above.
+from videodb import IndexType
 
 video.index_spoken_words(force=True)
-
-# search() raises InvalidRequestError when no results are found.
-# Always wrap in try/except and treat "No results found" as empty.
-try:
-    results = video.search("product demo")
-    shots = results.get_shots()
-    stream_url = results.compile()
-except InvalidRequestError as e:
-    if "No results found" in str(e):
-        shots = []
-    else:
-        raise
+scene_index_id = video.index_scenes(prompt="Describe the visual content.")
+results = video.legacy_search(
+    "person writing on a whiteboard",
+    index_type=IndexType.scene,
+    scene_index_id=scene_index_id,
+)
 ```
 
-### Scene search
-
-```python
-import re
-from videodb import SearchType, IndexType, SceneExtractionType
-from videodb.exceptions import InvalidRequestError
-
-# index_scenes() has no force parameter — it raises an error if a scene
-# index already exists. Extract the existing index ID from the error.
-try:
-    scene_index_id = video.index_scenes(
-        extraction_type=SceneExtractionType.shot_based,
-        prompt="Describe the visual content in this scene.",
-    )
-except Exception as e:
-    match = re.search(r"id\s+([a-f0-9]+)", str(e))
-    if match:
-        scene_index_id = match.group(1)
-    else:
-        raise
-
-# Use score_threshold to filter low-relevance noise (recommended: 0.3+)
-try:
-    results = video.search(
-        query="person writing on a whiteboard",
-        search_type=SearchType.semantic,
-        index_type=IndexType.scene,
-        scene_index_id=scene_index_id,
-        score_threshold=0.3,
-    )
-    shots = results.get_shots()
-    stream_url = results.compile()
-except InvalidRequestError as e:
-    if "No results found" in str(e):
-        shots = []
-    else:
-        raise
-```
+Recognise this pattern in existing repos and leave it alone unless asked to migrate — it still works. See [reference/migration.md](reference/migration.md) to port it, or [reference/legacy/search.md](reference/legacy/search.md) to maintain it.
 
 ### Timeline editing
 
@@ -328,9 +360,12 @@ except InvalidRequestError as e:
 
 | Scenario | Error message | Solution |
 |----------|--------------|----------|
-| Indexing an already-indexed video | `Spoken word index for video already exists` | Use `video.index_spoken_words(force=True)` to skip if already indexed |
-| Scene index already exists | `Scene index with id XXXX already exists` | Extract the existing `scene_index_id` from the error with `re.search(r"id\s+([a-f0-9]+)", str(e))` |
-| Search finds no matches | `InvalidRequestError: No results found` | Catch the exception and treat as empty results (`shots = []`) |
+| Search result has no stream URL | `AttributeError: 'SearchResponse' object has no attribute 'stream_url'` | `search()` returns `SearchResponse` in 0.5.0. Use `results.compile()` |
+| `search(score_threshold=)` searches the wrong indexes | no error, unexpected results | `score_threshold` does not route to legacy. Use `semantic_search(score_threshold=)`, or `legacy_search()` for v1 indexes |
+| Semantic index on object detection | `use_for includes semantic but no scene has embeddable text` | Object artifacts have no top-level text. Omit `use_for` (it degrades automatically) or pass `["query", "aggregate"]` |
+| Indexing a field that does not exist | `fields.filter names not present in any scene's data` | The error lists the available field names — read it. Or check `index.field_schema` |
+| Search finds no matches | v2 returns an empty `SearchResponse`; only `legacy_search()` raises `InvalidRequestError: No results found` | Check `len(response)`. Wrap only legacy calls in try/except |
+| Indexing an already-indexed video (v1) | `Spoken word index for video already exists` | Use `video.index_spoken_words(force=True)` to skip if already indexed |
 | Reframe times out | Blocks indefinitely on long videos | Use `start`/`end` to limit segment, or pass `callback_url` for async |
 | Negative timestamps on Timeline | Silently produces broken stream | Always validate `start >= 0` before creating `VideoAsset` |
 | `generate_video()` / `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |
@@ -340,9 +375,11 @@ except InvalidRequestError as e:
 Reference documentation is in the `reference/` directory adjacent to this SKILL.md file. Use the Glob tool to locate it if needed.
 
 - [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
-- [reference/index.md](reference/index.md) - Scene indexing & extraction workflow (index, extract frames, read back, manage)
-- [reference/index-reference.md](reference/index-reference.md) - Scene index code reference (methods, SceneCollection/Scene/Frame classes)
-- [reference/search.md](reference/search.md) - In-depth guide to video search (spoken word and scene-based)
+- [reference/indexing.md](reference/indexing.md) - Understand → index pipeline: analyzers, artifacts, segmentation, field configuration
+- [reference/indexing-reference.md](reference/indexing-reference.md) - Analyzer catalog and Understanding/Index class reference
+- [reference/search.md](reference/search.md) - Retrieval guide: search, ask, semantic_search, query, aggregate
+- [reference/search-reference.md](reference/search-reference.md) - Retrieval signatures, filter syntax, response objects
+- [reference/migration.md](reference/migration.md) - v1 → v2 mapping and SDK 0.5.0 breaking changes. Read when you find v1 code
 - [reference/editor.md](reference/editor.md) - Timeline editing workflow guide (4-layer model, use cases, examples)
 - [reference/editor-reference.md](reference/editor-reference.md) - Editor code reference (constructors, parameters, enums)
 - [reference/streaming.md](reference/streaming.md) - HLS streaming and instant playback
@@ -354,6 +391,12 @@ Reference documentation is in the `reference/` directory adjacent to this SKILL.
 - [reference/capture.md](reference/capture.md) - Desktop capture workflow
 - [reference/capture-reference.md](reference/capture-reference.md) - Capture SDK and WebSocket events
 - [reference/use-cases.md](reference/use-cases.md) - Common video processing patterns and examples
+
+Legacy v1 indexing and search. These APIs still work and are not deprecated, but read these only when maintaining existing v1 code:
+
+- [reference/legacy/index.md](reference/legacy/index.md) - v1 scene indexing and frame extraction workflow
+- [reference/legacy/index-reference.md](reference/legacy/index-reference.md) - v1 scene index code reference (SceneCollection/Scene/Frame)
+- [reference/legacy/search.md](reference/legacy/search.md) - v1 spoken-word and scene search
 
 ## Screen Recording (Desktop Capture)
 
@@ -395,6 +438,11 @@ For complete capture workflow, see [reference/capture.md](reference/capture.md).
 
 | Problem | VideoDB solution |
 |---------|-----------------|
+| Make a video searchable | `video.understand(analyzers=[...])` then `video.index(source=analyzer)` |
+| Find moments by what was said or shown | `video.search(query)`, or `semantic_search(index_names=[...])` to target an index |
+| Answer a question about a video | `video.ask(question, include_sources=True)` |
+| Count or group what appears in a video | `video.aggregate(index_name=..., group_by=..., metric="count")` |
+| Filter moments on exact field values | `video.query(index_name=..., filter={...})` |
 | Platform rejects video aspect ratio or resolution | `video.reframe()` or `conn.transcode()` with `VideoConfig` |
 | Need to resize video for Twitter/Instagram/TikTok | `video.reframe(target="vertical")` or `target="square"` |
 | Need to change resolution (e.g. 1080p → 720p) | `conn.transcode()` with `VideoConfig(resolution=720)` |

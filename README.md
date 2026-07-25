@@ -25,7 +25,7 @@ This skill gives your agent one consistent interface to:
 
 - **See**: Realtime desktop screen, mic and system audio, RTSP streams, ingest files, URLs, YouTube.
 
-- **Understand**: Visual understanding, transcribe, index and search moments with playble clips
+- **Understand**: Run analyzers over speech, scenes, objects, OCR and brands; index the results; then search moments, ask questions, filter and count
 
 - **Act**: Stream results, trigger alerts on live feeds, edit timelines, generate subtitles and overlays, export clips.
 
@@ -38,7 +38,8 @@ VideoDB Skills lets your AI coding agent run end to end, server-side video workf
 - Capture desktop screen, mic, and system audio for real time processing.
 - Upload and process RTSP streams, videos from YouTube, URLs, and local files.
 - Create realtime context of visual and spoken information. 
-- Index and search spoken words and visual scenes anytime.
+- Run analyzers over speech, scenes, objects, OCR and brands, then index what they produce.
+- Search moments in natural language, ask questions and get answers grounded in the video, filter on exact field values, and aggregate counts server-side.
 - Generate transcripts, subtitles, and AI media.
 - Edit clips, overlays, and exports server side.
 
@@ -47,7 +48,7 @@ Return playable HLS links for anything you build.
 
 ## Get Started
 
-Get started in two quick steps. Open your AI coding agent (Requires **Python 3.9+**) and follow along.
+Get started in two quick steps. Open your AI coding agent (Requires **Python 3.9+** and **VideoDB Python SDK 0.5.0 or newer**) and follow along.
 
 
 ### Step 1: Install the skill
@@ -94,6 +95,8 @@ Ask your agent to run instructions like these. The skill loads automatically.
 - "Generate a background music, and add to this Clip"
 - "Add subtitles to original video with white text on black background"
 - "Find every scene showing 'phone close-up' or 'product on screen'"
+- "Which objects appear most often in this video? Break it down by shot count"
+- "Ask this video what the presenter said about pricing, and show me the clips"
 - "Capture my screen for the next two minutes and write a report of what i'm doing along with any insights or suggestions"*
 - "Here is the rtsp link for my IP Camera <rtsp url>, monitor and log the alert to text file along with timestamp whenever a person enters into the room"
 
@@ -116,7 +119,9 @@ Keep your client and agent stack light: send video in, get back structured conte
 | **Capture**             | Capture desktop screen, mic, and system audio for realtime processing         |
 | **Upload**              | Ingest video from YouTube, URLs, or local files                               |
 | **Context**             | Generate realtime structured context for any RTSP feed or desktop stream      |
+| **Understand**          | Run analyzers (speech, scenes, objects, OCR, brands, activity) into reusable artifacts |
 | **Search**              | Find exact moments by speech, scenes, or metadata, return playable evidence   |
+| **Ask & Analyze**       | Get grounded answers with evidence, filter on exact fields, aggregate counts and facets |
 | **Transcripts**         | Generate clean, timestamped transcripts from any video                        |
 | **Subtitles**           | Auto generate subtitles, then style and burn in or export                     |
 | **Edit**                | Trim, merge, clip, overlay text, images, audio, plus dubbing and translation  |

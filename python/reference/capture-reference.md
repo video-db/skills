@@ -4,6 +4,17 @@ Code-level details for VideoDB capture sessions. For workflow guide, see [captur
 
 ---
 
+## Contents
+
+- WebSocket Events (channels, lifecycle events, event structures)
+- Event Persistence (ws_listener usage, JSONL format, reading events)
+- WebSocket Connection
+- CaptureSession
+- CaptureClient
+- Channels (mics, displays, system audio)
+- RTStreams and AI Pipelines
+- Session Lifecycle
+
 ## WebSocket Events
 
 Real-time events from capture sessions and AI pipelines. No webhooks or polling required.

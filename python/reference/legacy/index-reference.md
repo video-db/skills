@@ -1,8 +1,24 @@
-# Scene Index & Extraction Reference
+# Scene Index & Extraction Reference (v1)
+
+> **LEGACY — do not use for new code.** This page documents the v1 scene-index API. Every method here **still works in SDK 0.5.0 and is not deprecated** — nothing raises `DeprecationWarning`. The server may attach migration notices to `response.warnings`, surfaced as Python `UserWarning`. Read this only when maintaining existing v1 code.
+>
+> New code: [../indexing-reference.md](../indexing-reference.md) → [../search-reference.md](../search-reference.md). To port existing code: [../migration.md](../migration.md).
 
 Code-level details for VideoDB scene indexing and extraction. For workflow guide, see [index.md](index.md).
 
 ---
+
+## Contents
+
+- Imports
+- Video Scene Methods
+- index_scenes
+- extract_scenes
+- Extraction Types and Configs
+- SceneCollection
+- Scene
+- Frame
+- Scene Index Record
 
 ## Imports
 
