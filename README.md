@@ -126,6 +126,7 @@ Keep your client and agent stack light: send video in, get back structured conte
 | **Subtitles**           | Auto generate subtitles, then style and burn in or export                     |
 | **Edit**                | Trim, merge, clip, overlay text, images, audio, plus dubbing and translation  |
 | **AI Generate**         | Create images, video, music, sound effects, and voiceovers from text          |
+| **Sandbox Compute**     | Run open-weight models (Gemma, Qwen, Whisper, OmniVoice, FLUX, RT-DETR) on managed GPU sandboxes |
 | **Transcode / Reframe** | Change resolution, quality, aspect ratio, and social crops, all on the server |
 | **Stream**              | Get instant playable HLS links (built in CDN) for anything you ingest or generate.             |
 

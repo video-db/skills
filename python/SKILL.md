@@ -306,6 +306,40 @@ image = coll.generate_image(
 )
 ```
 
+### Sandbox Compute (self-hosted / open-weight models)
+
+Run open-weight models (Gemma, Qwen, Whisper, OmniVoice, FLUX, RT-DETR) by creating a sandbox and passing `sandbox_id` to a supported job. Requires `videodb>=0.5.1`.
+
+```python
+from videodb import SandboxTier, SandboxModel
+
+# 1. Create a sandbox sized for the largest model, then wait until active.
+sandbox = conn.create_sandbox(
+    tier=SandboxTier.medium,
+    models=[SandboxModel.GEMMA_4_31B.value],   # exact ID, NO -FP8 suffix
+)
+sandbox.wait_for_ready(timeout=300, interval=5)
+
+# 2. Understanding: set config.model + config.sandbox_id on the analyzer.
+understanding = video.understand(analyzers=[{
+    "type": "vlm", "name": "scene",
+    "config": {"model": "google/gemma-4-31B-it", "sandbox_id": sandbox.id,
+               "prompt": "Describe the scene."},
+}])
+
+# 2b. Generation: pass model_name + sandbox_id (jobs return GenerationJob → .wait()).
+response = coll.generate_text(prompt="Summarize this.", model_name="Qwen/Qwen3.5-9B",
+                             sandbox_id=sandbox.id, max_tokens=300)
+job = coll.generate_image(prompt="a city at sunset", model_name="black-forest-labs/FLUX.1-dev",
+                          sandbox_id=sandbox.id)
+image = job.wait(timeout=900, interval=5)
+
+# 3. Stop when done — provisioning/active/alert all count toward the tier limit.
+sandbox.stop(); sandbox.wait_for_stop()
+```
+
+Model IDs must match the catalog exactly (**no `-FP8` suffix**) or `create_sandbox` raises `Unsupported sandbox model`. See [reference/sandbox.md](reference/sandbox.md) for the full model catalog, tiers, categories, pricing, and pitfalls.
+
 ## Error handling
 
 ```python
@@ -350,6 +384,8 @@ Reference documentation is in the `reference/` directory adjacent to this SKILL.
 - [reference/editor-reference.md](reference/editor-reference.md) - Editor code reference (constructors, parameters, enums)
 - [reference/streaming.md](reference/streaming.md) - HLS streaming and instant playback
 - [reference/generative.md](reference/generative.md) - AI-powered media generation (images, video, audio)
+- [reference/sandbox.md](reference/sandbox.md) - Sandbox Compute workflow (run open-weight models: Gemma, Qwen, Whisper, OmniVoice, FLUX, RT-DETR)
+- [reference/sandbox-reference.md](reference/sandbox-reference.md) - Sandbox code reference (create/get/list/stop, tiers, model catalog, sandbox-aware generation)
 - [reference/rtstream.md](reference/rtstream.md) - Live stream ingestion workflow (RTSP/RTMP)
 - [reference/rtstream-reference.md](reference/rtstream-reference.md) - RTStream SDK methods and AI pipelines
 - [reference/capture.md](reference/capture.md) - Desktop capture workflow
