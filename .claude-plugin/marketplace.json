@@ -1,5 +1,6 @@
 {
   "name": "videodb-skills",
+  "description": "VideoDB's Python SDK skill and hosted MCP integration for video and audio workflows.",
   "owner": {
     "name": "VideoDB"
   },

@@ -1,7 +1,13 @@
 {
   "name": "videodb",
   "description": "Process videos using VideoDB Python SDK. Upload, understand, index, search, ask questions, aggregate, edit, generate subtitles, transcode, capture, stream, and run open-weight models on sandbox compute — all via natural language.",
-  "version": "1.2.0",
+  "version": "1.3.0",
+  "author": {
+    "name": "VideoDB",
+    "url": "https://videodb.io"
+  },
+  "homepage": "https://docs.videodb.io",
+  "repository": "https://github.com/video-db/skills",
   "license": "MIT",
   "skills": "./python"
 }
