@@ -19,7 +19,7 @@ Code-level details for VideoDB capture sessions. For workflow guide, see [captur
 
 Real-time events from capture sessions and AI pipelines. No webhooks or polling required.
 
-Use [scripts/ws_listener.py](../scripts/ws_listener.py) to connect and dump events to `/tmp/videodb_events.jsonl`.
+Use `${CLAUDE_SKILL_DIR}/scripts/ws_listener.py` to connect and dump events to `/tmp/videodb_events.jsonl`.
 
 ### Event Channels
 
@@ -130,10 +130,10 @@ Use `ws_listener.py` to dump all WebSocket events to a JSONL file for later anal
 
 ```bash
 # Start with --clear to clear old events (recommended for new sessions)
-python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> &
+python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --clear --cwd=<PROJECT_ROOT> &
 
 # Append to existing events (for reconnects)
-python scripts/ws_listener.py --cwd=<PROJECT_ROOT> &
+python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --cwd=<PROJECT_ROOT> &
 ```
 
 `--cwd=<PROJECT_ROOT>` loads `.env` from the given path instead of the current working directory. This ensures the correct API key is found regardless of where the script is launched from.
@@ -141,9 +141,9 @@ python scripts/ws_listener.py --cwd=<PROJECT_ROOT> &
 Or specify a custom output directory:
 
 ```bash
-python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> /path/to/output &
+python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --clear --cwd=<PROJECT_ROOT> /path/to/output &
 # Or via environment variable:
-VIDEODB_EVENTS_DIR=/path/to/output python scripts/ws_listener.py --clear --cwd=<PROJECT_ROOT> &
+VIDEODB_EVENTS_DIR=/path/to/output python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --clear --cwd=<PROJECT_ROOT> &
 ```
 
 The script outputs `WS_ID=<connection_id>` on the first line, then listens indefinitely.
