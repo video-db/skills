@@ -125,6 +125,17 @@ Get a free API key at https://console.videodb.io (50 free uploads, no credit car
 
 **Do NOT** read, write, or handle the API key yourself. Always let the user set it.
 
+### 3. Authorize the hosted MCP server (Claude Code plugin only)
+
+The plugin bundles the hosted MCP server at `https://mcp.videodb.io/mcp`, which is
+authorized separately from the SDK key above. Tell the user to run `/mcp`, select
+**videodb**, and complete browser authorization with their VideoDB account. Verify with
+"list my VideoDB collections".
+
+The MCP tools need no local Python install and no API key. Skip this step when the skill
+was installed with `npx skills add` or is running outside Claude Code — there is no MCP
+server in that case, and the SDK path above is the only one available.
+
 ## Quick Reference
 
 ### Upload media
@@ -372,7 +383,7 @@ except InvalidRequestError as e:
 
 ## Additional docs
 
-Reference documentation is in the `reference/` directory adjacent to this SKILL.md file. Use the Glob tool to locate it if needed.
+Reference documentation is in `${CLAUDE_SKILL_DIR}/reference/`. Read files there with that prefix; the links below are relative to this SKILL.md.
 
 - [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
 - [reference/indexing.md](reference/indexing.md) - Understand → index pipeline: analyzers, artifacts, segmentation, field configuration
@@ -402,9 +413,11 @@ Legacy v1 indexing and search. These APIs still work and are not deprecated, but
 
 Use `ws_listener.py` to capture WebSocket events during recording sessions. Desktop capture supports **macOS** only.
 
+`${CLAUDE_SKILL_DIR}` is this skill's install directory, set by Claude Code. On agents that do not set it, substitute the directory holding this SKILL.md.
+
 ### Quick Start
 
-1. **Start listener**: `python scripts/ws_listener.py --cwd=<PROJECT_ROOT> &`
+1. **Start listener**: `python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --cwd=<PROJECT_ROOT> &`
 2. **Get WebSocket ID**: `cat /tmp/videodb_ws_id`
 3. **Run capture code** (see reference/capture.md for full workflow)
 4. **Events written to**: `/tmp/videodb_events.jsonl`
@@ -427,7 +440,7 @@ recent_visual = [e for e in events
 
 ### Utility Scripts
 
-- [scripts/ws_listener.py](scripts/ws_listener.py) - WebSocket event listener (dumps to JSONL)
+- `${CLAUDE_SKILL_DIR}/scripts/ws_listener.py` - WebSocket event listener (dumps to JSONL)
 
 For complete capture workflow, see [reference/capture.md](reference/capture.md).
 

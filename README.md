@@ -64,11 +64,24 @@ Or install with Claude Code plugin:
 /plugin install videodb@videodb-skills
 ```
 
+The Claude Code plugin includes the Python skill and the hosted MCP server at
+`https://mcp.videodb.io/mcp`. After installation, run `/mcp`, select VideoDB,
+and complete browser authorization with your VideoDB account. Then ask Claude
+to "list my VideoDB collections" to verify the connection. The hosted MCP tools
+do not require a local Python installation or a manually configured API key.
+
+The Python skill uses separate SDK authentication; follow Step 2 below for SDK
+workflows. Installing with `npx skills add` installs the skill only, without the
+MCP connection. See the [MCP setup guide](https://docs.videodb.io/pages/mcp/connect)
+and [privacy policy](https://videodb.io/legal/privacy).
+
 ### Step 2: Setup
 
 ```
 /videodb setup
 ```
+
+For the Claude Code plugin, use the fully qualified command `/videodb:videodb setup`.
 
 The agent will guide setup for your [VideoDB API key](https://console.videodb.io) ($20 free credits, no credit card required), install the SDK, and verify the connection.
 

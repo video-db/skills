@@ -126,4 +126,4 @@ For full signatures and class properties, see [rtstream-reference.md](rtstream-r
 
 | Script | Description |
 |--------|-------------|
-| `scripts/ws_listener.py` | WebSocket event listener for real-time AI results |
+| `${CLAUDE_SKILL_DIR}/scripts/ws_listener.py` | WebSocket event listener for real-time AI results |
