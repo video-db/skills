@@ -125,6 +125,17 @@ Get a free API key at https://console.videodb.io (50 free uploads, no credit car
 
 **Do NOT** read, write, or handle the API key yourself. Always let the user set it.
 
+### 3. Authorize the hosted MCP server (Claude Code plugin only)
+
+The plugin bundles the hosted MCP server at `https://mcp.videodb.io/mcp`, which is
+authorized separately from the SDK key above. Tell the user to run `/mcp`, select
+**videodb**, and complete browser authorization with their VideoDB account. Verify with
+"list my VideoDB collections".
+
+The MCP tools need no local Python install and no API key. Skip this step when the skill
+was installed with `npx skills add` or is running outside Claude Code — there is no MCP
+server in that case, and the SDK path above is the only one available.
+
 ## Quick Reference
 
 ### Upload media
