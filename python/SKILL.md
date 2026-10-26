@@ -1,66 +1,37 @@
 ---
 name: videodb
-description: See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- run analyzers over speech, scenes, objects, OCR, brands and activity; build searchable indexes; then search moments, ask questions about a video, filter and aggregate results with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
+description: Set up VideoDB and work with video through the VideoDB Python SDK. Use for "setup videodb" or "/videodb setup", when the user wants Python code, a script or a notebook rather than a chat answer, for desktop screen capture, for generating music, voiceover, images or video with AI, for dubbing, for sandbox compute with open-weight models, and for any video task the video-search, video-clips, video-subtitles, video-edit and video-live skills do not cover.
 allowed-tools: Read Grep Glob
 argument-hint: "[task description]"
 ---
 
-# VideoDB Skill
+# VideoDB: setup and the Python SDK
 
-**Perception + memory + actions for video, live streams, and desktop sessions.**
+VideoDB runs video work on its servers: ingest, understand, index, search, clip, subtitle, compose, stream. This skill covers setup and the Python SDK. Five smaller skills cover the common jobs and should be used first when they match:
 
-Use this skill when you need to:
+| Job | Skill |
+|---|---|
+| Find a moment, ask a video, count what appears | `video-search` |
+| Clips, highlight reels, vertical cuts, MP4s | `video-clips` |
+| Transcripts, subtitles, translation | `video-subtitles` |
+| Music, overlays, captions, compositions | `video-edit` |
+| Cameras, live streams, meetings, screen capture | `video-live` |
 
-## 1) Desktop Perception
-- Start/stop a **desktop session** capturing **screen, mic, and system audio**
-- Stream **live context** and store **episodic session memory**
-- Run **real-time alerts/triggers** on what’s spoken and what's happening on screen
-- Produce **session summaries**, a searchable timeline, and **playable evidence links**
+## Which path
 
-## 2) Video ingest + stream
-- Ingest a **file or URL** and return a **playable web stream link**
-- Transcode/normalize: **codec, bitrate, fps, resolution, aspect ratio**
+1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `generate_clip`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. No install, no API key.
+2. **No VideoDB tools, in Claude chat or Cowork**: tell the user, in one line, to connect VideoDB: Settings, then Connectors, then VideoDB, then Connect, and log in to their VideoDB account when asked (free, no card needed). Then retry.
+3. **Claude Code or another agent with a shell**: the hosted MCP server is bundled; run `/mcp`, pick videodb and authorize. The SDK path below is for code, scripts, notebooks, desktop capture, AI generation, dubbing and sandbox compute, which the connector does not do.
 
-## 3) Understand + index + retrieve (timestamps + evidence)
-- **Understand**: run analyzers over speech, scenes, objects, OCR, brands, activity
-- **Index**: turn analyzer artifacts into semantic, filterable, and aggregatable indexes
-- **Retrieve**: search moments, ask questions, filter exactly, count and group — with **timestamps** and **playable evidence**
-- Auto-create **clips** from results
+Long connector jobs return `status: processing`. Wait about 30 seconds, then read the result with the tool the reply names (`retry_with`) or `get_job_result` with its `output_url`. Never re-run the write.
 
-## 4) Timeline editing + generation
-- Subtitles: **generate**, **translate**, **burn-in**
-- Overlays: **text/image/branding**, motion captions
-- Audio: **background music**, **voiceover**, **dubbing**
-- Programmatic composition and exports via **timeline operations**
+## Outputs
 
-## 5) Live streams (RTSP) + monitoring
-- Connect **RTSP/live feeds**
-- Run **real-time visual and spoken understanding** and emit **events/alerts** for monitoring workflows
-
----
-
-## Common inputs
-- Local **file path**, public **URL**, or **RTSP URL**
-- Desktop capture request: **start / stop / summarize session**
-- Desired operations: get context for understanding, transcode spec, index spec, search query, clip ranges, timeline edits, alert rules
-
-## Common outputs
-- **Stream URL** — make it playable: `https://console.videodb.io/player?url={STREAM_URL}`
-- Search results with **timestamps** and **evidence links**
+- **Stream URL**, playable at `https://console.videodb.io/player?url={STREAM_URL}`; connector tools also return a `player_url`
+- Search results with timestamps and playable evidence
 - Generated assets: subtitles, audio, images, clips
-- **Event/alert payloads** for live streams
-- Desktop **session summaries** and memory entries
-
----
-
-## Canonical prompts (examples)
-- “Start desktop capture and alert when a password field appears.”
-- “Record my session and produce an actionable summary when it ends.”
-- “Ingest this file and return a playable stream link.”
-- “Index this folder and find every scene with people, return timestamps.”
-- “Generate subtitles, burn them in, and add light background music.”
-- “Connect this RTSP URL and alert when a person enters the zone.”
-
+- Event and alert payloads for live streams
+- Desktop session summaries and searchable timelines
 
 ## Running Python code
 
