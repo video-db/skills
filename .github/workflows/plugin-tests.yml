@@ -1,0 +1,52 @@
+name: plugin tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      live:
+        description: "Also run the live suite against the real MCP server (needs an authorized claude on the runner)"
+        default: false
+        type: boolean
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install -g @anthropic-ai/claude-code
+      - run: python3 tests/static_checks.py
+      - run: claude plugin validate .
+
+  evals:
+    needs: static
+    if: ${{ github.event_name != 'push' }}
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Skip when no API key is configured
+        if: ${{ env.ANTHROPIC_API_KEY == '' }}
+        run: echo "ANTHROPIC_API_KEY secret not set; eval suites skipped" && exit 0
+      - name: Chat suite (mocked connector)
+        if: ${{ env.ANTHROPIC_API_KEY != '' }}
+        run: RUNS=1 THRESHOLD=0.8 MAX_COST=10 tests/run.sh chat
+      - name: Not-connected chat case
+        if: ${{ env.ANTHROPIC_API_KEY != '' }}
+        run: claude plugin eval . --eval-dir evals-no-connector --tag chat --trust-plugin --no-publish --runs 1 --threshold 0.8 --max-cost-usd 3 --ablation none --json evals-no-connector/results/ci.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && env.ANTHROPIC_API_KEY != '' }}
+        with:
+          name: eval-results
+          path: |
+            evals/results/
+            evals-no-connector/results/

@@ -1,6 +1,6 @@
 ---
 name: videodb
-description: Set up VideoDB and work with video through the VideoDB Python SDK. Use for "setup videodb" or "/videodb setup", when the user wants Python code, a script or a notebook rather than a chat answer, for desktop screen capture, for generating music, voiceover, images or video with AI, for dubbing, for sandbox compute with open-weight models, and for any video task the video-search, video-clips, video-subtitles, video-edit and video-live skills do not cover.
+description: Set up VideoDB and write code against the VideoDB Python SDK. Use for "setup videodb" or "/videodb setup", when the user wants Python code, a script or a notebook rather than a chat answer, for bulk uploading or indexing a folder or library of media, for sandbox compute with open-weight models, and for any video task that video-search, video-clips, video-subtitles, video-edit and video-live do not cover. Screen recording belongs to video-live, AI-generated music, voiceover, images or video to video-edit, and dubbing to video-subtitles.
 allowed-tools: Read Grep Glob
 argument-hint: "[task description]"
 ---
@@ -20,10 +20,12 @@ VideoDB runs video work on its servers: ingest, understand, index, search, clip,
 ## Which path
 
 1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `generate_clip`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. No install, no API key.
-2. **No VideoDB tools, in Claude chat or Cowork**: tell the user, in one line, to connect VideoDB: Settings, then Connectors, then VideoDB, then Connect, and log in to their VideoDB account when asked (free, no card needed). Then retry.
-3. **Claude Code or another agent with a shell**: the hosted MCP server is bundled; run `/mcp`, pick videodb and authorize. The SDK path below is for code, scripts, notebooks, desktop capture, AI generation, dubbing and sandbox compute, which the connector does not do.
+2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, save it yourself to the project's `.env` (Setup, below), never print it, and continue with the SDK. In Claude Code, `/mcp` then authorizing the bundled videodb server also works.
+3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
 
-Long connector jobs return `status: processing`. Wait about 30 seconds, then read the result with the tool the reply names (`retry_with`) or `get_job_result` with its `output_url`. Never re-run the write.
+The SDK path is also the only path for code, scripts, notebooks, desktop capture, AI generation, dubbing and sandbox compute, which the connector does not do. Talking to the user: never write "index", "indexed" or "indexing" in a reply; say "searchable".
+
+Long connector jobs return `status: processing`. The reply carries an `output_url` and names the tool to poll (`poll_with`, or `retry_with` on older servers). Call that tool with the `output_url` until it is `done`; several `processing` replies in a row are normal (a 10-minute YouTube upload takes about five), and a `done` reply with an empty result means poll once more. Never re-run the write; that starts a second job.
 
 ## Outputs
 
@@ -87,14 +89,13 @@ The `>=0.5.0` pin matters — the understand/index/ask/aggregate APIs do not exi
 
 ### 2. Configure API key
 
-The user must set `VIDEO_DB_API_KEY` using **either** method:
+Ask the user for their VideoDB API key in one line: free at https://console.videodb.io, $20 of free credits, no credit card. When they give it to you, in chat or any other way, save it for them and keep going:
 
-- **Export in terminal (recommended)**: `export VIDEO_DB_API_KEY=your-key`
-- **Project `.env` file**: Save `VIDEO_DB_API_KEY=your-key` in the project's `.env` file
+- Write `VIDEO_DB_API_KEY=<key>` to the project's `.env` (create the file if needed) and make sure `.env` is listed in `.gitignore`.
+- Never print, echo, log or commit the key, and never send it anywhere except through the SDK.
+- If they prefer to set it themselves, `export VIDEO_DB_API_KEY=<key>` in the terminal also works.
 
-Get a free API key at https://console.videodb.io ($20 free credits, no credit card required).
-
-**Do NOT** read, write, or handle the API key yourself. Always let the user set it. Never ask the user to paste the key into the chat; ask them to export it or put it in `.env`, then retry.
+Tell them what you saved and where, without repeating the key.
 
 ### 3. Authorize the hosted MCP server (Claude Code plugin only)
 

@@ -1,6 +1,6 @@
 ---
 name: video-search
-description: Find a moment in a video or ask a question about it. Use when the user wants to search inside a video or a library of videos ("find where they talk about pricing", "which scenes show a phone"), get an answer with timestamps, count what appears, or turn the matches into a clip. Works on YouTube links, public video URLs and videos already in the user's VideoDB account.
+description: Find a moment in a video or ask a question about it. Use when the user wants to search inside a video, a library, or a meeting recording ("find where they talk about pricing", "which scenes show a phone", "what did she say about hiring"), get an answer with timestamps, count what appears, or get a clip of that moment. A highlight reel from a prompt, a cut by time range, or a vertical cut is video-clips. Works on YouTube links, public URLs and the user's VideoDB videos.
 ---
 
 # Find a moment, or ask a video
@@ -8,25 +8,29 @@ description: Find a moment in a video or ask a question about it. Use when the u
 ## Which path
 
 1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `ask_video`, `understand_video`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. Do not install anything and do not ask for an API key.
-2. **No VideoDB tools, in Claude chat or Cowork**: tell the user, in one line, to connect VideoDB: Settings, then Connectors, then VideoDB, then Connect, and log in to their VideoDB account when asked (free, no card needed). Then retry. Nothing else to set up.
-3. **Claude Code with a shell and no VideoDB tools**: run `/mcp`, pick videodb and authorize. Or use the Python SDK path at the end of this file when the user wants code.
+2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, in chat or any other way, save it yourself to the project's `.env` as `VIDEO_DB_API_KEY`, never print it, and continue with the Python SDK path at the end of this file. In Claude Code, `/mcp` then authorizing videodb also works.
+3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
 
-Long jobs return `status: processing`. Wait about 30 seconds, then read the result with the tool the reply names (`retry_with`) or `get_job_result` with its `output_url`. Never re-run the write; that starts a second job.
+Talking to the user: never write "index", "indexed" or "indexing" in a reply. Say "searchable" ("it is now searchable by what was said and what is shown"), and "transcribe" rather than naming a job. One line of status at a time, then the result.
+
+Long jobs return `status: processing`. The reply carries an `output_url` and names the tool to poll (`poll_with`, or `retry_with` on older servers). Call that tool with the `output_url` until it is `done`; several `processing` replies in a row are normal (a 10-minute YouTube upload takes about five), and a `done` reply with an empty result means poll once more. Never re-run the write; that starts a second job.
 
 ## With the connector tools
 
-**1. Get the video.** A YouTube link or public URL: `upload_media(url)`; note the `m-` id. Already in the account: `list_videos` or `search_videos_by_title(query)`. The user has no URL and the file is on their computer: the connector cannot take local files; point them to the console at https://console.videodb.io to upload, then continue with the `m-` id.
+**1. Get the video.** First `search_videos_by_title(query)` with the video's title or the link's words; reuse the `m-` id if it is already in the account. Otherwise, for a YouTube link or public URL, `upload_media(url)`, poll until `done`, and note the `m-` id and the `length` in seconds. The user has no URL and the file is on their computer: the connector cannot take local files; point them to the console at https://console.videodb.io to upload, then continue with the `m-` id.
 
 **2. Pick the fast path or the index path.**
 
 *Fast path, the default for a one-off question about what was said.* Read the transcript yourself and find the moments:
 
 ```
-generate_transcript(video_id)                       # once; returns quickly on short videos
-get_transcript(video_id, timestamped=true)          # segments with start and end seconds
+generate_transcript(media_id)                                   # a job; poll until done (instant if already transcribed)
+get_transcript(media_id, timestamped=true, segmenter="sentence")   # sentence segments with start and end seconds
 ```
 
-Scan the segments for the moments the user described, note their start and end, and go to step 4. No index needed. The transcript is the whole speech of the video in your context, so a long video (over roughly an hour, or a transcript the tool truncates) is a sign to use the index path instead.
+Scan the segments for the moments the user described, note their start and end, and go to step 4. No index needed. Two traps: the transcript job's `done` result includes text and a word list, but the list is truncated, so always read with `get_transcript`; and the default segmenter is one segment per word, capped at 2000 segments, so pass `segmenter="sentence"` (a couple of hours of speech fit) or `start` and `end` windows. A video the tool still truncates, or one the user will keep asking about, is a sign to use the index path.
+
+Nothing matches: say so plainly and do not stretch a loose match into the thing the user asked for. A YouTube upload can be an excerpt of a longer talk. Offer the nearest moment, clearly labelled as such, or ask for another video.
 
 *Index path.* Use it when the question is about what is shown rather than said, when the user wants counts or exact filters, when they will ask many questions about the same video or library, or when the transcript is too long to read. Check `list_indexes(video_id)` first; if nothing is ready:
 
