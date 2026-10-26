@@ -94,7 +94,7 @@ The user must set `VIDEO_DB_API_KEY` using **either** method:
 
 Get a free API key at https://console.videodb.io ($20 free credits, no credit card required).
 
-**Do NOT** read, write, or handle the API key yourself. Always let the user set it.
+**Do NOT** read, write, or handle the API key yourself. Always let the user set it. Never ask the user to paste the key into the chat; ask them to export it or put it in `.env`, then retry.
 
 ### 3. Authorize the hosted MCP server (Claude Code plugin only)
 
