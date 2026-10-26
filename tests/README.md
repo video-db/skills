@@ -13,7 +13,7 @@ Three layers, cheapest first. Every change to a skill, command or manifest shoul
 
 ## How the chat surface is simulated
 
-`claude plugin eval` runs inside Claude Code, so a chat case grants only `Skill` and adds an `append_system_prompt` line saying the run is the claude.ai chat app with no shell. Without that line the model knows it is in Claude Code and offers the shell path instead of the connect line. The mocked tools are named `mcp__videodb__<tool>` in the transcript, and `evals/mocks/videodb/_tools.json` gives them their real parameter schemas so the model sees `media_id`, `timeline`, the ASS colour fields and so on.
+`claude plugin eval` runs inside Claude Code, so a chat case grants only `Skill` and adds an `append_system_prompt` line saying the run is the claude.ai chat app with no shell. Without that line the model knows it is in Claude Code and offers the shell path instead of the connect line. The mocked tools are named `mcp__plugin_videodb_videodb__<tool>` in the transcript (the prefix is how Claude Code names a plugin-bundled MCP server, `plugin:videodb:videodb`; `tool_used` and `tool_order` graders match that name exactly, so check it with `--keep-temp` and the trace if a grader reports 0 calls that visibly happened), and `evals/mocks/videodb/_tools.json` gives them their real parameter schemas so the model sees `media_id`, `timeline`, the ASS colour fields and so on.
 
 ## What the chat cases encode
 
