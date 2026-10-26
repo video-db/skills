@@ -17,7 +17,18 @@ Long jobs return `status: processing`. Wait about 30 seconds, then read the resu
 
 **1. Get the video.** A YouTube link or public URL: `upload_media(url)`; note the `m-` id. Already in the account: `list_videos` or `search_videos_by_title(query)`. The user has no URL and the file is on their computer: the connector cannot take local files; point them to the console at https://console.videodb.io to upload, then continue with the `m-` id.
 
-**2. Make it searchable (once per video).** Check `list_indexes(video_id)` first. If nothing is ready:
+**2. Pick the fast path or the index path.**
+
+*Fast path, the default for a one-off question about what was said.* Read the transcript yourself and find the moments:
+
+```
+generate_transcript(video_id)                       # once; returns quickly on short videos
+get_transcript(video_id, timestamped=true)          # segments with start and end seconds
+```
+
+Scan the segments for the moments the user described, note their start and end, and go to step 4. No index needed. The transcript is the whole speech of the video in your context, so a long video (over roughly an hour, or a transcript the tool truncates) is a sign to use the index path instead.
+
+*Index path.* Use it when the question is about what is shown rather than said, when the user wants counts or exact filters, when they will ask many questions about the same video or library, or when the transcript is too long to read. Check `list_indexes(video_id)` first; if nothing is ready:
 
 ```
 understand_video(video_id, analyzers=[
@@ -35,7 +46,7 @@ create_index(video_id, understanding_id, analyzer_name="scene")
 
 Only speech matters (a podcast, a call): run just the `spoken_words` analyzer. Objects and counts ("how many cars"): add `{"type": "object_detection"}` or `{"type": "activity_recognition"}`.
 
-**3. Retrieve.**
+**3. Retrieve (index path).**
 
 | The user wants | Call |
 |---|---|
@@ -46,7 +57,7 @@ Only speech matters (a podcast, a call): run just the `spoken_words` analyzer. O
 | Exact filters ("scenes with label = car") | `query_index(video_id, index_name, filter)` |
 | A deeper investigation with follow-ups | `search_video(..., mode="deepsearch")`, then pass `session_id` on the next call |
 
-**4. Deliver.** Give the moments as `start` to `end` in mm:ss with the text that matched, and the `player_url` of each clip when `include_clip` was set. Offer a single clip of the matches: `generate_clip(video_id, timeline=[[start, end], ...])`, poll, then share the `player_url`.
+**4. Deliver.** Give the moments as `start` to `end` in mm:ss with the words that matched (quote the transcript, or the `text` of each search hit), and the `player_url` of each clip when `include_clip` was set. Make one clip of the matches: `generate_clip(video_id, timeline=[[start, end], ...])` (seconds, a few seconds of padding on each side reads better), poll, then share the `player_url`.
 
 Older videos that were indexed with `index_spoken_words` or `index_scenes` (v1) are searched with `legacy_search_video` and `legacy_search_collection`.
 
