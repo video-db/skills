@@ -121,7 +121,7 @@ The user must set `VIDEO_DB_API_KEY` using **either** method:
 - **Export in terminal (recommended)**: `export VIDEO_DB_API_KEY=your-key`
 - **Project `.env` file**: Save `VIDEO_DB_API_KEY=your-key` in the project's `.env` file
 
-Get a free API key at https://console.videodb.io (50 free uploads, no credit card).
+Get a free API key at https://console.videodb.io ($20 free credits, no credit card required).
 
 **Do NOT** read, write, or handle the API key yourself. Always let the user set it.
 
