@@ -130,7 +130,7 @@ CaptionAsset(
 | `position` | `Positioning\|None` | `Positioning()` | Alignment and margins |
 | `animation` | `CaptionAnimation\|None` | `None` | Animation effect |
 
-Requires `video.index_spoken_words()` before using `src="auto"`.
+Requires a transcript (`video.generate_transcript()`) before using `src="auto"`.
 
 ---
 

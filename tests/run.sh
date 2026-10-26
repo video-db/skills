@@ -12,7 +12,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 RUNS="${RUNS:-1}"; THRESHOLD="${THRESHOLD:-0.8}"; MAX_COST="${MAX_COST:-10}"
 PIN=(); [ -n "${MODEL:-}" ] && PIN+=(--model "$MODEL"); [ -n "${JUDGE_MODEL:-}" ] && PIN+=(--judge-model "$JUDGE_MODEL")
-COMMON=(--trust-plugin --no-publish --runs "$RUNS" --threshold "$THRESHOLD" --max-cost-usd "$MAX_COST" --ablation none "${PIN[@]}")
+# ${PIN[@]+"${PIN[@]}"} expands an empty array safely under set -u on bash 3.2 (macOS)
+COMMON=(--trust-plugin --no-publish --runs "$RUNS" --threshold "$THRESHOLD" --max-cost-usd "$MAX_COST" --ablation none ${PIN[@]+"${PIN[@]}"})
 
 static() {
   python3 tests/static_checks.py "$@"
@@ -27,8 +28,8 @@ offline() {
 }
 live() {
   # Real server: every mocked tool is ignored, the plugin's own MCP server starts, and its tools need a grant by name.
-  claude plugin eval . --eval-dir evals --tag smoke --mocks off --allow-tools "mcp__videodb__*" \
-    --trust-plugin --no-publish --runs 1 --threshold "$THRESHOLD" --max-cost-usd "$MAX_COST" --ablation none "${PIN[@]}" \
+  claude plugin eval . --eval-dir evals --tag smoke --mocks off --allow-tools "mcp__plugin_videodb_videodb__*" \
+    --trust-plugin --no-publish --runs 1 --threshold "$THRESHOLD" --max-cost-usd "$MAX_COST" --ablation none ${PIN[@]+"${PIN[@]}"} \
     --json evals/results/last-live.json
 }
 

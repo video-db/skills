@@ -13,7 +13,7 @@ Three layers, cheapest first. Every change to a skill, command or manifest shoul
 
 ## How the chat surface is simulated
 
-`claude plugin eval` runs inside Claude Code, so a chat case grants only `Skill` and adds an `append_system_prompt` line saying the run is the claude.ai chat app with no shell. Without that line the model knows it is in Claude Code and offers the shell path instead of the connect line. The mocked tools are named `mcp__videodb__<tool>` in the transcript, and `evals/mocks/videodb/_tools.json` gives them their real parameter schemas so the model sees `media_id`, `timeline`, the ASS colour fields and so on.
+`claude plugin eval` runs inside Claude Code, so a chat case grants only `Skill` and adds an `append_system_prompt` line saying the run is the claude.ai chat app with no shell. Without that line the model knows it is in Claude Code and offers the shell path instead of the connect line. The mocked tools are named `mcp__plugin_videodb_videodb__<tool>` in the transcript (the prefix is how Claude Code names a plugin-bundled MCP server, `plugin:videodb:videodb`; `tool_used` and `tool_order` graders match that name exactly, so check it with `--keep-temp` and the trace if a grader reports 0 calls that visibly happened), and `evals/mocks/videodb/_tools.json` gives them their real parameter schemas so the model sees `media_id`, `timeline`, the ASS colour fields and so on.
 
 ## What the chat cases encode
 
@@ -38,4 +38,4 @@ Mock a tool the case needs in `evals/mocks/videodb/<tool>.md` (fixed JSON body, 
 
 ## CI
 
-`.github/workflows/plugin-tests.yml` runs the static layer on every pull request, and the chat and offline-chat suites on pull requests that touch `skills/`, `python/`, `commands/` or the manifests when `ANTHROPIC_API_KEY` is set as a repository secret. The live layer is manual.
+`.github/workflows/plugin-tests.yml` runs the static layer on every pull request and push to main. The chat and offline-chat suites run on pull requests only when `ANTHROPIC_API_KEY` is set as a repository secret. Without the secret the `evals` job still reports green but runs nothing; it posts a warning annotation and a step summary saying so, so a green check on a repo without the secret means static checks only. The live layer is manual.

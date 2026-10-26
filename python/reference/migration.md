@@ -96,7 +96,7 @@ That last row is the one to internalise. v1 had no way to ask "does this index a
 Keep using these:
 
 - **`video.extract_scenes()` / `get_scene_collection()`** — the only way to get viewable frame image URLs. Scene collections are unchanged and still current.
-- **`video.index_spoken_words()` for subtitles and captions.** `video.add_subtitle()` and `CaptionAsset(src="auto")` read the v1 spoken-word index; the SDK warns if you skip it. A v2 `spoken_words` artifact does not substitute here.
+- **`video.generate_transcript()` for subtitles and captions.** `video.add_subtitle()` and `CaptionAsset(src="auto")` read the video's transcript, which `generate_transcript()` or a `spoken_words` analyzer run creates. `index_spoken_words()` is not needed for them.
 
 ---
 

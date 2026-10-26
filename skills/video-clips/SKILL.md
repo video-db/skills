@@ -22,7 +22,7 @@ Every cut is a long job: the call returns `status: processing`. The reply carrie
 | The user wants | Call |
 |---|---|
 | One range, or several ranges joined, from one video | `generate_clip(video_id, timeline=[[10, 25], [60, 90]])` (seconds) |
-| The moments that match a description | `generate_transcript(media_id)` once (plus `index_spoken_words` where the server has it), then `create_highlight_clip(video_id, prompt="every product demo")`, then `compile_clips` with the shots it returns |
+| The moments that match a description | `generate_transcript(media_id)` once, then `create_highlight_clip(video_id, prompt="every product demo")`, then `compile_clips` with the shots it returns |
 | Control over which moments make the cut | `generate_transcript(media_id)`, poll, `get_transcript(media_id, timestamped=true, segmenter="sentence")`, pick the ranges yourself, then `generate_clip` (the `video-search` skill has the details) |
 | A reel across several videos | `compile_clips(clips=[{"video_id": "m-a", "shots": [[5, 20]]}, {"video_id": "m-b", "shots": [[0, 12]]}])` |
 | Vertical for Shorts, Reels, TikTok, or square | `reframe_video(video_id, start, end, target="vertical")` (`"square"`, `"landscape"`, or `{"width", "height"}`); `mode="smart"` follows the subject |

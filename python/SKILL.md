@@ -195,18 +195,17 @@ All five exist on `Collection` too, fanning out across every indexed video. See 
 ### Transcript + subtitle
 
 ```python
-# force=True skips the error if the video is already indexed
-video.index_spoken_words(force=True)
+video.generate_transcript()          # returns the existing transcript if there is one; force=True re-runs it
 text = video.get_transcript_text()
 stream_url = video.add_subtitle()
 ```
 
-`index_spoken_words()` is the correct call here even on 0.5.0 — `add_subtitle()` and `CaptionAsset(src="auto")` read the v1 spoken-word index. A v2 `spoken_words` artifact does not substitute for it. This is the one place v1 indexing is still the right answer.
+`add_subtitle()` and `CaptionAsset(src="auto")` read the video's transcript. `generate_transcript()` creates it, and a `spoken_words` analyzer run from `understand()` counts too. The legacy `index_spoken_words()` is not needed for subtitles or captions.
 
 ### Legacy indexing (existing codebases)
 
 ```python
-# v1 API — still supported in 0.5.0, not deprecated. New code should use the v2 path above.
+# v1 API, legacy. Only for codebases that already use it; new code uses understand() + index() above.
 from videodb import IndexType
 
 video.index_spoken_words(force=True)
@@ -348,7 +347,7 @@ except InvalidRequestError as e:
 | Semantic index on object detection | `use_for includes semantic but no scene has embeddable text` | Object artifacts have no top-level text. Omit `use_for` (it degrades automatically) or pass `["query", "aggregate"]` |
 | Indexing a field that does not exist | `fields.filter names not present in any scene's data` | The error lists the available field names — read it. Or check `index.field_schema` |
 | Search finds no matches | v2 returns an empty `SearchResponse`; only `legacy_search()` raises `InvalidRequestError: No results found` | Check `len(response)`. Wrap only legacy calls in try/except |
-| Indexing an already-indexed video (v1) | `Spoken word index for video already exists` | Use `video.index_spoken_words(force=True)` to skip if already indexed |
+| Legacy `index_spoken_words()` on an already-indexed video (v1) | `Spoken word index for video already exists` | Pass `force=True`, or drop the call: subtitles and captions only need `generate_transcript()` |
 | Reframe times out | Blocks indefinitely on long videos | Use `start`/`end` to limit segment, or pass `callback_url` for async |
 | Negative timestamps on Timeline | Silently produces broken stream | Always validate `start >= 0` before creating `VideoAsset` |
 | `generate_video()` / `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |

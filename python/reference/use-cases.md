@@ -131,7 +131,7 @@ Every operation produces playable stream URLs. Embed in web players, share direc
 | Count or group what appears | Index with `use_for=["query","aggregate"]` → `aggregate(group_by=...)` |
 | Filter moments on exact values | Index with a schema → `query(index_name=..., filter={...})` |
 | Create highlights | Search multiple topics → Build timeline → Generate stream |
-| Add subtitles | `index_spoken_words()` → `add_subtitle()` (v1 index, still required) |
+| Add subtitles | `generate_transcript()` → `add_subtitle()` |
 | Record screen + AI | Start capture → Run AI pipelines → Export video |
 | Monitor live streams | Connect RTSP → `rtstream.understand()` → `rtstream.index()` → Create alerts |
 | Reformat for social | Reframe to target aspect ratio |

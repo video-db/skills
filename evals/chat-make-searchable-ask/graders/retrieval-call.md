@@ -1,5 +1,5 @@
 ---
 type: regex
 target: trace
-pattern: 'mcp__videodb__(?:ask_video|search_video)'
+pattern: 'mcp__plugin_videodb_videodb__(?:ask_video|search_video)'
 ---
