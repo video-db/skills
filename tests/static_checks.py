@@ -17,6 +17,12 @@ def ok(cond, msg):
         fails.append(msg)
 
 
+def unconditional_isw(text):
+    """Lines that tell Claude to run index_spoken_words without generate_transcript first (legacy v1 mentions excluded)."""
+    return [l for l in text.splitlines()
+            if "`index_spoken_words`" in l and "generate_transcript" not in l and "legacy" not in l]
+
+
 # --- manifests -------------------------------------------------------------
 pj = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())
 mj = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text())
@@ -67,7 +73,7 @@ for f in job_skills + [base]:
     ok("API key" in which, f"{rel}: Which path has the shell take-the-key instruction")
     conn_part = s.split("## Running Python code", 1)[0] if f == base else s.split("## With the Python SDK", 1)[0]
     ok("pip install" not in conn_part, f"{rel}: no pip install outside the SDK section")
-    ok("index_spoken_words(video_id)" not in conn_part or "where" in conn_part, f"{rel}: index_spoken_words only as a conditional step")
+    ok(not unconditional_isw(conn_part), f"{rel}: index_spoken_words only as a conditional step after generate_transcript")
     ok("retry_with`)" not in s, f"{rel}: polling text names poll_with")
     for ref in re.findall(r"\$\{CLAUDE_PLUGIN_ROOT\}/([\w/.-]+)", s):
         ok((ROOT / ref).exists(), f"{rel}: referenced file exists: {ref}")
@@ -84,6 +90,7 @@ for c in cmds:
     ok(re.search(r"^description: .+$", s, re.M) is not None, f"commands/{c.name}: has a description")
     ok("$ARGUMENTS" in s, f"commands/{c.name}: uses $ARGUMENTS")
     ok("—" not in s, f"commands/{c.name}: no em dash")
+    ok(not unconditional_isw(s), f"commands/{c.name}: index_spoken_words only as a conditional step after generate_transcript")
 
 # --- README (the listing's long description) -------------------------------
 rd = (ROOT / "README.md").read_text()

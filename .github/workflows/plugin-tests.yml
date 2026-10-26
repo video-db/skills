@@ -34,9 +34,12 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm install -g @anthropic-ai/claude-code
-      - name: Skip when no API key is configured
+      - name: Skipped, no API key configured
         if: ${{ env.ANTHROPIC_API_KEY == '' }}
-        run: echo "ANTHROPIC_API_KEY secret not set; eval suites skipped" && exit 0
+        run: |
+          echo "::warning title=Eval suites skipped::ANTHROPIC_API_KEY is not set as a repository secret, so this job ran no evals. Only the static checks passed."
+          echo "## Eval suites skipped" >> "$GITHUB_STEP_SUMMARY"
+          echo "ANTHROPIC_API_KEY is not set as a repository secret. Add it under Settings → Secrets to run the chat and offline suites in CI. Until then, a green check here means static checks only." >> "$GITHUB_STEP_SUMMARY"
       - name: Chat suite (mocked connector)
         if: ${{ env.ANTHROPIC_API_KEY != '' }}
         run: RUNS=1 THRESHOLD=0.8 MAX_COST=10 tests/run.sh chat
