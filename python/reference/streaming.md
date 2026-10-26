@@ -118,7 +118,6 @@ For detailed timeline editing, see [editor.md](editor.md).
 Compile search results into a single stream of all matching segments:
 
 ```python
-
 u = video.understand(analyzers=[{"type": "spoken_words", "name": "transcript"}])
 u.wait_until_complete()
 video.index(source=u.get_analyzer("transcript"), name="transcript").wait_until_complete()
