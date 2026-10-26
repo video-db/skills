@@ -76,7 +76,7 @@ conn = videodb.connect(); coll = conn.get_collection()
 video = coll.upload(url="https://www.youtube.com/watch?v=VIDEO_ID")
 u = video.understand(analyzers=[{"type": "spoken_words", "name": "transcript"},
                                 {"type": "vlm", "name": "scene", "config": {"prompt": "Describe the scene."}}])
-while not all(a.is_complete for a in (u.refresh().list_analyzers() or [None])): time.sleep(15)
+u.wait_until_complete()
 for a in u.list_analyzers():
     if a.is_successful: video.index(source=a, name=a.name).wait_until_complete()
 r = video.search("the part about pricing")

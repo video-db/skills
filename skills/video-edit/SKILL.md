@@ -29,7 +29,7 @@ Do not fall back to ffmpeg, moviepy or local encoding for anything below; it all
 | Background music at 20% | `{"type": "audio", "id": "a-...", "volume": 0.2}` on its own track |
 | A title or lower-third | `{"type": "text", "text": "Launch day", "font": {"size": 64, "color": "#FFFFFF"}, "background": {"color": "#000000", "opacity": 0.6, "border_width": 12}}` with clip `fit: "contain"` and `position: "bottom"` |
 | A logo or image | `{"type": "image", "id": "img-..."}` with clip `scale: 0.2`, `position: "top_right"`, `opacity: 0.9` |
-| Captions from speech | `{"type": "caption", "src": "auto", "animation": "box_highlight"}`; the video must already be transcribed (`generate_transcript`, plus `index_spoken_words` where that tool exists) or the render shows no captions and no error |
+| Captions from speech | `{"type": "caption", "src": "auto", "animation": "box_highlight"}`; the video must already be transcribed (`generate_transcript`, or a `spoken_words` analyzer run) or the render shows no captions and no error |
 | A fade between clips | clip `transition: {"in": "fade", "out": "fade", "duration": 0.5}` |
 | Vertical for social | `resolution="1080x1920"`, clip `fit: "crop"` |
 

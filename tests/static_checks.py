@@ -18,9 +18,9 @@ def ok(cond, msg):
 
 
 def unconditional_isw(text):
-    """Lines that tell Claude to run index_spoken_words without generate_transcript first (legacy v1 mentions excluded)."""
-    return [l for l in text.splitlines()
-            if "`index_spoken_words`" in l and "generate_transcript" not in l and "legacy" not in l]
+    """Lines that tell Claude to run index_spoken_words. Subtitles, captions and highlights read the transcript
+    (generate_transcript); index_spoken_words is legacy v1 and may only appear in a line that says so."""
+    return [l for l in text.splitlines() if "`index_spoken_words`" in l and "legacy" not in l]
 
 
 # --- manifests -------------------------------------------------------------

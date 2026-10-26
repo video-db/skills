@@ -7,7 +7,7 @@ Subtitle or transcribe the video by following the `video-subtitles` skill. Prefe
 
 Input: $ARGUMENTS
 
-- Default: `generate_transcript` and poll until done (plus `index_spoken_words` where the server has it), then `add_subtitles` with the style the user described, and reply with the `player_url`.
+- Default: `generate_transcript` and poll until done, then `add_subtitles` with the style the user described, and reply with the `player_url`.
 - "transcript": `generate_transcript`, then `get_transcript(timestamped=true)`, and paste the transcript.
 - "translate to <language>": `translate_transcript` and give the translated segments. Say that dubbing needs the SDK.
 

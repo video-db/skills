@@ -23,13 +23,13 @@ Long jobs return `status: processing`. The reply carries an `output_url` and nam
 
 **Subtitles burned into the video.**
 
-1. `generate_transcript(media_id)` and poll until `done` (instant if the video already has a transcript). On servers that also expose `index_spoken_words`, run it on the video too; older `add_subtitles` versions read that index.
+1. `generate_transcript(media_id)` and poll until `done` (instant if the video already has a transcript). `add_subtitles` reads the video's transcript; a `spoken_words` analyzer run from `understand_video` counts too. `index_spoken_words` is the legacy v1 call and is not needed.
 2. `add_subtitles(video_id, ...)`. Returns a `stream_url` and a `player_url` at once; it is not a job.
 3. An MP4 file: `download_stream(stream_url, name="...")`, poll, then share the download link.
 
 Style options on `add_subtitles`: `font_name`, `font_size` (8 to 72, default 18), `bold`, `italic`, `alignment` (`bottom_center` default, `top_center`, `middle_center`, ...), `border_style` (`outline`, `opaque_box` or `no_border`), `outline`, `outline_colour`, `shadow`, `margin_l`, `margin_r`, `margin_v`. Colours use the ASS format `&HAABBGGRR`: opaque white `&H00FFFFFF`, black `&H00000000`, yellow `&H0000FFFF`. "White text on a black box" is `primary_colour="&H00FFFFFF", back_colour="&H00000000", border_style="opaque_box"`.
 
-**Animated or karaoke captions, or captions on a composed video.** Use the `video-edit` skill's `render_timeline` with a `caption` asset (`src: "auto"`, `animation: "karaoke"`). The video must already be transcribed (`generate_transcript`, plus `index_spoken_words` where that tool exists), or the render comes back with no captions and no error.
+**Animated or karaoke captions, or captions on a composed video.** Use the `video-edit` skill's `render_timeline` with a `caption` asset (`src: "auto"`, `animation: "karaoke"`). The video must already be transcribed (`generate_transcript`, or a `spoken_words` analyzer run), or the render comes back with no captions and no error.
 
 **Translate.** `translate_transcript(video_id, language="Spanish")` returns the translated, timestamped segments. Give them to the user as text or as an SRT-style list.
 
@@ -45,7 +45,7 @@ import videodb
 from videodb import SubtitleStyle, SubtitleAlignment, SubtitleBorderStyle
 conn = videodb.connect(); coll = conn.get_collection()
 video = coll.upload(url="https://www.youtube.com/watch?v=VIDEO_ID")
-video.index_spoken_words(force=True)
+video.generate_transcript()
 print(video.get_transcript_text())
 stream_url = video.add_subtitle(SubtitleStyle(font_size=20, primary_colour="&H00FFFFFF",
                                               back_colour="&H00000000", border_style=SubtitleBorderStyle.opaque_box,

@@ -56,8 +56,8 @@ video.play()
 ### With Subtitles
 
 ```python
-# Index and add subtitles first
-video.index_spoken_words(force=True)
+# Transcribe and add subtitles first
+video.generate_transcript()
 video.add_subtitle()
 
 # Stream now includes subtitles
@@ -118,10 +118,11 @@ For detailed timeline editing, see [editor.md](editor.md).
 Compile search results into a single stream of all matching segments:
 
 ```python
-from videodb import SearchType
 
-video.index_spoken_words(force=True)
-results = video.search("key announcement", search_type=SearchType.semantic)
+u = video.understand(analyzers=[{"type": "spoken_words", "name": "transcript"}])
+u.wait_until_complete()
+video.index(source=u.get_analyzer("transcript"), name="transcript").wait_until_complete()
+results = video.search("key announcement")
 
 # Compile all matching shots into one stream
 stream_url = results.compile()
@@ -134,7 +135,7 @@ results.play()
 ### Stream Individual Search Hits
 
 ```python
-results = video.search("product demo", search_type=SearchType.semantic)
+results = video.search("product demo")
 
 for i, shot in enumerate(results.get_shots()):
     stream_url = shot.generate_stream()
@@ -159,7 +160,6 @@ Combine search, timeline composition, and streaming in one workflow:
 
 ```python
 import videodb
-from videodb import SearchType
 from videodb.timeline import Timeline
 from videodb.asset import VideoAsset, TextAsset, TextStyle
 
@@ -167,7 +167,9 @@ conn = videodb.connect()
 coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
-video.index_spoken_words(force=True)
+u = video.understand(analyzers=[{"type": "spoken_words", "name": "transcript"}])
+u.wait_until_complete()
+video.index(source=u.get_analyzer("transcript"), name="transcript").wait_until_complete()
 
 # Search for key moments
 queries = ["introduction", "main demo", "Q&A"]
@@ -175,7 +177,7 @@ timeline = Timeline(conn)
 
 for query in queries:
     # Find matching segments
-    results = video.search(query, search_type=SearchType.semantic)
+    results = video.search(query)
     for shot in results.get_shots():
         timeline.add_inline(
             VideoAsset(asset_id=shot.video_id, start=shot.start, end=shot.end)
@@ -226,7 +228,6 @@ Build a stream dynamically based on search availability:
 
 ```python
 import videodb
-from videodb import SearchType
 from videodb.timeline import Timeline
 from videodb.asset import VideoAsset, TextAsset, TextStyle
 
@@ -234,7 +235,9 @@ conn = videodb.connect()
 coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
-video.index_spoken_words(force=True)
+u = video.understand(analyzers=[{"type": "spoken_words", "name": "transcript"}])
+u.wait_until_complete()
+video.index(source=u.get_analyzer("transcript"), name="transcript").wait_until_complete()
 
 timeline = Timeline(conn)
 
@@ -243,7 +246,7 @@ topics = ["opening remarks", "technical deep dive", "closing"]
 
 found_any = False
 for topic in topics:
-    results = video.search(topic, search_type=SearchType.semantic)
+    results = video.search(topic)
     shots = results.get_shots()
     if shots:
         found_any = True
@@ -273,7 +276,6 @@ Process an event recording into a streamable recap with multiple sections:
 
 ```python
 import videodb
-from videodb import SearchType
 from videodb.timeline import Timeline
 from videodb.asset import VideoAsset, AudioAsset, ImageAsset, TextAsset, TextStyle
 
@@ -282,7 +284,9 @@ coll = conn.get_collection()
 
 # Upload event recording
 event = coll.upload(url="https://example.com/event-recording.mp4")
-event.index_spoken_words(force=True)
+u = event.understand(analyzers=[{"type": "spoken_words", "name": "transcript"}])
+u.wait_until_complete()
+event.index(source=u.get_analyzer("transcript"), name="transcript").wait_until_complete()
 
 # Generate background music
 music = coll.generate_music(
@@ -300,14 +304,14 @@ title_img = coll.generate_image(
 timeline = Timeline(conn)
 
 # Main video segments from search
-keynote = event.search("keynote announcement", search_type=SearchType.semantic)
+keynote = event.search("keynote announcement")
 if keynote.get_shots():
     for shot in keynote.get_shots()[:5]:
         timeline.add_inline(
             VideoAsset(asset_id=shot.video_id, start=shot.start, end=shot.end)
         )
 
-demo = event.search("product demo", search_type=SearchType.semantic)
+demo = event.search("product demo")
 if demo.get_shots():
     for shot in demo.get_shots()[:5]:
         timeline.add_inline(
