@@ -23,6 +23,7 @@
     "url": "https://videodb.io"
   },
   "homepage": "https://docs.videodb.io",
+  "privacyPolicyUrl": "https://videodb.io/legal/privacy",
   "repository": "https://github.com/video-db/skills",
   "license": "MIT",
   "skills": "./python"
