@@ -18,7 +18,7 @@ For code-level details (constructors, parameters, enums), see [editor-reference.
 
 ## Prerequisites
 
-All media **must be uploaded** to a collection before it can be used as an asset. For auto-generated captions, the source video must also be **indexed for spoken words** via `video.index_spoken_words()`.
+All media **must be uploaded** to a collection before it can be used as an asset. For auto-generated captions, the source video must also have a **transcript**: `video.generate_transcript()`, or a `spoken_words` analyzer run.
 
 ```python
 import videodb
@@ -212,10 +212,10 @@ clip = Clip(asset=video_asset, duration=10, filter=Filter.greyscale)
 
 ### Captions
 
-Auto-generate subtitles synced to speech with animation effects. The video must be indexed first:
+Auto-generate subtitles synced to speech with animation effects. The video must have a transcript first:
 
 ```python
-video.index_spoken_words(force=True)
+video.generate_transcript()
 ```
 
 Caption animations: `box_highlight`, `color_highlight`, `reveal`, `karaoke`, `impact`, `supersize`.
@@ -306,7 +306,7 @@ from videodb.editor import (
     CaptionAsset, FontStyling, BorderAndShadow, Positioning, CaptionAnimation,
 )
 
-video.index_spoken_words(force=True)
+video.generate_transcript()
 
 caption = CaptionAsset(
     src="auto",

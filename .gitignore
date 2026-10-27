@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 *.pyo
 .DS_Store
+evals/results/
+evals-no-connector/results/

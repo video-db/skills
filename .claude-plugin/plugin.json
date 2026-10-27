@@ -2,7 +2,7 @@
   "name": "videodb",
   "displayName": "VideoDB",
   "description": "Edit, clip, subtitle and search your videos in Claude. Find any moment by what was said or shown, then turn it into a shareable clip. Works with uploads, YouTube links, live streams and screen recordings.",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "keywords": [
     "video",
     "video editing",
@@ -42,5 +42,9 @@
   "termsOfServiceUrl": "https://videodb.io/legal/terms",
   "repository": "https://github.com/video-db/skills",
   "license": "MIT",
-  "skills": "./python"
+  "skills": [
+    "./python",
+    "./skills"
+  ],
+  "commands": "./commands"
 }

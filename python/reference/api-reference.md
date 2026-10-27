@@ -209,7 +209,7 @@ video = coll.get_video(video_id)
 | `video.query(index_name, filter, limit, return_fields, sort, index_id)` | `SearchResult` | **(v2)** Exact structured filtering |
 | `video.aggregate(index_name, filter, group_by, metric, limit, sort, index_id)` | `dict\|list[dict]` | **(v2)** Counts, grouping, facets |
 | `video.legacy_search(query, search_type, index_type, ...)` | `SearchResult` | **(v1)** Search v1 indexes explicitly |
-| `video.index_spoken_words(language_code=None, force=False)` | `None` | **(v1)** Index speech for search. Use `force=True` to skip if already indexed. Still required for `add_subtitle()` and `CaptionAsset(src="auto")` |
+| `video.index_spoken_words(language_code=None, force=False)` | `None` | **(v1, legacy)** Index speech for `legacy_search()`. Not needed for `add_subtitle()` or `CaptionAsset(src="auto")`, which read the transcript from `generate_transcript()` |
 | `video.index_scenes(extraction_type, prompt, extraction_config, metadata, model_name, name, scenes, callback_url)` | `str` | **(v1)** Index visual scenes (returns scene_index_id) |
 | `video.index_visuals(prompt, batch_config, ...)` | `str` | **(v1)** Index visuals (returns scene_index_id) |
 | `video.index_audio(prompt, model_name, ...)` | `str` | **(v1)** Index audio with LLM (returns scene_index_id) |

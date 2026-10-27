@@ -1,66 +1,39 @@
 ---
 name: videodb
-description: See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- run analyzers over speech, scenes, objects, OCR, brands and activity; build searchable indexes; then search moments, ask questions about a video, filter and aggregate results with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
+description: Set up VideoDB and write code against the VideoDB Python SDK. Use for "setup videodb" or "/videodb setup", when the user wants Python code, a script or a notebook rather than a chat answer, for bulk uploading or indexing a folder or library of media, for sandbox compute with open-weight models, and for any video task that video-search, video-clips, video-subtitles, video-edit and video-live do not cover. Screen recording belongs to video-live, AI-generated music, voiceover, images or video to video-edit, and dubbing to video-subtitles.
 allowed-tools: Read Grep Glob
 argument-hint: "[task description]"
 ---
 
-# VideoDB Skill
+# VideoDB: setup and the Python SDK
 
-**Perception + memory + actions for video, live streams, and desktop sessions.**
+VideoDB runs video work on its servers: ingest, understand, index, search, clip, subtitle, compose, stream. This skill covers setup and the Python SDK. Five smaller skills cover the common jobs and should be used first when they match:
 
-Use this skill when you need to:
+| Job | Skill |
+|---|---|
+| Find a moment, ask a video, count what appears | `video-search` |
+| Clips, highlight reels, vertical cuts, MP4s | `video-clips` |
+| Transcripts, subtitles, translation | `video-subtitles` |
+| Music, overlays, captions, compositions | `video-edit` |
+| Cameras, live streams, meetings, screen capture | `video-live` |
 
-## 1) Desktop Perception
-- Start/stop a **desktop session** capturing **screen, mic, and system audio**
-- Stream **live context** and store **episodic session memory**
-- Run **real-time alerts/triggers** on what’s spoken and what's happening on screen
-- Produce **session summaries**, a searchable timeline, and **playable evidence links**
+## Which path
 
-## 2) Video ingest + stream
-- Ingest a **file or URL** and return a **playable web stream link**
-- Transcode/normalize: **codec, bitrate, fps, resolution, aspect ratio**
+1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `generate_clip`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. No install, no API key.
+2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, save it yourself to the project's `.env` (Setup, below), never print it, and continue with the SDK. In Claude Code, `/mcp` then authorizing the bundled videodb server also works.
+3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
 
-## 3) Understand + index + retrieve (timestamps + evidence)
-- **Understand**: run analyzers over speech, scenes, objects, OCR, brands, activity
-- **Index**: turn analyzer artifacts into semantic, filterable, and aggregatable indexes
-- **Retrieve**: search moments, ask questions, filter exactly, count and group — with **timestamps** and **playable evidence**
-- Auto-create **clips** from results
+The SDK path is also the only path for code, scripts, notebooks, desktop capture, AI generation, dubbing and sandbox compute, which the connector does not do. Talking to the user: never write "index", "indexed" or "indexing" in a reply; say "searchable".
 
-## 4) Timeline editing + generation
-- Subtitles: **generate**, **translate**, **burn-in**
-- Overlays: **text/image/branding**, motion captions
-- Audio: **background music**, **voiceover**, **dubbing**
-- Programmatic composition and exports via **timeline operations**
+Long connector jobs return `status: processing`. The reply carries an `output_url` and names the tool to poll (`poll_with`, or `retry_with` on older servers). Call that tool with the `output_url` until it is `done`; several `processing` replies in a row are normal (a 10-minute YouTube upload takes about five), and a `done` reply with an empty result means poll once more. Never re-run the write; that starts a second job.
 
-## 5) Live streams (RTSP) + monitoring
-- Connect **RTSP/live feeds**
-- Run **real-time visual and spoken understanding** and emit **events/alerts** for monitoring workflows
+## Outputs
 
----
-
-## Common inputs
-- Local **file path**, public **URL**, or **RTSP URL**
-- Desktop capture request: **start / stop / summarize session**
-- Desired operations: get context for understanding, transcode spec, index spec, search query, clip ranges, timeline edits, alert rules
-
-## Common outputs
-- **Stream URL** — make it playable: `https://console.videodb.io/player?url={STREAM_URL}`
-- Search results with **timestamps** and **evidence links**
+- **Stream URL**, playable at `https://console.videodb.io/player?url={STREAM_URL}`; connector tools also return a `player_url`
+- Search results with timestamps and playable evidence
 - Generated assets: subtitles, audio, images, clips
-- **Event/alert payloads** for live streams
-- Desktop **session summaries** and memory entries
-
----
-
-## Canonical prompts (examples)
-- “Start desktop capture and alert when a password field appears.”
-- “Record my session and produce an actionable summary when it ends.”
-- “Ingest this file and return a playable stream link.”
-- “Index this folder and find every scene with people, return timestamps.”
-- “Generate subtitles, burn them in, and add light background music.”
-- “Connect this RTSP URL and alert when a person enters the zone.”
-
+- Event and alert payloads for live streams
+- Desktop session summaries and searchable timelines
 
 ## Running Python code
 
@@ -116,14 +89,13 @@ The `>=0.5.0` pin matters — the understand/index/ask/aggregate APIs do not exi
 
 ### 2. Configure API key
 
-The user must set `VIDEO_DB_API_KEY` using **either** method:
+Ask the user for their VideoDB API key in one line: free at https://console.videodb.io, $20 of free credits, no credit card. When they give it to you, in chat or any other way, save it for them and keep going:
 
-- **Export in terminal (recommended)**: `export VIDEO_DB_API_KEY=your-key`
-- **Project `.env` file**: Save `VIDEO_DB_API_KEY=your-key` in the project's `.env` file
+- Write `VIDEO_DB_API_KEY=<key>` to the project's `.env` (create the file if needed) and make sure `.env` is listed in `.gitignore`.
+- Never print, echo, log or commit the key, and never send it anywhere except through the SDK.
+- If they prefer to set it themselves, `export VIDEO_DB_API_KEY=<key>` in the terminal also works.
 
-Get a free API key at https://console.videodb.io ($20 free credits, no credit card required).
-
-**Do NOT** read, write, or handle the API key yourself. Always let the user set it.
+Tell them what you saved and where, without repeating the key.
 
 ### 3. Authorize the hosted MCP server (Claude Code plugin only)
 
@@ -223,18 +195,17 @@ All five exist on `Collection` too, fanning out across every indexed video. See 
 ### Transcript + subtitle
 
 ```python
-# force=True skips the error if the video is already indexed
-video.index_spoken_words(force=True)
+video.generate_transcript()          # returns the existing transcript if there is one; force=True re-runs it
 text = video.get_transcript_text()
 stream_url = video.add_subtitle()
 ```
 
-`index_spoken_words()` is the correct call here even on 0.5.0 — `add_subtitle()` and `CaptionAsset(src="auto")` read the v1 spoken-word index. A v2 `spoken_words` artifact does not substitute for it. This is the one place v1 indexing is still the right answer.
+`add_subtitle()` and `CaptionAsset(src="auto")` read the video's transcript. `generate_transcript()` creates it, and a `spoken_words` analyzer run from `understand()` counts too. The legacy `index_spoken_words()` is not needed for subtitles or captions.
 
 ### Legacy indexing (existing codebases)
 
 ```python
-# v1 API — still supported in 0.5.0, not deprecated. New code should use the v2 path above.
+# v1 API, legacy. Only for codebases that already use it; new code uses understand() + index() above.
 from videodb import IndexType
 
 video.index_spoken_words(force=True)
@@ -376,7 +347,7 @@ except InvalidRequestError as e:
 | Semantic index on object detection | `use_for includes semantic but no scene has embeddable text` | Object artifacts have no top-level text. Omit `use_for` (it degrades automatically) or pass `["query", "aggregate"]` |
 | Indexing a field that does not exist | `fields.filter names not present in any scene's data` | The error lists the available field names — read it. Or check `index.field_schema` |
 | Search finds no matches | v2 returns an empty `SearchResponse`; only `legacy_search()` raises `InvalidRequestError: No results found` | Check `len(response)`. Wrap only legacy calls in try/except |
-| Indexing an already-indexed video (v1) | `Spoken word index for video already exists` | Use `video.index_spoken_words(force=True)` to skip if already indexed |
+| Legacy `index_spoken_words()` on an already-indexed video (v1) | `Spoken word index for video already exists` | Pass `force=True`, or drop the call: subtitles and captions only need `generate_transcript()` |
 | Reframe times out | Blocks indefinitely on long videos | Use `start`/`end` to limit segment, or pass `callback_url` for async |
 | Negative timestamps on Timeline | Silently produces broken stream | Always validate `start >= 0` before creating `VideoAsset` |
 | `generate_video()` / `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |
@@ -411,7 +382,7 @@ Legacy v1 indexing and search. These APIs still work and are not deprecated, but
 
 ## Screen Recording (Desktop Capture)
 
-Use `ws_listener.py` to capture WebSocket events during recording sessions. Desktop capture supports **macOS** only.
+Use `ws_listener.py` to capture WebSocket events during recording sessions. Desktop capture runs on **macOS** and **Windows**.
 
 `${CLAUDE_SKILL_DIR}` is this skill's install directory, set by Claude Code. On agents that do not set it, substitute the directory holding this SKILL.md.
 

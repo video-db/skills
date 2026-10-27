@@ -10,7 +10,7 @@
 
 ## Overview
 
-VideoDB Capture enables real-time screen and audio recording with AI processing. Desktop capture currently supports **macOS** only.
+VideoDB Capture enables real-time screen and audio recording with AI processing. Desktop capture runs on **macOS** and **Windows**.
 
 For code-level details (SDK methods, event structures, AI pipelines), see [capture-reference.md](capture-reference.md).
 
