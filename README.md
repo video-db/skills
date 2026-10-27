@@ -93,7 +93,7 @@ export VIDEO_DB_API_KEY=sk-xxx     # or VIDEO_DB_API_KEY=sk-xxx in .env
 | AI generation: images, video, music, voiceover | | ✓ |
 | Dubbing | | ✓ |
 | Open-weight models on sandbox compute | | ✓ |
-| Desktop screen, mic and system audio capture | | ✓ macOS only, agent running on your Mac |
+| Desktop screen, mic and system audio capture | | ✓ macOS and Windows, agent running on your computer |
 
 Every result comes back as a playable stream link (built-in CDN) or a download.
 

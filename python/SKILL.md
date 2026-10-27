@@ -382,7 +382,7 @@ Legacy v1 indexing and search. These APIs still work and are not deprecated, but
 
 ## Screen Recording (Desktop Capture)
 
-Use `ws_listener.py` to capture WebSocket events during recording sessions. Desktop capture supports **macOS** only.
+Use `ws_listener.py` to capture WebSocket events during recording sessions. Desktop capture runs on **macOS** and **Windows**.
 
 `${CLAUDE_SKILL_DIR}` is this skill's install directory, set by Claude Code. On agents that do not set it, substitute the directory holding this SKILL.md.
 
