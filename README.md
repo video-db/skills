@@ -7,27 +7,95 @@
 
 <img width="1200" height="372" alt="banner" src="https://github.com/user-attachments/assets/fdbf3879-dcd6-443c-93e0-9a7e1bfdfa90" />
 
-**Edit, clip, subtitle and search your videos in Claude.**
+**Edit, clip, subtitle and search video from any AI agent.**
 
-Works in **Claude** (web, desktop, mobile), **Cowork**, **Claude Code**, and in **Cursor**, **Codex** and other agents
+VideoDB does the video work on its servers. The agent asks for it in plain language.
 
-**[📚 Docs](https://docs.videodb.io)** &emsp; **[ Watch Demos ](https://www.youtube.com/playlist?list=PLhxAMFLSSK01IONxpqtEqj0UUQyFswiaR)**
+**[📚 Docs](https://docs.videodb.io)** &emsp; **[ Watch Demos ](https://www.youtube.com/playlist?list=PLhxAMFLSSK01IONxpqtEqj0UUQyFswiaR)** &emsp; **[Discord](https://discord.com/invite/py9P639jGz)**
 
 </div>
 
+## Three ways to use it
+
+| You are using | Do this | What you get |
+| --- | --- | --- |
+| **Claude** (web, desktop, mobile), Cowork, Claude Code | [Add to Claude](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory), one click, log in to VideoDB when asked | The skills below plus the VideoDB connector. Paste a YouTube link and ask. No install, no API key. |
+| **Any MCP client or chatbot** (Cursor, Claude Code, ChatGPT, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams, meeting recording. |
+| **A coding agent with a shell** (Claude Code, Cursor, Codex, Copilot, others) | `npx skills add video-db/skills` | The skills teach the agent the VideoDB Python SDK, so it can write and run code: everything the connector does, plus local files, AI generation, dubbing, sandbox compute and desktop capture. |
+
+A free VideoDB account comes with $20 of credits, no credit card: [console.videodb.io](https://console.videodb.io).
+
 ## Add to Claude
 
-One click from the [Claude plugin directory](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory) adds VideoDB to Claude. Log in to your VideoDB account when Claude asks ($20 of free credits, no credit card), then paste a YouTube link and ask for what you want. No install, no API key to copy.
-
-Try these:
+One click from the [Claude plugin directory](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory). Then try:
 
 - "Upload https://www.youtube.com/watch?v=MnrJzXM7a6o and give me a shareable link"
-- "Find every moment where they talk about pricing, and give me one clip of those moments"
+- "Find where they talk about pricing and give me one clip of it"
 - "Cut 1:10 to 1:40, make it vertical for Shorts, and burn in white subtitles on a black box"
 - "Which objects appear most often in this video? Break it down by count"
 - "Ask this video what the presenter said about pricing, and show me the clips"
 - "Give me the timestamped transcript, then translate it to Spanish"
 - "Here is the RTSP link for my camera. Alert this webhook whenever a person enters the room"
+
+In Claude chat and Cowork the skills use the VideoDB connector, which the plugin sets up. In Claude Code they can also use the Python SDK.
+
+## Connect the MCP server in any client
+
+Endpoint: `https://mcp.videodb.io/mcp` (Streamable HTTP). Your client asks you to log in to your VideoDB account once.
+
+- **Claude** (custom connector): Settings → Connectors → Add custom connector, paste the URL, click Connect.
+- **Claude Code**: `claude mcp add --transport http videodb https://mcp.videodb.io/mcp`, then `/mcp` to authorize.
+- **Cursor** (Settings → MCP → Add new global MCP server):
+
+  ```json
+  { "mcpServers": { "videodb": { "url": "https://mcp.videodb.io/mcp" } } }
+  ```
+
+- **Other clients**: any client that speaks Streamable HTTP and OAuth works the same way. Full guide and the tool reference: [docs.videodb.io/pages/mcp](https://docs.videodb.io/pages/mcp/index).
+
+The MCP server takes public URLs and YouTube links, not local files; it does not generate media or dub, and it cannot capture a desktop. For those, use the SDK through a coding agent.
+
+## Install the skills in a coding agent
+
+```bash
+npx skills add video-db/skills
+```
+
+Works with Claude Code, Cursor, Codex, Copilot and other agents that read `SKILL.md` files. Or, in Claude Code, install the plugin, which bundles the MCP server as well:
+
+```bash
+/plugin marketplace add video-db/skills
+/plugin install videodb@videodb-skills
+```
+
+Then say "setup videodb" (in Claude Code: `/videodb:setup`). The agent installs the SDK (Python 3.9+, `videodb>=0.5.0`), asks for your [API key](https://console.videodb.io) and saves it to the project's `.env` for you. If you would rather set it yourself:
+
+```bash
+export VIDEO_DB_API_KEY=sk-xxx     # or VIDEO_DB_API_KEY=sk-xxx in .env
+```
+
+`npx skills add` installs the skills only. To give the agent the MCP tools as well, connect the server as above.
+
+## What works where
+
+| Capability | Claude chat and any MCP client | Coding agent with the SDK |
+| --- | :---: | :---: |
+| Upload from a YouTube link or public URL | ✓ | ✓ |
+| Upload a local file | | ✓ |
+| Transcripts, subtitles, translation | ✓ | ✓ |
+| Find a moment, ask a video, count what appears | ✓ | ✓ |
+| Clips, highlight reels, supercuts, thumbnails, MP4 | ✓ | ✓ |
+| Vertical and square cuts for Shorts, Reels, TikTok | ✓ | ✓ |
+| Timeline edits: music, overlays, captions, transitions | ✓ | ✓ |
+| Transcode and reframe on the server | ✓ | ✓ |
+| Live streams (RTSP, RTMP, HLS) with alerts | ✓ | ✓ |
+| Record a Zoom, Google Meet or Teams meeting | ✓ | ✓ |
+| AI generation: images, video, music, voiceover | | ✓ |
+| Dubbing | | ✓ |
+| Open-weight models on sandbox compute | | ✓ |
+| Desktop screen, mic and system audio capture | | ✓ macOS only, agent running on your Mac |
+
+Every result comes back as a playable stream link (built-in CDN) or a download.
 
 ## What is inside
 
@@ -36,75 +104,21 @@ Try these:
 | `video-search` | Find a moment, ask a video a question, count what appears, search a whole library |
 | `video-clips` | Clips of a time range, highlight reels from a prompt, supercuts, vertical cuts, thumbnails, MP4s |
 | `video-subtitles` | Transcripts, burned-in subtitles with styling, translation |
-| `video-edit` | Background music, voiceover, text and logo overlays, captions, compositions |
+| `video-edit` | Background music, voiceover, text and logo overlays, animated captions, compositions |
 | `video-live` | Cameras and live streams with alerts, meeting recording, desktop screen capture |
-| `videodb` | Setup, the Python SDK, AI generation, dubbing, sandbox compute |
+| `videodb` | Setup, the Python SDK reference, AI generation, dubbing, sandbox compute |
 
-Plus the hosted MCP server at `https://mcp.videodb.io/mcp` (89 tools) and four slash commands for Claude Code: `/videodb:setup`, `/videodb:find`, `/videodb:clip`, `/videodb:subtitles`.
+Four slash commands for Claude Code: `/videodb:setup`, `/videodb:find`, `/videodb:clip`, `/videodb:subtitles`. The plugin also carries the hosted MCP server configuration (`.mcp.json`).
 
-In Claude chat and Cowork the skills use the VideoDB connector, which the plugin sets up. In Claude Code they use the bundled MCP server and the Python SDK, so code, scripts, desktop capture and AI generation work there too.
+### If you are an agent reading this
 
-## Install in Claude Code, Cursor, Codex and other agents
-
-```bash
-npx skills add video-db/skills
-```
-
-Or as a Claude Code plugin, which also bundles the MCP server:
-
-```bash
-/plugin marketplace add video-db/skills
-/plugin install videodb@videodb-skills
-```
-
-After installing the plugin, run `/mcp`, select videodb, and authorize in the browser. Then ask Claude to "list my VideoDB collections" to verify. The MCP tools need no local Python and no API key. `npx skills add` installs the skills only; see the [MCP setup guide](https://docs.videodb.io/pages/mcp/connect) to add the server by URL, and the [privacy policy](https://videodb.io/legal/privacy).
-
-### SDK setup (for code, scripts, capture and generation)
-
-```
-/videodb:setup
-```
-
-Requires Python 3.9+ and VideoDB Python SDK 0.5.0 or newer. The agent installs the SDK, asks you to set your [API key](https://console.videodb.io) ($20 of free credits, no credit card), and verifies the connection. In Cursor, Codex and other agents, say "setup videodb".
-
-```bash
-# Recommended: export in the terminal
-export VIDEO_DB_API_KEY=sk-xxx
-
-# Or add to your project's .env file
-VIDEO_DB_API_KEY=sk-xxx
-```
-
-## Capability
-
-VideoDB is the server-side video stack for agents and apps. Send video in, get back structured context, searchable moments and playable streams, with no ffmpeg glue on your side.
-
-| Capability              | What it unlocks                                                               |
-| ----------------------- | ----------------------------------------------------------------------------- |
-| **Upload**              | Ingest video from YouTube, URLs, or local files                               |
-| **Understand**          | Run analyzers (speech, scenes, objects, OCR, brands, activity) into reusable artifacts |
-| **Search**              | Find exact moments by speech, scenes, or metadata, return playable evidence   |
-| **Ask & Analyze**       | Get grounded answers with evidence, filter on exact fields, aggregate counts and facets |
-| **Transcripts**         | Generate clean, timestamped transcripts from any video                        |
-| **Subtitles**           | Auto generate subtitles, then style and burn in or export                     |
-| **Edit**                | Trim, merge, clip, overlay text, images, audio, plus dubbing and translation  |
-| **Transcode / Reframe** | Change resolution, quality, aspect ratio, and social crops, all on the server |
-| **Stream**              | Get instant playable HLS links (built in CDN) for anything you ingest or generate |
-| **Capture**             | Capture desktop screen, mic, and system audio for realtime processing (SDK, macOS) |
-| **Context**             | Generate realtime structured context for any RTSP feed or desktop stream      |
-| **AI Generate**         | Create images, video, music, sound effects, and voiceovers from text (SDK)    |
-| **Sandbox Compute**     | Run open-weight models (Gemma, Qwen, Whisper, OmniVoice, FLUX, RT-DETR) on managed GPU sandboxes (SDK) |
-
-See → Understand → Act, as an API, for video and audio.
-
-**Supported platforms:** macOS, Linux, Windows (PowerShell)
-
----
+Use the VideoDB connector tools when they are present. Load the skill that matches the job (the table above). With a shell and no connector, ask the user for their API key once, save it to `.env`, and use the Python SDK as the `videodb` skill describes. Long jobs return `status: processing`; poll with the tool the reply names until `done`, and never re-run the write.
 
 ## Community & Support
 
 - **Documentation:** [docs.videodb.io](https://docs.videodb.io)
 - **Discord:** [Join our community](https://discord.com/invite/py9P639jGz)
+- **Privacy policy:** [videodb.io/legal/privacy](https://videodb.io/legal/privacy)
 
 <div align="center">
 

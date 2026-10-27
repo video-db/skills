@@ -97,7 +97,8 @@ rd = (ROOT / "README.md").read_text()
 ok(rd.lstrip().startswith("[![Add to Claude]"), "README starts with the Add to Claude badge")
 ok("claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3" in rd, "README links the directory listing")
 ok("$20" in rd and "50 uploads" not in rd, "README states $20 free credits and no 50-uploads claim")
-ok(rd.index("## Add to Claude") < rd.index("## Install in Claude Code"), "README: Add to Claude section comes before the install section")
+ok(rd.index("## Add to Claude") < rd.index("## Install the skills in a coding agent"), "README: Add to Claude section comes before the install section")
+ok("https://mcp.videodb.io/mcp" in rd and "## What works where" in rd, "README: MCP endpoint and the what-works-where table are present")
 
 # --- connector tool names used in skills exist in the documented tool list --
 doc_tools = set((ROOT / "tests/connector_tools.txt").read_text().split())
