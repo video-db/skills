@@ -1,1 +1,0 @@
-{{file:fixtures/transcript.json}}
