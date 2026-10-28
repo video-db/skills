@@ -71,7 +71,7 @@ Works with Claude Code, Cursor, Codex, Copilot and other agents that read `SKILL
 Then say "setup videodb" (in Claude Code: `/videodb:setup`). The agent installs the SDK (Python 3.9+, `videodb>=0.5.0`), asks for your [API key](https://console.videodb.io) and saves it to the project's `.env` for you. If you would rather set it yourself:
 
 ```bash
-export VIDEO_DB_API_KEY=sk-xxx     # or VIDEO_DB_API_KEY=sk-xxx in .env
+export VIDEO_DB_API_KEY=<your-key>     # or VIDEO_DB_API_KEY=<your-key> in .env
 ```
 
 `npx skills add` installs the skills only. To give the agent the MCP tools as well, connect the server as above.
