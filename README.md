@@ -114,6 +114,16 @@ Four slash commands for Claude Code: `/videodb:setup`, `/videodb:find`, `/videod
 
 Use the VideoDB connector tools when they are present. Load the skill that matches the job (the table above). With a shell and no connector, ask the user for their API key once, save it to `.env`, and use the Python SDK as the `videodb` skill describes. Long jobs return `status: processing`; poll with the tool the reply names until `done`, and never re-run the write.
 
+## Privacy and data
+
+The plugin itself collects nothing. It has no hooks and sends no telemetry. The video work happens on VideoDB's servers, so these things leave your machine:
+
+- **Connector (claude.ai, Cowork, Claude Code):** your requests, and the video links you share, go to `https://mcp.videodb.io/mcp` after you sign in to VideoDB.
+- **Python SDK (coding agents):** the SDK sends your requests, the files and links you upload, and your API key to `https://api.videodb.io`. The key is saved only in your project's `.env` file.
+- **Live capture and meetings:** desktop screen and audio, camera streams, and meeting recordings stream to VideoDB only after you start them.
+
+Everything you upload or record is stored in your VideoDB account and processed to give you results. It isn't sold. Data travels over TLS and is stored in the United States. Video file data is kept for 180 days. VideoDB is not for children under 13. The full details are in our [Privacy Policy](https://videodb.io/legal/privacy) and [Terms](https://videodb.io/legal/terms). Questions go to [support@videodb.io](mailto:support@videodb.io).
+
 ## Community & Support
 
 - **Documentation:** [docs.videodb.io](https://docs.videodb.io)

@@ -9,7 +9,7 @@
       "name": "videodb",
       "displayName": "VideoDB",
       "description": "Edit, clip, subtitle and search your videos in Claude. Find any moment by what was said or shown, then turn it into a shareable clip. Works with uploads, YouTube links, live streams and screen recordings.",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "category": "development",
       "keywords": [
         "video",

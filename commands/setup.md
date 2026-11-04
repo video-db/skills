@@ -1,5 +1,5 @@
 ---
-description: Set up VideoDB in this project: SDK, API key and the hosted MCP server, then verify the connection
+description: "Set up VideoDB in this project: SDK, API key and the hosted MCP server, then verify the connection"
 ---
 
 First check what is already there:
