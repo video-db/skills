@@ -9,7 +9,7 @@
       "name": "videodb",
       "displayName": "VideoDB",
       "description": "Let Claude watch, search and clip your videos. Find the exact moment in any YouTube link or video in your library by what was said or shown, and turn it into a playable clip, a captioned edit or a shot list.",
-      "version": "1.4.1",
+      "version": "1.5.0",
       "category": "ai",
       "keywords": [
         "watch video",
