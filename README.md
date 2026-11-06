@@ -110,7 +110,7 @@ Every result comes back as a playable stream link (built-in CDN) or a download.
 | `get-started` | What VideoDB can do, with prompts to try built from your library |
 | `videodb` | Setup, the Python SDK reference, AI generation, dubbing, sandbox compute |
 
-Slash commands for Claude Code: `/videodb:start`, `/videodb:watch`, `/videodb:last`, `/videodb:find`, `/videodb:clip`, `/videodb:subtitles`, `/videodb:setup`. The plugin also carries the hosted MCP server configuration (`.mcp.json`).
+Slash commands for Claude Code: `/videodb:start`, `/videodb:watch`, `/videodb:find`, `/videodb:clip`, `/videodb:subtitles`, `/videodb:setup`. The plugin also carries the hosted MCP server configuration (`.mcp.json`).
 
 ### If you are an agent reading this
 
