@@ -3,7 +3,7 @@ description: Find a moment in a video or ask it a question. Usage - /videodb:fin
 argument-hint: "<video> <query or question>"
 ---
 
-Find what the user is looking for by following the `video-search` skill. Prefer the VideoDB connector tools when they are present; with no connector on the user's own computer, offer `/mcp` first and the Python SDK second. Never use the SDK in a Claude chat or Cowork sandbox.
+Find what the user is looking for by following the `video-search` skill. Prefer the VideoDB connector tools when they are present; with no connector in Claude Code or another coding agent, offer the connector first (`authenticate` or `/mcp`) and the Python SDK second. Never use the SDK in a Claude chat or Cowork sandbox.
 
 Input: $ARGUMENTS
 

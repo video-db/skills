@@ -12,6 +12,8 @@ Offer two or three looks by name and recommend one. Never show colour codes. Uns
 | Minimal | Clean edits, ads | `font_size=22, primary_colour="&H00FFFFFF", outline=1, shadow=1, border_style="outline", alignment="bottom_center"` |
 | Karaoke | Word-by-word highlight | Not `add_subtitles`: `render_timeline` with a caption asset, `animation: "karaoke"` (the `video-edit` skill). The video must be transcribed first. |
 
+`margin_v` is the caption's distance from the bottom edge, not time padding; Bold social's 220 lifts captions above the app's buttons on vertical video.
+
 Colours are ASS `&HAABBGGRR`: `&H00FFFFFF` opaque white, `&H80000000` half-transparent black, `&H0000FFFF` yellow. A user who asks for a colour by name gets the matching code; they never see the code.
 
 Say after the result: "I used the <look> look. Want <other look> instead?"

@@ -8,8 +8,8 @@ description: Find every moment in a video that matches a description, or ask que
 ## Which path
 
 1. **VideoDB tools present** (names such as `upload_media`, `search_video`, `ask_video`, `understand_video`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. Install nothing and never ask for an API key.
-2. **No VideoDB tools, on the user's own computer** (Claude Code, or another coding agent with a shell): offer both ways, the connector first. Connector: in Claude Code, run `/mcp` and authorize videodb; another agent adds `https://mcp.videodb.io/mcp`. It needs no key. Python SDK: ask the user to add `VIDEO_DB_API_KEY=...` to the project's `.env` themselves (free at https://console.videodb.io, $20 of credits, no card). Never ask for the key in chat and never accept one pasted there; if one appears, tell the user to rotate it at the console. For the SDK, continue with the Python SDK path at the end of this file.
-3. **No VideoDB tools in Claude chat or Cowork**, even when you can run code there: that is a sandbox, and the user's API key never goes into it, so the connector is the only way. Reply only: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and sign in (free, no card). Then send this again and I'll take it from there." If VideoDB is connected but switched off in this chat, say instead: "VideoDB is connected but switched off in this chat. Click + → Connectors, switch it on, then send this again."
+2. **No VideoDB tools, in Claude Code (on a computer or on the web) or another coding agent:** offer the connector first; it needs no key. If a VideoDB `authenticate` tool is present, call it and give the user the sign-in link it returns. Otherwise, in Claude Code, have the user run `/mcp` and authorize videodb; another agent adds `https://mcp.videodb.io/mcp`. Python SDK second: ask the user to add `VIDEO_DB_API_KEY=...` to the project's `.env` themselves (free at https://console.videodb.io, $20 of credits, no card). Never ask for the key in chat and never accept one pasted there; if one appears, tell the user to rotate it at the console. For the SDK, continue with the Python SDK path at the end of this file.
+3. **No VideoDB tools in Claude chat or Cowork** (the apps with Settings → Connectors), even when you can run code there: that is a sandbox, and the user's API key never goes into it, so the connector is the only way. Reply only: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and sign in (free, no card). Then send this again and I'll take it from there." If VideoDB is connected but switched off in this chat, say instead: "VideoDB is connected but switched off in this chat. Click + → Connectors, switch it on, then send this again."
 
 ## Defaults (use them; do not ask)
 
@@ -38,14 +38,9 @@ Long jobs return `status: processing` with an `output_url` and the tool to poll 
 | Nothing matches | Say so plainly. Offer the nearest moment, labelled as such, or a narrower query. Never stretch a loose match. |
 | Anything you can't fix | Say plainly what didn't work and what the user can do instead, then report it to VideoDB (below). |
 
-**Tell VideoDB what fell short.** With the connector, call `submit_feedback` whenever this chat shows something the VideoDB team should hear, even if you worked around it:
-
-- a call failed, or returned something other than what its description promised (`error`, `wrong_result`);
-- the user wanted something no tool can do (`missing_capability`);
-- a tool's inputs or behaviour confused you, or took a retry to get right (`confusing_tool`);
-- a job ran far longer than the user could wait, or the user was unhappy or suggested how VideoDB could work better (`other`).
-
-Fill it from the chat; do not stop to ask. Put the user's goal, what was expected, and what happened (the calls, the error, how long it took). Describe the task, never the user's content: no transcripts, names or file contents. One call per distinct issue, then keep helping. Don't announce it; if the user made the suggestion, say "I've passed that on to the VideoDB team."
+**Tell VideoDB what fell short.** With the connector, call `submit_feedback` when this chat shows something the VideoDB team should know, even if you worked around it: a failed or wrong result, something no tool can do, a confusing tool, a job far slower than the user could wait, or a suggestion or complaint from the user.
+Send it after the job is delivered, one call per issue and at most three per chat. Fill it from the chat without asking, and describe the task, never the user's content.
+Then tell the user in one line: "I've sent the VideoDB team a note about <the issue> (no video content)."
 
 ## With the connector tools
 
@@ -101,7 +96,7 @@ Say what actually happened, not what you planned.
 
 ## Deliver
 
-Make one clip of the matches: `generate_clip(video_id, timeline=[[start, end], ...])` for one video or `compile_clips` across videos. Search and transcript times sit tight on the words, so where a range would start or end mid-word or mid-action, widen that side by 1 to 2 seconds of the source video; leave clean edges alone, and merge ranges that now overlap; poll, then lead with the `player_url` on its own line. Then each moment as `start` to `end` in mm:ss with the words that matched. Name the defaults you used in one sentence. Then offer two next jobs as short phrases the user can send back: "Add captions to this clip", "Search my whole library for this".
+Make one clip of the matches: `generate_clip(video_id, timeline=[[start, end], ...])` for one video or `compile_clips` across videos. Before cutting, check each range's edges: search times sit tight on the words, so widen a side by 1 to 2 seconds only where it would start or end mid-word or mid-action, and merge ranges that then overlap. Poll the clip, then lead with the `player_url` on its own line. Then each moment as `start` to `end` in mm:ss with the words that matched. Name the defaults you used in one sentence. Then offer two next jobs as short phrases the user can send back: "Add captions to this clip", "Search my whole library for this".
 
 After the first job that worked in this chat, add one line: "It's saved in your VideoDB library. Next time, say 'What's in my VideoDB library?' and I'll start from here." Only once per chat.
 
