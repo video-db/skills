@@ -3,7 +3,7 @@ description: Cut a clip or highlight reel from a video. Usage - /videodb:clip <Y
 argument-hint: "<video> <range or prompt>"
 ---
 
-Make the clip the user asked for by following the `video-clips` skill. Prefer the VideoDB connector tools when they are present; fall back to the Python SDK only in a shell with no connector.
+Make the clip the user asked for by following the `video-clips` skill. Prefer the VideoDB connector tools when they are present; with no connector on the user's own computer, offer `/mcp` first and the Python SDK second. Never use the SDK in a Claude chat or Cowork sandbox.
 
 Input: $ARGUMENTS
 

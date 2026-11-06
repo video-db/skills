@@ -114,7 +114,7 @@ Slash commands for Claude Code: `/videodb:start`, `/videodb:watch`, `/videodb:fi
 
 ### If you are an agent reading this
 
-Use the VideoDB connector tools when they are present. Load the skill that matches the job (the table above). With a shell and no connector, ask the user to add their API key to `.env` themselves (never through the chat), and use the Python SDK as the `videodb` skill describes. Long jobs return `status: processing`; poll with the tool the reply names until `done`, and never re-run the write.
+Use the VideoDB connector tools when they are present. Load the skill that matches the job (the table above). With no connector on the user's own computer, offer the connector first (`/mcp` in Claude Code) and the Python SDK second: the user adds their API key to `.env` themselves (never through the chat), then follow the `videodb` skill. In Claude chat or Cowork, a code sandbox does not count as a shell: the connector is the only way there, and no API key goes into it. Long jobs return `status: processing`; poll with the tool the reply names until `done`, and never re-run the write.
 
 ## Privacy and data
 

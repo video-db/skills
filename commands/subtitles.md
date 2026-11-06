@@ -3,7 +3,7 @@ description: Burn subtitles into a video, or get its transcript. Usage - /videod
 argument-hint: "<video> [style or language]"
 ---
 
-Subtitle or transcribe the video by following the `video-subtitles` skill. Prefer the VideoDB connector tools when they are present; fall back to the Python SDK only in a shell with no connector.
+Subtitle or transcribe the video by following the `video-subtitles` skill. Prefer the VideoDB connector tools when they are present; with no connector on the user's own computer, offer `/mcp` first and the Python SDK second. Never use the SDK in a Claude chat or Cowork sandbox.
 
 Input: $ARGUMENTS
 
