@@ -96,7 +96,7 @@ Say what actually happened, not what you planned.
 
 ## Deliver
 
-Make one clip of the matches: `generate_clip(video_id, timeline=[[start, end], ...])` for one video or `compile_clips` across videos. Before cutting, check each range's edges: search times sit tight on the words, so widen a side by 1 to 2 seconds only where it would start or end mid-word or mid-action, and merge ranges that then overlap. Poll the clip, then lead with the `player_url` on its own line. Then each moment as `start` to `end` in mm:ss with the words that matched. Name the defaults you used in one sentence. Then offer two next jobs as short phrases the user can send back: "Add captions to this clip", "Search my whole library for this".
+Make one clip of the matches: `generate_clip(video_id, timeline=[[start, end], ...])` for one video or `compile_clips` across videos. Before cutting, check each range's edges against the transcript; search times sit tight on the words, so if an edge cuts off a word or an action, nudge it out by a second or two. Poll the clip, then lead with the `player_url` on its own line. Then each moment as `start` to `end` in mm:ss with the words that matched. Name the defaults you used in one sentence. Then offer two next jobs as short phrases the user can send back: "Add captions to this clip", "Search my whole library for this".
 
 After the first job that worked in this chat, add one line: "It's saved in your VideoDB library. Next time, say 'What's in my VideoDB library?' and I'll start from here." Only once per chat.
 

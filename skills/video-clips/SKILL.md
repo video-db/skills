@@ -18,7 +18,7 @@ description: Cut clips and highlights from a video. Use when the user wants a cl
 - Shorts, Reels, TikTok: 9:16, smart crop on the speaker. These platforms take clips up to about 3 minutes (TikTok longer). Most work best under a minute; go longer when the material is informative enough to hold it. Vertical cuts are slow; say so before starting. Other platforms: `references/platform-presets.md`.
 - When you chose the length or the moments, say the plan in one line before starting, then start: "Making a 50-second Reel from the four strongest moments. Tell me if you want it shorter or longer."
 - Captions: a named platform turns them on in that platform's look; skip them only if the user says no captions. Otherwise add them when asked, in the Clean look. Settings for both looks: `references/platform-presets.md`.
-- Clip edges: transcript and search times sit tight on the words, so a cut exactly there can clip the first or last word or end mid-gesture. Where a range would start or end abruptly, widen that side by 1 to 2 seconds of the source video; where it already starts and ends cleanly, leave it. This widens the cut range, not the caption timing. Never widen into the next topic or past the video's ends, and merge ranges that now overlap.
+- Clip edges, a suggestion rather than a rule: search and transcript times sit tight on the words, so check where each cut starts and ends against the transcript. If an edge cuts off a word or a gesture, nudge it out by a second or two; if it lands cleanly, keep it. This is about the cut, not caption timing.
 
 Name the defaults you used in one sentence after the result. Ask a question only if you cannot tell which video they mean.
 
