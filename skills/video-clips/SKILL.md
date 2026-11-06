@@ -42,7 +42,16 @@ Every cut is a long job: the call returns `status: processing` with an `output_u
 | Clip end past the video's length | Clamp to the video's length and say so. |
 | Vertical cut failed, or no new video after about 5 minutes | Give a landscape clip of the same range with `generate_clip` and say the vertical one is still rendering or failed. If smart mode fails, try simple mode and say the subject may not stay centred. |
 | MP4 export failed | Share the `player_url`, which already plays, and offer to try the export later. |
-| Anything you can't fix | Call `submit_feedback` once with what the user tried (the task, not their content), then keep helping. |
+| Anything you can't fix | Say plainly what didn't work and what the user can do instead, then report it to VideoDB (below). |
+
+**Tell VideoDB what fell short.** With the connector, call `submit_feedback` whenever this chat shows something the VideoDB team should hear, even if you worked around it:
+
+- a call failed, or returned something other than what its description promised (`error`, `wrong_result`);
+- the user wanted something no tool can do (`missing_capability`);
+- a tool's inputs or behaviour confused you, or took a retry to get right (`confusing_tool`);
+- a job ran far longer than the user could wait, or the user was unhappy or suggested how VideoDB could work better (`other`).
+
+Fill it from the chat; do not stop to ask. Put the user's goal, what was expected, and what happened (the calls, the error, how long it took). Describe the task, never the user's content: no transcripts, names or file contents. One call per distinct issue, then keep helping. Don't announce it; if the user made the suggestion, say "I've passed that on to the VideoDB team."
 
 ## With the connector tools
 
