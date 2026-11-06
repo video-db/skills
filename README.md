@@ -20,7 +20,7 @@ VideoDB does the video work on its servers. The agent asks for it in plain langu
 | You are using | Do this | What you get |
 | --- | --- | --- |
 | **Claude** (web, desktop, mobile), Cowork, Claude Code | [Add to Claude](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory), one click, log in to VideoDB when asked | The skills below plus the VideoDB connector. Paste a YouTube link and ask. No install, no API key. |
-| **Any MCP client or chatbot** (Cursor, Claude Code, ChatGPT, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams, meeting recording. |
+| **Any MCP client or chatbot** (Cursor, Claude Code, ChatGPT, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams. |
 | **A coding agent with a shell** (Claude Code, Cursor, Codex, Copilot, others) | `npx skills add video-db/skills` | The skills teach the agent the VideoDB Python SDK, so it can write and run code: everything the connector does, plus local files, AI generation, dubbing, sandbox compute and desktop capture. |
 
 A free VideoDB account comes with $20 of credits, no credit card: [console.videodb.io](https://console.videodb.io).
@@ -68,7 +68,7 @@ Works with Claude Code, Cursor, Codex, Copilot and other agents that read `SKILL
 /plugin install videodb@videodb-skills
 ```
 
-Then say "setup videodb" (in Claude Code: `/videodb:setup`). The agent installs the SDK (Python 3.9+, `videodb>=0.5.0`), asks for your [API key](https://console.videodb.io) and saves it to the project's `.env` for you. If you would rather set it yourself:
+Then say "setup videodb" (in Claude Code: `/videodb:setup`). The agent installs the SDK (Python 3.9+, `videodb>=0.5.0`), and asks you to add your [API key](https://console.videodb.io) to the project's `.env`. The key never goes through the chat:
 
 ```bash
 export VIDEO_DB_API_KEY=<your-key>     # or VIDEO_DB_API_KEY=<your-key> in .env
@@ -89,7 +89,6 @@ export VIDEO_DB_API_KEY=<your-key>     # or VIDEO_DB_API_KEY=<your-key> in .env
 | Timeline edits: music, overlays, captions, transitions | ✓ | ✓ |
 | Transcode and reframe on the server | ✓ | ✓ |
 | Live streams (RTSP, RTMP, HLS) with alerts | ✓ | ✓ |
-| Record a Zoom, Google Meet or Teams meeting | ✓ | ✓ |
 | AI generation: images, video, music, voiceover | | ✓ |
 | Dubbing | | ✓ |
 | Open-weight models on sandbox compute | | ✓ |
@@ -101,18 +100,20 @@ Every result comes back as a playable stream link (built-in CDN) or a download.
 
 | Skill | Use it for |
 | --- | --- |
-| `video-search` | Find a moment, ask a video a question, count what appears, search a whole library |
+| `video-watch` | Watch a video: summaries, "what did they say about", what is on screen, shot lists, ad breakdowns |
+| `video-search` | Find every moment about a topic and clip them, count what appears, ask a whole library |
 | `video-clips` | Clips of a time range, highlight reels from a prompt, supercuts, vertical cuts, thumbnails, MP4s |
 | `video-subtitles` | Transcripts, burned-in subtitles with styling, translation |
 | `video-edit` | Background music, voiceover, text and logo overlays, animated captions, compositions |
-| `video-live` | Cameras and live streams with alerts, meeting recording, desktop screen capture |
+| `video-live` | Cameras and live streams with alerts, desktop screen capture |
+| `get-started` | What VideoDB can do, with prompts to try built from your library |
 | `videodb` | Setup, the Python SDK reference, AI generation, dubbing, sandbox compute |
 
-Four slash commands for Claude Code: `/videodb:setup`, `/videodb:find`, `/videodb:clip`, `/videodb:subtitles`. The plugin also carries the hosted MCP server configuration (`.mcp.json`).
+Slash commands for Claude Code: `/videodb:start`, `/videodb:watch`, `/videodb:find`, `/videodb:clip`, `/videodb:subtitles`, `/videodb:setup`. The plugin also carries the hosted MCP server configuration (`.mcp.json`).
 
 ### If you are an agent reading this
 
-Use the VideoDB connector tools when they are present. Load the skill that matches the job (the table above). With a shell and no connector, ask the user for their API key once, save it to `.env`, and use the Python SDK as the `videodb` skill describes. Long jobs return `status: processing`; poll with the tool the reply names until `done`, and never re-run the write.
+Use the VideoDB connector tools when they are present. Load the skill that matches the job (the table above). With no connector in Claude Code or another coding agent, offer the connector first (a VideoDB `authenticate` tool if present, else `/mcp` in Claude Code) and the Python SDK second: the user adds their API key to `.env` themselves (never through the chat), then follow the `videodb` skill. In Claude chat or Cowork, a code sandbox does not count as a shell: the connector is the only way there, and no API key goes into it. Long jobs return `status: processing`; poll with the tool the reply names until `done`, and never re-run the write.
 
 ## Privacy and data
 
@@ -120,7 +121,7 @@ The plugin itself collects nothing. It has no hooks and sends no telemetry. The 
 
 - **Connector (claude.ai, Cowork, Claude Code):** your requests, and the video links you share, go to `https://mcp.videodb.io/mcp` after you sign in to VideoDB.
 - **Python SDK (coding agents):** the SDK sends your requests, the files and links you upload, and your API key to `https://api.videodb.io`. The key is saved only in your project's `.env` file.
-- **Live capture and meetings:** desktop screen and audio, camera streams, and meeting recordings stream to VideoDB only after you start them.
+- **Live capture:** desktop screen and audio, and camera streams, stream to VideoDB only after you start them.
 
 Everything you upload or record is stored in your VideoDB account and processed to give you results. It isn't sold. Data travels over TLS and is stored in the United States. Video file data is kept for 180 days. VideoDB is not for children under 13. The full details are in our [Privacy Policy](https://videodb.io/legal/privacy) and [Terms](https://videodb.io/legal/terms). Questions go to [support@videodb.io](mailto:support@videodb.io).
 
