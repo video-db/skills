@@ -17,7 +17,7 @@ description: Cut clips and highlights from a video. Use when the user wants a cl
 - Highlight reel with no length or number of moments: choose both from the material, one reel, prompt "the most compelling, high-energy moments, with a strong opening" (put the user's own words first if they gave any).
 - Shorts, Reels, TikTok: 9:16, smart crop on the speaker. These platforms take clips up to about 3 minutes (TikTok longer). Most work best under a minute; go longer when the material is informative enough to hold it. Vertical cuts are slow; say so before starting. Other platforms: `references/platform-presets.md`.
 - When you chose the length or the moments, say the plan in one line before starting, then start: "Making a 50-second Reel from the four strongest moments. Tell me if you want it shorter or longer."
-- Captions with no style: the Clean look (the `video-subtitles` skill).
+- Captions: a named platform turns them on in that platform's look; skip them only if the user says no captions. Otherwise add them when asked, in the Clean look. Settings for both looks: `references/platform-presets.md`.
 - Clip edges: transcript and search times sit tight on the words, so a cut exactly there can clip the first or last word or end mid-gesture. Where a range would start or end abruptly, widen that side by 1 to 2 seconds of the source video; where it already starts and ends cleanly, leave it. This widens the cut range, not the caption timing. Never widen into the next topic or past the video's ends, and merge ranges that now overlap.
 
 Name the defaults you used in one sentence after the result. Ask a question only if you cannot tell which video they mean.
@@ -66,14 +66,14 @@ Notes that save a retry:
 
 - `create_highlight_clip` matches spoken content by default and returns an empty `shots` list on a video whose speech is not transcribed. Transcribe first. It returns shots, not a stream; render them with `compile_clips`.
 - `reframe_video` is slow. Always pass `start` and `end` for the segment the user wants. It saves a new video in the collection; subtitles or further cuts go on that new `m-` id. On some servers the first `done` reply carries only a `reframe_id` and the new video appears later: keep polling the same `output_url` and check `list_videos` for a new entry.
-- Subtitles on the clip: reframe first, then `generate_transcript` on the new video, then `add_subtitles` (the `video-subtitles` skill).
+- Captions on the clip: reframe first, then `generate_transcript` on the new video and poll until `done`, then `add_subtitles(video_id, ...)` with the look's settings from `references/platform-presets.md`. `add_subtitles` returns the captioned `player_url` at once.
 - Timestamps the user gives as mm:ss are converted to seconds before any call.
 
 ## Before you share
 
 - The length matches the plan within one second; if not, say the real length first.
 - A vertical result reports 9:16 at the expected size.
-- If captions were asked for, they cover the whole clip.
+- If captions were asked for or a platform turned them on, they cover the whole clip.
 
 Say what actually happened, not what you planned.
 

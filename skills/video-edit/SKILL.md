@@ -19,7 +19,7 @@ Do not fall back to ffmpeg, moviepy or local encoding for anything below; it all
 
 - A promo or edit with no length: choose one that fits the footage, often about 30 seconds. Say the planned length in one line before rendering and invite a change. A length or clips the user named are used exactly.
 - Captions with no style: `animation: "box_highlight"`.
-- Vertical for social: `resolution="1080x1920"`, clip `fit: "crop"`.
+- Shorts, Reels or TikTok: `resolution="1080x1920"`, clip `fit: "crop"`, and captions on (`box_highlight`, sized for vertical) unless the user says no captions. Transcribe the source first.
 - Share the `player_url`; export an MP4 only when the user asks for a file.
 
 Name the defaults you used in one sentence after the result. Ask a question only if you cannot tell which footage they mean. Ask once, with a one-sentence plan, before bringing in a source over 20 minutes that is not yet in the library, or exporting an MP4 of more than 5 minutes.

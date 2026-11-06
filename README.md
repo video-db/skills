@@ -89,7 +89,6 @@ export VIDEO_DB_API_KEY=<your-key>     # or VIDEO_DB_API_KEY=<your-key> in .env
 | Timeline edits: music, overlays, captions, transitions | ✓ | ✓ |
 | Transcode and reframe on the server | ✓ | ✓ |
 | Live streams (RTSP, RTMP, HLS) with alerts | ✓ | ✓ |
-| Record a Zoom, Google Meet or Teams meeting | | ✓ |
 | AI generation: images, video, music, voiceover | | ✓ |
 | Dubbing | | ✓ |
 | Open-weight models on sandbox compute | | ✓ |
@@ -106,7 +105,7 @@ Every result comes back as a playable stream link (built-in CDN) or a download.
 | `video-clips` | Clips of a time range, highlight reels from a prompt, supercuts, vertical cuts, thumbnails, MP4s |
 | `video-subtitles` | Transcripts, burned-in subtitles with styling, translation |
 | `video-edit` | Background music, voiceover, text and logo overlays, animated captions, compositions |
-| `video-live` | Cameras and live streams with alerts, meeting recording, desktop screen capture |
+| `video-live` | Cameras and live streams with alerts, desktop screen capture |
 | `get-started` | What VideoDB can do, with prompts to try built from your library |
 | `videodb` | Setup, the Python SDK reference, AI generation, dubbing, sandbox compute |
 
@@ -122,7 +121,7 @@ The plugin itself collects nothing. It has no hooks and sends no telemetry. The 
 
 - **Connector (claude.ai, Cowork, Claude Code):** your requests, and the video links you share, go to `https://mcp.videodb.io/mcp` after you sign in to VideoDB.
 - **Python SDK (coding agents):** the SDK sends your requests, the files and links you upload, and your API key to `https://api.videodb.io`. The key is saved only in your project's `.env` file.
-- **Live capture and meetings:** desktop screen and audio, camera streams, and meeting recordings stream to VideoDB only after you start them.
+- **Live capture:** desktop screen and audio, and camera streams, stream to VideoDB only after you start them.
 
 Everything you upload or record is stored in your VideoDB account and processed to give you results. It isn't sold. Data travels over TLS and is stored in the United States. Video file data is kept for 180 days. VideoDB is not for children under 13. The full details are in our [Privacy Policy](https://videodb.io/legal/privacy) and [Terms](https://videodb.io/legal/terms). Questions go to [support@videodb.io](mailto:support@videodb.io).
 

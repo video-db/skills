@@ -15,7 +15,7 @@ VideoDB runs video work on its servers: ingest, understand, index, search, clip,
 | Clips, highlight reels, vertical cuts, MP4s | `video-clips` |
 | Transcripts, subtitles, translation | `video-subtitles` |
 | Music, overlays, captions, compositions | `video-edit` |
-| Cameras, live streams, meetings, screen capture | `video-live` |
+| Cameras, live streams, screen capture | `video-live` |
 
 ## Which path
 

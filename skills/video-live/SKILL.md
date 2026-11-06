@@ -1,9 +1,9 @@
 ---
 name: video-live
-description: "Live video and screen recording. Use when the user wants to connect a camera or live stream (RTSP, RTMP, HLS), watch it for an event and get alerted, search or play back what a stream showed, join and record a Zoom, Google Meet or Teams meeting that is happening now, or record their desktop screen and audio and get a summary or searchable timeline of that session. A recording that already exists as a file is a normal video: use video-search to ask about it."
+description: "Live video and screen recording. Use when the user wants to connect a camera or live stream (RTSP, RTMP, HLS), watch it for an event and get alerted, search or play back what a stream showed, or record their desktop screen and audio and get a summary or searchable timeline of that session. A recording that already exists as a file is a normal video: use video-search to ask about it."
 ---
 
-# Live streams, meetings and screen capture
+# Live streams and screen capture
 
 ## Which path
 
@@ -27,8 +27,6 @@ Talking to the user: no tool names, ids, job names or "index" in a reply; say "s
 Spoken words on a stream: `index_rtstream_audio(rtstream_id)`; read the live text with `get_rtstream_transcript`.
 
 **Search and play back.** `search_rtstream(rtstream_id, query)` over the indexed records; `get_rtstream_scenes(rtstream_id, scene_index_id, start, end)` to read descriptions for a window. Timestamps are Unix seconds. `get_rtstream_stream(rtstream_id, start, end)` returns a playable `player_url` for a window. `export_rtstream_recording(rtstream_id, name)` turns the latest recording into a regular video, after which the `video-search`, `video-clips` and `video-subtitles` skills apply.
-
-**Record a meeting.** Not available in chat. In Claude Code, the SDK does it: `coll.record_meeting(meeting_url, bot_name="VideoDB Notetaker")` (`${CLAUDE_PLUGIN_ROOT}/python/reference/api-reference.md`). In chat, say so in one line and offer to work on a recording the user already has.
 
 Long jobs return `status: processing`. The reply carries an `output_url` and names the tool to poll (`poll_with`, or `retry_with` on older servers). Call that tool with the `output_url` until it is `done`; several `processing` replies in a row are normal (a 10-minute YouTube upload takes about five), and a `done` reply with an empty result means poll once more. Never re-run the write; that starts a second job.
 
