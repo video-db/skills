@@ -17,7 +17,7 @@ Do not fall back to ffmpeg, moviepy or local encoding for anything below; it all
 
 ## Defaults (use them; do not ask)
 
-- A promo or edit with no length: 30 seconds.
+- A promo or edit with no length: choose one that fits the footage, often about 30 seconds. Say the planned length in one line before rendering and invite a change. A length or clips the user named are used exactly.
 - Captions with no style: `animation: "box_highlight"`.
 - Vertical for social: `resolution="1080x1920"`, clip `fit: "crop"`.
 - Share the `player_url`; export an MP4 only when the user asks for a file.

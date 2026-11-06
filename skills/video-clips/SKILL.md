@@ -13,8 +13,10 @@ description: Cut clips and highlights from a video. Use when the user wants a cl
 
 ## Defaults (use them; do not ask)
 
-- Highlight reel with no length: 30 seconds, one reel, prompt "the most compelling, high-energy moments, with a strong opening" (put the user's own words first if they gave any).
-- Shorts, Reels, TikTok: 30 to 45 seconds, never over 60 unless asked; 9:16, smart crop on the speaker. Vertical cuts are slow; say so before starting. Other platforms: `references/platform-presets.md`.
+- What the user gave wins: a length, ranges or moments they named are used exactly.
+- Highlight reel with no length or number of moments: choose both from the material, one reel, prompt "the most compelling, high-energy moments, with a strong opening" (put the user's own words first if they gave any).
+- Shorts, Reels, TikTok: 9:16, smart crop on the speaker. These platforms take clips up to about 3 minutes (TikTok longer). Most work best under a minute; go longer when the material is informative enough to hold it. Vertical cuts are slow; say so before starting. Other platforms: `references/platform-presets.md`.
+- When you chose the length or the moments, say the plan in one line before starting, then start: "Making a 50-second Reel from the four strongest moments. Tell me if you want it shorter or longer."
 - Captions with no style: the Clean look (the `video-subtitles` skill).
 - 1 to 2 seconds of padding on each side of a moment.
 
