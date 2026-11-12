@@ -14,7 +14,6 @@ Requires `videodb>=0.5.0`.
 - Timeline & Editor (assets and styles)
 - Video Search Parameters
 - Search Response Objects
-- Meeting Object
 - RTStream & Capture
 - Enums & Constants (SearchType, IndexCapability, FieldGroup, SceneExtractionType)
 - Exceptions
@@ -42,7 +41,6 @@ conn = videodb.connect(
 | `conn.update_collection(id, name, description)` | `Collection` | Update a collection |
 | `conn.check_usage()` | `dict` | Get account usage stats |
 | `conn.upload(source, media_type, name, ...)` | `Video\|Audio\|Image` | Upload to default collection |
-| `conn.record_meeting(meeting_url, bot_name, ...)` | `Meeting` | Record a meeting |
 | `conn.create_capture_session(...)` | `CaptureSession` | Create a capture session (see [capture-reference.md](capture-reference.md)) |
 | `conn.youtube_search(query, result_threshold, duration)` | `list[dict]` | Search YouTube |
 | `conn.transcode(source, callback_url, mode, ...)` | `str` | Transcode video (returns job ID) |
@@ -147,7 +145,6 @@ coll = conn.get_collection()
 | `coll.generate_voice(text, voice_name="Default")` | `Audio` | Generate speech from text |
 | `coll.generate_text(prompt, model_name="basic", response_type="text")` | `dict` | LLM text generation — access result via `["output"]` |
 | `coll.dub_video(video_id, language_code)` | `Video` | Dub video into another language |
-| `coll.record_meeting(meeting_url, bot_name, ...)` | `Meeting` | Record a live meeting |
 | `coll.create_capture_session(...)` | `CaptureSession` | Create a capture session (see [capture-reference.md](capture-reference.md)) |
 | `coll.get_capture_session(...)` | `CaptureSession` | Retrieve capture session (see [capture-reference.md](capture-reference.md)) |
 | `coll.connect_rtstream(url, name, ...)` | `RTStream` | Connect to a live stream (see [rtstream-reference.md](rtstream-reference.md)) |
@@ -600,40 +597,6 @@ Returned by `semantic_search()`, `query()`, and `legacy_search()`.
 |--------|---------|-------------|
 | `shot.generate_stream()` | `str` | Stream this specific shot |
 | `shot.play()` | `str` | Open shot stream in browser |
-
-## Meeting Object
-
-```python
-meeting = coll.record_meeting(
-    meeting_url="https://meet.google.com/...",
-    bot_name="Bot",
-    callback_url=None,          # Webhook URL for status updates
-    callback_data=None,         # Optional dict passed through to callbacks
-    time_zone="UTC",            # Time zone for the meeting
-)
-```
-
-### Meeting Properties
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `meeting.id` | `str` | Unique meeting ID |
-| `meeting.collection_id` | `str` | Parent collection ID |
-| `meeting.status` | `str` | Current status |
-| `meeting.video_id` | `str` | Recorded video ID (after completion) |
-| `meeting.bot_name` | `str` | Bot name |
-| `meeting.meeting_title` | `str` | Meeting title |
-| `meeting.meeting_url` | `str` | Meeting URL |
-| `meeting.speaker_timeline` | `dict` | Speaker timeline data |
-| `meeting.is_active` | `bool` | True if initializing or processing |
-| `meeting.is_completed` | `bool` | True if done |
-
-### Meeting Methods
-
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `meeting.refresh()` | `Meeting` | Refresh data from server |
-| `meeting.wait_for_status(target_status, timeout=14400, interval=120)` | `bool` | Poll until status reached |
 
 ## RTStream & Capture
 
