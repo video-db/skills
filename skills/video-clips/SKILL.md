@@ -72,7 +72,7 @@ Notes that save a retry:
 ## Before you share
 
 - The length matches the plan within one second; if not, say the real length first.
-- A vertical result reports 9:16 at the expected size.
+- A vertical result is 9:16: read its width and height, never assume 1080x1920.
 - If captions were asked for or a platform turned them on, they cover the whole clip.
 
 Say what actually happened, not what you planned.

@@ -18,8 +18,8 @@ Do not fall back to ffmpeg, moviepy or local encoding for anything below; it all
 ## Defaults (use them; do not ask)
 
 - A promo or edit with no length: choose one that fits the footage, often about 30 seconds. Say the planned length in one line before rendering and invite a change. A length or clips the user named are used exactly.
-- Captions with no style: `animation: "box_highlight"`.
-- Shorts, Reels or TikTok: `resolution="1080x1920"`, clip `fit: "crop"`, and captions on (`box_highlight`, sized for vertical) unless the user says no captions. Transcribe the source first.
+- Captions with no style: the Box Highlight preset. Presets by name and their fields: `references/caption-presets.md`. Always pass a preset's `secondary_color`; left unset, the highlighted word turns red.
+- Shorts, Reels or TikTok: `resolution="1080x1920"`, clip `fit: "crop"`, and captions on in the TikTok Classic preset unless the user says no captions. Transcribe the source first.
 - Share the `player_url`; export an MP4 only when the user asks for a file.
 
 Name the defaults you used in one sentence after the result. Ask a question only if you cannot tell which footage they mean. Ask once, with a one-sentence plan, before bringing in a source over 20 minutes that is not yet in the library, or exporting an MP4 of more than 5 minutes.
@@ -57,7 +57,7 @@ Then tell the user in one line: "I've sent the VideoDB team a note about <the is
 | Background music at 20% | `{"type": "audio", "id": "a-...", "volume": 0.2}` on its own track |
 | A title or lower-third | `{"type": "text", "text": "Launch day", "font": {"size": 64, "color": "#FFFFFF"}, "background": {"color": "#000000", "opacity": 0.6, "border_width": 12}}` with clip `fit: "contain"` and `position: "bottom"` |
 | A logo or image | `{"type": "image", "id": "img-..."}` with clip `scale: 0.2`, `position: "top_right"`, `opacity: 0.9` |
-| Captions from speech | `{"type": "caption", "src": "auto", "animation": "box_highlight"}`; the video must already be transcribed (`generate_transcript`, or a `spoken_words` analyzer run) or the render shows no captions and no error |
+| Captions from speech | `{"type": "caption", "src": "auto", ...}` with a preset's fields from `references/caption-presets.md`; the video must already be transcribed (`generate_transcript`, or a `spoken_words` analyzer run) or the render shows no captions and no error |
 | A fade between clips | clip `transition: {"in": "fade", "out": "fade", "duration": 0.5}` |
 | Vertical for social | `resolution="1080x1920"`, clip `fit: "crop"` |
 

@@ -54,7 +54,7 @@ Then tell the user in one line: "I've sent the VideoDB team a note about <the is
 2. `add_subtitles(video_id, ...)` with the settings of the chosen look. It returns a `stream_url` and a `player_url` at once; it is not a job.
 3. An MP4 file: `download_stream(stream_url, name="...")`, poll, then share the download link.
 
-Style options on `add_subtitles`: `font_name`, `font_size` (8 to 72, default 18, too small for 720p and above; use 24 or more), `bold`, `italic`, `alignment` (`bottom_center` default, `top_center`, `middle_center`, ...), `border_style` (`outline`, `opaque_box` or `no_border`), `primary_colour`, `back_colour`, `outline`, `outline_colour`, `shadow`, `margin_l`, `margin_r`, `margin_v`.
+Style options on `add_subtitles`: `font_name`, `font_size` (8 to 72, default 18), `bold`, `italic`, `alignment` (`bottom_center` default, `top_center`, `middle_center`, ...), `border_style` (`outline`, `opaque_box` or `no_border`), `primary_colour`, `back_colour`, `outline`, `outline_colour`, `shadow`, `margin_l`, `margin_r`, `margin_v`. Size, outline and margins are on a 288-line canvas scaled to the frame height, not pixels of the video (`references/caption-looks.md`).
 
 **Animated or karaoke captions, or captions on a composed video.** Use the `video-edit` skill's `render_timeline` with a `caption` asset (`src: "auto"`, `animation: "karaoke"`). The video must already be transcribed, or the render comes back with no captions and no error.
 
@@ -87,8 +87,8 @@ conn = videodb.connect(); coll = conn.get_collection()
 video = coll.upload(url="https://www.youtube.com/watch?v=VIDEO_ID")
 video.generate_transcript()
 print(video.get_transcript_text())
-stream_url = video.add_subtitle(SubtitleStyle(font_size=26, bold=True, primary_colour="&H00FFFFFF",
+stream_url = video.add_subtitle(SubtitleStyle(font_size=16, bold=True, primary_colour="&H00FFFFFF",
                                               back_colour="&H80000000", border_style=SubtitleBorderStyle.opaque_box,
-                                              alignment=SubtitleAlignment.bottom_center, margin_v=40))
+                                              alignment=SubtitleAlignment.bottom_center, margin_v=12))
 print(f"https://console.videodb.io/player?url={stream_url}")
 ```
