@@ -1,4 +1,5 @@
 ---
+name: setup
 description: "Set up VideoDB in this project: SDK, API key and the hosted MCP server, then verify the connection"
 ---
 
