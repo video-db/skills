@@ -1,4 +1,5 @@
 [![Add to Claude](https://img.shields.io/badge/Add%20to%20Claude-VideoDB-D97757?style=for-the-badge&logo=claude&logoColor=white)](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory)
+[![Add to ChatGPT](https://img.shields.io/badge/Add%20to%20ChatGPT-VideoDB-10A37F?style=for-the-badge)](https://videodb.io/chatgpt?ref=skills)
 [![License][license-shield]][license-url]
 [![GitHub stars](https://img.shields.io/github/stars/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/stargazers)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fvideodb.io%2F&style=for-the-badge&label=videodb.io)](https://videodb.io)
@@ -15,12 +16,13 @@ VideoDB does the video work on its servers. The agent asks for it in plain langu
 
 </div>
 
-## Three ways to use it
+## Four ways to use it
 
 | You are using | Do this | What you get |
 | --- | --- | --- |
 | **Claude** (web, desktop, mobile), Cowork, Claude Code | [Add to Claude](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory), one click, log in to VideoDB when asked | The skills below plus the VideoDB connector. Paste a YouTube link and ask. No install, no API key. |
-| **Any MCP client or chatbot** (Cursor, Claude Code, ChatGPT, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams, meeting recording. |
+| **ChatGPT** | [Add to ChatGPT](https://videodb.io/chatgpt?ref=skills), one click, log in to VideoDB when asked | The VideoDB tools in your ChatGPT conversations. Paste a YouTube link and ask. No install, no API key. |
+| **Any other MCP client** (Cursor, Claude Code, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams, meeting recording. |
 | **A coding agent with a shell** (Claude Code, Cursor, Codex, Copilot, others) | `npx skills add video-db/skills` | The skills teach the agent the VideoDB Python SDK, so it can write and run code: everything the connector does, plus local files, AI generation, dubbing, sandbox compute and desktop capture. |
 
 A free VideoDB account comes with $20 of credits, no credit card: [console.videodb.io](https://console.videodb.io).
@@ -38,6 +40,10 @@ One click from the [Claude plugin directory](https://claude.ai/customize/plugins
 - "Here is the RTSP link for my camera. Alert this webhook whenever a person enters the room"
 
 In Claude chat and Cowork the skills use the VideoDB connector, which the plugin sets up. In Claude Code they can also use the Python SDK.
+
+## Add to ChatGPT
+
+One click from the [VideoDB plugin page in ChatGPT](https://videodb.io/chatgpt?ref=skills). Log in to VideoDB when ChatGPT asks, then try the same prompts as above.
 
 ## Connect the MCP server in any client
 
@@ -78,7 +84,7 @@ export VIDEO_DB_API_KEY=<your-key>     # or VIDEO_DB_API_KEY=<your-key> in .env
 
 ## What works where
 
-| Capability | Claude chat and any MCP client | Coding agent with the SDK |
+| Capability | Claude, ChatGPT and any MCP client | Coding agent with the SDK |
 | --- | :---: | :---: |
 | Upload from a YouTube link or public URL | ✓ | ✓ |
 | Upload a local file | | ✓ |
