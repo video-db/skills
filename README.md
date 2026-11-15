@@ -97,6 +97,8 @@ export VIDEO_DB_API_KEY=<your-key>     # or VIDEO_DB_API_KEY=<your-key> in .env
 
 Every result comes back as a playable stream link (built-in CDN) or a download.
 
+Recording a meeting here sends a bot to the call. To record with no bot, [Call.md](https://github.com/video-db/call.md) is a Mac app by VideoDB that records the call from your own computer, with the same VideoDB account.
+
 ## What is inside
 
 | Skill | Use it for |
