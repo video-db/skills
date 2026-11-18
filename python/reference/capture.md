@@ -6,7 +6,7 @@
 - Quick Start
 - Complete Capture Workflow (13 steps, listener to export)
 - Shutdown Sequence
-- Scripts
+- Event Listener
 
 ## Overview
 

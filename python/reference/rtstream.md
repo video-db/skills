@@ -14,7 +14,7 @@ For code-level details (SDK methods, parameters, examples), see [rtstream-refere
 - RTStream Sources
 - Understanding & Indexing (v2)
 - Legacy RTStream indexing (v1)
-- Scripts
+- Event Listener
 
 ## Use Cases
 
