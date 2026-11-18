@@ -1,7 +1,7 @@
 ---
 name: videodb
 description: Set up VideoDB and write code against the VideoDB Python SDK. Use for "setup videodb" or "/videodb setup", when the user wants Python code, a script or a notebook rather than a chat answer, for bulk uploading or indexing a folder or library of media, for sandbox compute with open-weight models, and for any video task that video-search, video-clips, video-subtitles, video-edit and video-live do not cover. Screen recording belongs to video-live, AI-generated music, voiceover, images or video to video-edit, and dubbing to video-subtitles.
-allowed-tools: Read Grep Glob
+allowed-tools: Read, Grep, Glob
 argument-hint: "[task description]"
 ---
 
