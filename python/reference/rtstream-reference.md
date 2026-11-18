@@ -635,7 +635,7 @@ All real-time AI results are delivered via WebSocket. Pass `ws_connection_id` to
 | `audio_index` | `index_audio()` | Audio analysis results |
 | `alert` | `create_alert()` | Alert notifications |
 
-For WebSocket event structures and ws_listener usage, see [capture-reference.md](capture-reference.md).
+For WebSocket event structures and the event listener, see [capture-reference.md](capture-reference.md).
 
 ---
 

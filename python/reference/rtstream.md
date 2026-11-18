@@ -122,8 +122,6 @@ For full signatures and class properties, see [rtstream-reference.md](rtstream-r
 
 ---
 
-## Scripts
+## Event Listener
 
-| Script | Description |
-|--------|-------------|
-| `${CLAUDE_SKILL_DIR}/scripts/ws_listener.py` | WebSocket event listener for real-time AI results |
+To receive real-time AI results over WebSocket, use the listener in [capture-reference.md](capture-reference.md#event-persistence).

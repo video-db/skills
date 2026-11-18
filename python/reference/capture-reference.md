@@ -7,7 +7,7 @@ Code-level details for VideoDB capture sessions. For workflow guide, see [captur
 ## Contents
 
 - WebSocket Events (channels, lifecycle events, event structures)
-- Event Persistence (ws_listener usage, JSONL format, reading events)
+- Event Persistence (event listener code, JSONL format, reading events)
 - WebSocket Connection
 - CaptureSession
 - CaptureClient
@@ -19,7 +19,7 @@ Code-level details for VideoDB capture sessions. For workflow guide, see [captur
 
 Real-time events from capture sessions and AI pipelines. No webhooks or polling required.
 
-Use `${CLAUDE_SKILL_DIR}/scripts/ws_listener.py` to connect and dump events to `/tmp/videodb_events.jsonl`.
+Use the event listener in [Event Persistence](#event-persistence) to connect and dump events to `/tmp/videodb_events.jsonl`.
 
 ### Event Channels
 
@@ -124,29 +124,82 @@ Use `${CLAUDE_SKILL_DIR}/scripts/ws_listener.py` to connect and dump events to `
 
 ## Event Persistence
 
-Use `ws_listener.py` to dump all WebSocket events to a JSONL file for later analysis.
+Save this listener as `videodb_ws_listener.py` in the user's project. It dumps every WebSocket event to a JSONL file for later analysis.
+
+```python
+# videodb_ws_listener.py: run from the project root so load_dotenv() finds .env
+import asyncio, json, os, signal, sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
+import videodb
+
+args = sys.argv[1:]
+clear = "--clear" in args
+out = Path(next((a for a in args if not a.startswith("-")), os.environ.get("VIDEODB_EVENTS_DIR", "/tmp")))
+out.mkdir(parents=True, exist_ok=True)
+events, ws_id_file, pid_file = out / "videodb_events.jsonl", out / "videodb_ws_id", out / "videodb_ws_pid"
+
+
+async def listen():
+    first, backoff, failures = True, 1, 0
+    while failures < 10:
+        try:
+            ws = await videodb.connect().connect_websocket().connect()
+            if first:
+                if clear:
+                    events.unlink(missing_ok=True)
+                print(f"WS_ID={ws.connection_id}", flush=True)
+            first, backoff, failures = False, 1, 0
+            ws_id_file.write_text(ws.connection_id)
+            async for msg in ws.receive():
+                now = datetime.now(timezone.utc)
+                msg["ts"], msg["unix_ts"] = now.isoformat(), now.timestamp()
+                with open(events, "a") as f:
+                    f.write(json.dumps(msg) + "\n")
+        except Exception as e:
+            failures += 1
+            print(f"Connection error: {e}; retrying in {backoff}s", flush=True)
+            await asyncio.sleep(backoff)
+            backoff = min(backoff * 2, 60)
+
+
+async def main():
+    stop = asyncio.Event()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        asyncio.get_running_loop().add_signal_handler(sig, stop.set)
+    task = asyncio.create_task(listen())
+    await asyncio.wait([task, asyncio.create_task(stop.wait())], return_when=asyncio.FIRST_COMPLETED)
+    task.cancel()
+
+
+pid_file.write_text(str(os.getpid()))
+try:
+    asyncio.run(main())
+finally:
+    pid_file.unlink(missing_ok=True)
+```
 
 ### Start Listener and Get WebSocket ID
 
+Run it from the project root, so `.env` and its `VIDEO_DB_API_KEY` are found:
+
 ```bash
 # Start with --clear to clear old events (recommended for new sessions)
-python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --clear --cwd=<PROJECT_ROOT> &
+python videodb_ws_listener.py --clear &
 
 # Append to existing events (for reconnects)
-python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --cwd=<PROJECT_ROOT> &
+python videodb_ws_listener.py &
+
+# Custom output directory, as an argument or via environment variable
+python videodb_ws_listener.py --clear /path/to/output &
+VIDEODB_EVENTS_DIR=/path/to/output python videodb_ws_listener.py --clear &
 ```
 
-`--cwd=<PROJECT_ROOT>` loads `.env` from the given path instead of the current working directory. This ensures the correct API key is found regardless of where the script is launched from.
-
-Or specify a custom output directory:
-
-```bash
-python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --clear --cwd=<PROJECT_ROOT> /path/to/output &
-# Or via environment variable:
-VIDEODB_EVENTS_DIR=/path/to/output python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --clear --cwd=<PROJECT_ROOT> &
-```
-
-The script outputs `WS_ID=<connection_id>` on the first line, then listens indefinitely.
+The listener prints `WS_ID=<connection_id>` on the first line, then listens until stopped.
 
 **Get the ws_id:**
 ```bash
@@ -170,11 +223,10 @@ kill $(cat /tmp/videodb_ws_pid)
 - `videodb_events.jsonl` - All events
 - `videodb_ws_pid` - Process ID for easy termination
 
-**Features:**
-- `--clear` flag to clear events file on start (use for new sessions)
-- Auto-reconnect with exponential backoff on connection drops
-- Graceful shutdown on SIGINT/SIGTERM
-- Connection status logging
+**Behaviour:**
+- `--clear` clears the events file on start (use for new sessions)
+- Reconnects with exponential backoff when the connection drops, up to 10 failures in a row
+- Shuts down cleanly on SIGINT/SIGTERM and removes the PID file
 
 ### JSONL Format
 
