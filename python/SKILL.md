@@ -354,7 +354,7 @@ except InvalidRequestError as e:
 
 ## Additional docs
 
-Reference documentation is in `${CLAUDE_SKILL_DIR}/reference/`. Read files there with that prefix; the links below are relative to this SKILL.md.
+Reference documentation is in `${CLAUDE_SKILL_DIR}/reference/`. Read files there with that prefix; the links below are relative to this SKILL.md. `${CLAUDE_SKILL_DIR}` is set by Claude Code; on agents that do not set it, use the directory holding this SKILL.md.
 
 - [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
 - [reference/indexing.md](reference/indexing.md) - Understand → index pipeline: analyzers, artifacts, segmentation, field configuration
@@ -382,13 +382,11 @@ Legacy v1 indexing and search. These APIs still work and are not deprecated, but
 
 ## Screen Recording (Desktop Capture)
 
-Use `ws_listener.py` to capture WebSocket events during recording sessions. Desktop capture runs on **macOS** and **Windows**.
-
-`${CLAUDE_SKILL_DIR}` is this skill's install directory, set by Claude Code. On agents that do not set it, substitute the directory holding this SKILL.md.
+Use an event listener to capture WebSocket events during recording sessions. Desktop capture runs on **macOS** and **Windows**.
 
 ### Quick Start
 
-1. **Start listener**: `python "${CLAUDE_SKILL_DIR}/scripts/ws_listener.py" --cwd=<PROJECT_ROOT> &`
+1. **Start listener**: save the listener from [reference/capture-reference.md](reference/capture-reference.md#event-persistence) as `videodb_ws_listener.py` in the project, then run `python videodb_ws_listener.py --clear &` from the project root
 2. **Get WebSocket ID**: `cat /tmp/videodb_ws_id`
 3. **Run capture code** (see reference/capture.md for full workflow)
 4. **Events written to**: `/tmp/videodb_events.jsonl`
@@ -408,10 +406,6 @@ cutoff = time.time() - 300
 recent_visual = [e for e in events 
                  if e.get("channel") == "visual_index" and e["unix_ts"] > cutoff]
 ```
-
-### Utility Scripts
-
-- `${CLAUDE_SKILL_DIR}/scripts/ws_listener.py` - WebSocket event listener (dumps to JSONL)
 
 For complete capture workflow, see [reference/capture.md](reference/capture.md).
 
