@@ -1,8 +1,8 @@
 [![Add to Claude](https://img.shields.io/badge/Add%20to%20Claude-VideoDB-D97757?style=for-the-badge&logo=claude&logoColor=white)](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory)
 [![Add to ChatGPT](https://img.shields.io/badge/Add%20to%20ChatGPT-VideoDB-10A37F?style=for-the-badge)](https://videodb.io/chatgpt?ref=skills)
-[![License][license-shield]][license-url]
-[![GitHub stars](https://img.shields.io/github/stars/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/stargazers)
+[![Discord](https://img.shields.io/badge/dynamic/json?style=for-the-badge&url=https://discord.com/api/invites/py9P639jGz?with_counts=true&query=$.approximate_member_count&logo=discord&logoColor=blue&color=green&label=discord)](https://discord.com/invite/py9P639jGz)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fvideodb.io%2F&style=for-the-badge&label=videodb.io)](https://videodb.io)
+[![GitHub stars](https://img.shields.io/github/stars/video-db/skills.svg?style=for-the-badge)](https://github.com/video-db/skills/stargazers)
 
 <div align="center">
 
@@ -141,6 +141,3 @@ Everything you upload or record is stored in your VideoDB account and processed 
 Made with ❤️ by the VideoDB team
 
 </div>
-
-[license-shield]: https://img.shields.io/github/license/video-db/skills.svg?style=for-the-badge
-[license-url]: https://github.com/video-db/skills/blob/main/LICENSE
