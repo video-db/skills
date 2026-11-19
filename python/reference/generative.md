@@ -100,7 +100,7 @@ video = coll.generate_video(model="heygen", image_url=face_url, config=HeyGenCon
 
 | `HeyGenConfig` field | Values |
 |---|---|
-| `voice` | Exact voice name; `HeyGenConfig.voices` has 12 starters, all 102 at `HeyGenConfig.docs` |
+| `voice` | Exact voice name; `HeyGenConfig.voices` has 12 starters, all 102 at https://docs.videodb.io/api-reference/generation/models/heygen (`HeyGenConfig.docs`) |
 | `audio_id` | User's audio to lip-sync; not with `voice` |
 | `talking_style` | `HeyGenConfig.talking_styles`: `"stable"` (default), `"expressive"` |
 | `expression` | `"happy"` |
