@@ -142,7 +142,7 @@ coll = conn.get_collection()
 | `coll.aggregate(index_name, filter, group_by, metric, limit, sort, index_id)` | `dict\|list[dict]` | **(v2)** Counts, grouping, facets |
 | `coll.legacy_search(query, search_type, index_type, namespace, scene_index_id, ...)` | `SearchResult` | **(v1)** Search v1 indexes (semantic only; keyword and scene raise `NotImplementedError`) |
 | `coll.generate_image(prompt, aspect_ratio="1:1")` | `Image` | Generate image with AI |
-| `coll.generate_video(prompt=None, duration=5, model=None, image_url=None, reference_images=None, aspect_ratio=None, resolution=None, config=None)` | `Video` | Generate video with AI; `model="heygen"` + `HeyGenConfig` for talking avatars (`videodb>=0.5.2`) |
+| `coll.generate_video(prompt=None, duration=5, model=None, image_url=None, reference_images=None, aspect_ratio=None, resolution=None, config=None, image_id=None)` | `Video` | Generate video with AI; `model="heygen"` + `HeyGenConfig` for talking avatars (`videodb>=0.5.2`); `image_id` needs `videodb>=0.5.3` |
 | `coll.generate_music(prompt, duration=5)` | `Audio` | Generate music with AI |
 | `coll.generate_sound_effect(prompt, duration=2)` | `Audio` | Generate sound effect |
 | `coll.generate_voice(text, voice_name="Default")` | `Audio` | Generate speech from text |
