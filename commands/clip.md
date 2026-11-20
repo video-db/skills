@@ -1,4 +1,5 @@
 ---
+name: clip
 description: Cut a clip or highlight reel from a video. Usage - /videodb:clip <YouTube link, URL or m- id> <mm:ss-mm:ss | "highlights of ...">
 argument-hint: "<video> <range or prompt>"
 ---

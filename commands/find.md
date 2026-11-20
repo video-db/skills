@@ -1,4 +1,5 @@
 ---
+name: find
 description: Find a moment in a video or ask it a question. Usage - /videodb:find <YouTube link, URL or m- id> <what to look for, or a question>
 argument-hint: "<video> <query or question>"
 ---
