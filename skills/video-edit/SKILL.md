@@ -1,6 +1,6 @@
 ---
 name: video-edit
-description: Edit and compose video on a timeline. Use when the user wants to add background music, a voiceover or another audio track, put text, a logo or an image overlay on a video, join several videos or images into one with fades or other transitions, add animated or word-by-word karaoke captions, change the resolution or aspect ratio of a composition, or generate music, voiceover, images or video with AI for a composition. Static subtitles with a chosen font and position belong to video-subtitles.
+description: Edit and compose video on a timeline. Use when the user wants to add background music, a voiceover or another audio track, put text, a logo or an image overlay on a video, join several videos or images into one with fades or other transitions, add animated or word-by-word karaoke captions, or change the resolution or aspect ratio of a composition. Music, voiceover and images come from files the user supplies. Static subtitles with a chosen font and position belong to video-subtitles.
 ---
 
 # Edit and compose
@@ -15,7 +15,7 @@ Talking to the user: never write "index", "indexed" or "indexing" in a reply. Sa
 
 Rendering is a long job: the call returns `status: processing`. The reply carries an `output_url` and names the tool to poll (`poll_with`, or `retry_with` on older servers). Call that tool with the `output_url` until it is `done`; several `processing` replies in a row are normal (a 10-minute YouTube upload takes about five), and a `done` reply with an empty result means poll once more. Never re-run the write; that starts a second job. Share the finished `player_url`.
 
-Do not fall back to ffmpeg, moviepy or local encoding for anything below; it all runs on VideoDB's servers.
+Everything below runs on VideoDB's servers, so no local encoding setup is needed.
 
 ## With the connector tools
 
@@ -49,11 +49,11 @@ render_timeline(resolution="1920x1080", tracks=[
 
 **An MP4 file:** `download_timeline_render(stream_url)`, poll, share the download URL.
 
-**Generating music, voiceover, images or video with AI, and dubbing:** not available through the connector. In Claude Code the SDK does it (below). In chat, ask the user for a hosted audio or image URL to upload instead, and say that generation needs Claude Code or the SDK.
+**Music, voiceover and images:** ask the user for an audio or image file (a public URL, or an upload at https://console.videodb.io) and add it as an asset.
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Full guide: https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture; generation: https://docs.videodb.io/pages/act/generative-media.
+Set up first with `/videodb:setup` if `import videodb` fails. Full guide: https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")
@@ -61,8 +61,7 @@ import videodb
 from videodb.editor import Timeline, Track, Clip, VideoAsset, AudioAsset, TextAsset, Fit, Transition
 conn = videodb.connect(); coll = conn.get_collection()
 video = coll.upload(url="https://www.youtube.com/watch?v=VIDEO_ID")
-music = coll.generate_music(prompt="warm acoustic background", duration=20)   # or coll.upload(url=..., media_type="audio")
-voice = coll.generate_voice(text="Welcome to the show", voice_name="Default")
+music = coll.upload(url="https://example.com/music.mp3", media_type="audio")
 timeline = Timeline(conn); timeline.resolution = "1920x1080"
 v = Track(); v.add_clip(0, Clip(asset=VideoAsset(id=video.id, start=30), duration=20))
 a = Track(); a.add_clip(0, Clip(asset=AudioAsset(id=music.id, volume=0.2), duration=20))
@@ -70,5 +69,3 @@ timeline.add_track(v); timeline.add_track(a)
 stream_url = timeline.generate_stream()
 print(f"https://console.videodb.io/player?url={stream_url}")
 ```
-
-Dubbing: `coll.dub_video(video.id, language_code="es")`.

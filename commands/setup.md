@@ -5,7 +5,7 @@ description: "Set up VideoDB in this project: SDK, API key and the hosted MCP se
 First check what is already there:
 
 - VideoDB connector tools present (names such as `upload_media`, `search_video`) and no shell: setup is done. Say so in one line and offer three things to try, for example "Upload a YouTube link and give me a shareable clip", "Find where they talk about X", "Add subtitles, white on a black box". Stop here.
-- Connector tools present and a shell: chat tasks already work; continue below only if the user wants Python code, scripts, screen capture or AI generation.
+- Connector tools present and a shell: chat tasks already work; continue below only if the user wants Python code, scripts or screen capture.
 - No connector tools: continue below.
 
 Then set up the SDK by following the Setup section of the `videodb` skill (`${CLAUDE_PLUGIN_ROOT}/python/SKILL.md`):

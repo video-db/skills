@@ -1,6 +1,6 @@
 ---
 name: videodb
-description: Set up VideoDB and write code against the VideoDB Python SDK. Use for "setup videodb" or "/videodb setup", when the user wants Python code, a script or a notebook rather than a chat answer, for bulk uploading or indexing a folder or library of media, for sandbox compute with open-weight models, and for any video task that video-search, video-clips, video-subtitles, video-edit and video-live do not cover. Screen recording belongs to video-live, AI-generated music, voiceover, images or video to video-edit, and dubbing to video-subtitles.
+description: Set up VideoDB and write code against the VideoDB Python SDK. Use for "setup videodb" or "/videodb setup", when the user wants Python code, a script or a notebook rather than a chat answer, for bulk uploading or indexing a folder or library of media, for sandbox compute with open-weight models, and for any video task that video-search, video-clips, video-subtitles, video-edit and video-live do not cover. Screen recording belongs to video-live.
 argument-hint: "[task description]"
 ---
 
@@ -22,7 +22,7 @@ VideoDB runs video work on its servers: ingest, understand, index, search, clip,
 2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, save it yourself to the project's `.env` (Setup, below), never print it, and continue with the SDK. In Claude Code, `/mcp` then authorizing the bundled videodb server also works.
 3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
 
-The SDK path is also the only path for code, scripts, notebooks, desktop capture, AI generation, dubbing and sandbox compute, which the connector does not do. Talking to the user: never write "index", "indexed" or "indexing" in a reply; say "searchable".
+The SDK path is also the only path for code, scripts, notebooks, desktop capture and sandbox compute, which the connector does not do. Talking to the user: never write "index", "indexed" or "indexing" in a reply; say "searchable".
 
 Long connector jobs return `status: processing`. The reply carries an `output_url` and names the tool to poll (`poll_with`, or `retry_with` on older servers). Call that tool with the `output_url` until it is `done`; several `processing` replies in a row are normal (a 10-minute YouTube upload takes about five), and a `done` reply with an empty result means poll once more. Never re-run the write; that starts a second job.
 
@@ -30,7 +30,7 @@ Long connector jobs return `status: processing`. The reply carries an `output_ur
 
 - **Stream URL**, playable at `https://console.videodb.io/player?url={STREAM_URL}`; connector tools also return a `player_url`
 - Search results with timestamps and playable evidence
-- Generated assets: subtitles, audio, images, clips
+- Subtitles, clips and thumbnails
 - Event and alert payloads for live streams
 - Desktop session summaries and searchable timelines
 
@@ -278,18 +278,9 @@ reframed = video.reframe(start=0, end=60, target="square")
 reframed = video.reframe(start=0, end=60, target={"width": 1280, "height": 720})
 ```
 
-### Generative media
-
-```python
-image = coll.generate_image(
-    prompt="a sunset over mountains",
-    aspect_ratio="16:9",
-)
-```
-
 ### Sandbox Compute (self-hosted / open-weight models)
 
-Run open-weight models (Gemma, Qwen, Whisper, OmniVoice, FLUX, RT-DETR) by creating a sandbox and passing `sandbox_id` to a supported job. Requires `videodb>=0.5.1`.
+Run open-weight models (Gemma, Qwen, Whisper, RT-DETR) by creating a sandbox and passing `sandbox_id` to a supported job. Requires `videodb>=0.5.1`.
 
 ```python
 from videodb import SandboxTier, SandboxModel
@@ -308,12 +299,9 @@ understanding = video.understand(analyzers=[{
                "prompt": "Describe the scene."},
 }])
 
-# 2b. Generation: pass model_name + sandbox_id (jobs return GenerationJob → .wait()).
+# 2b. Text: pass model_name + sandbox_id.
 response = coll.generate_text(prompt="Summarize this.", model_name="Qwen/Qwen3.5-9B",
                              sandbox_id=sandbox.id, max_tokens=300)
-job = coll.generate_image(prompt="a city at sunset", model_name="black-forest-labs/FLUX.1-dev",
-                          sandbox_id=sandbox.id)
-image = job.wait(timeout=900, interval=5)
 
 # 3. Stop when done — provisioning/active/alert all count toward the tier limit.
 sandbox.stop(); sandbox.wait_for_stop()
@@ -349,11 +337,9 @@ except InvalidRequestError as e:
 | Legacy `index_spoken_words()` on an already-indexed video (v1) | `Spoken word index for video already exists` | Pass `force=True`, or drop the call: subtitles and captions only need `generate_transcript()` |
 | Reframe times out | Blocks indefinitely on long videos | Use `start`/`end` to limit segment, or pass `callback_url` for async |
 | Negative timestamps on Timeline | Silently produces broken stream | Always validate `start >= 0` before creating `VideoAsset` |
-| `generate_video()` / `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |
+| `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |
 
 ## Docs
-
-Read these with your web fetch tool when the quick reference above is not enough.
 
 | Topic | Page |
 |---|---|
@@ -362,15 +348,14 @@ Read these with your web fetch tool when the quick reference above is not enough
 | Search, ask, query, aggregate | https://docs.videodb.io/pages/understand/search-and-retrieval/intelligent-search |
 | Timeline editing | https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture |
 | Streaming and exports | https://docs.videodb.io/pages/act/output-and-delivery/streams-and-exports |
-| Generative media, dubbing | https://docs.videodb.io/pages/act/generative-media, https://docs.videodb.io/pages/act/generative-media/translation-and-dubbing |
 | Sandbox compute | https://docs.videodb.io/pages/core-concepts/sandbox-compute, https://docs.videodb.io/pages/core-concepts/sandbox-models |
 | Live streams (RTSP/RTMP) | https://docs.videodb.io/pages/ingest/live-streams/rtsp-ingest, https://docs.videodb.io/pages/ingest/live-streams/stream-lifecycle |
 | Desktop capture (macOS, Windows) | https://docs.videodb.io/pages/ingest/capture-sdks/overview, https://docs.videodb.io/pages/ingest/capture-sdks/realtime-context |
 | Legacy v1 indexing and search | https://docs.videodb.io/pages/understand/legacy-indexing-search/indexes-and-search |
 
-## Server-side first
+## Server-side editing
 
-**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, volume control, fade transitions, and media generation. Only fall back to local tools for what the Editor cannot do (speed changes, crop/zoom, colour grading, keyframe animation).
+VideoDB runs these on its servers, so no local encoding setup is needed: trimming, combining clips, overlaying audio, subtitles, text and image overlays, transcoding, resolution and aspect-ratio changes, resizing for platforms, transcription, volume control and fade transitions. The Editor does not cover speed changes, crop or zoom, colour grading, or keyframe animation.
 
 ### When to use what
 
@@ -387,5 +372,4 @@ Read these with your web fetch tool when the quick reference above is not enough
 | Need to overlay audio/music on video | `AudioAsset` on an Editor `Timeline` with volume control |
 | Need to add subtitles | `video.add_subtitle()` or `CaptionAsset` on Editor `Timeline` |
 | Need to combine/trim clips | `VideoAsset` on an Editor `Timeline` |
-| Need to compose images with voiceover | `ImageAsset` + `AudioAsset` on separate Editor tracks |
-| Need to generate voiceover, music, or SFX | `coll.generate_voice()`, `generate_music()`, `generate_sound_effect()` |
+| Need to compose images with a voiceover file | `ImageAsset` + `AudioAsset` on separate Editor tracks |

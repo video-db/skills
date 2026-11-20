@@ -25,7 +25,7 @@ VideoDB does the video work on its servers. The agent asks for it in plain langu
 | **Claude** (web, desktop, mobile), Cowork, Claude Code | [Add to Claude](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory), one click, log in to VideoDB when asked | The skills below plus the VideoDB connector. Paste a YouTube link and ask. No install, no API key. |
 | **ChatGPT** | [Add to ChatGPT](https://videodb.io/chatgpt?ref=skills), one click, log in to VideoDB when asked | The VideoDB tools in your ChatGPT conversations. Paste a YouTube link and ask. No install, no API key. |
 | **Any other MCP client** (Cursor, Claude Code, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams, meeting recording. |
-| **A coding agent with a shell** (Claude Code, Cursor, Codex, Copilot, others) | `npx skills add video-db/skills` | The skills teach the agent the VideoDB Python SDK, so it can write and run code: everything the connector does, plus local files, AI generation, dubbing, sandbox compute and desktop capture. |
+| **A coding agent with a shell** (Claude Code, Cursor, Codex, Copilot, others) | `npx skills add video-db/skills` | The skills teach the agent the VideoDB Python SDK, so it can write and run code: everything the connector does, plus local files, sandbox compute and desktop capture. |
 
 A free VideoDB account comes with $20 of credits, no credit card: [console.videodb.io](https://console.videodb.io).
 
@@ -61,7 +61,7 @@ Endpoint: `https://mcp.videodb.io/mcp` (Streamable HTTP). Your client asks you t
 
 - **Other clients**: any client that speaks Streamable HTTP and OAuth works the same way. Full guide and the tool reference: [docs.videodb.io/pages/mcp](https://docs.videodb.io/pages/mcp/index).
 
-The MCP server takes public URLs and YouTube links, not local files; it does not generate media or dub, and it cannot capture a desktop. For those, use the SDK through a coding agent.
+The MCP server takes public URLs and YouTube links, not local files, and it cannot capture a desktop. For those, use the SDK through a coding agent.
 
 ## Install the skills in a coding agent
 
@@ -95,11 +95,9 @@ export VIDEO_DB_API_KEY=<your-key>     # or VIDEO_DB_API_KEY=<your-key> in .env
 | Clips, highlight reels, supercuts, thumbnails, MP4 | ✓ | ✓ |
 | Vertical and square cuts for Shorts, Reels, TikTok | ✓ | ✓ |
 | Timeline edits: music, overlays, captions, transitions | ✓ | ✓ |
-| Transcode and reframe on the server | ✓ | ✓ |
+| Transcode, and smart reframe that keeps the subject in frame | ✓ | ✓ |
 | Live streams (RTSP, RTMP, HLS) with alerts | ✓ | ✓ |
 | Record a Zoom, Google Meet or Teams meeting | ✓ | ✓ |
-| AI generation: images, video, music, voiceover | | ✓ |
-| Dubbing | | ✓ |
 | Open-weight models on sandbox compute | | ✓ |
 | Desktop screen, mic and system audio capture | | ✓ macOS and Windows, agent running on your computer |
 
@@ -112,9 +110,9 @@ Every result comes back as a playable stream link (built-in CDN) or a download.
 | `video-search` | Find a moment, ask a video a question, count what appears, search a whole library |
 | `video-clips` | Clips of a time range, highlight reels from a prompt, supercuts, vertical cuts, thumbnails, MP4s |
 | `video-subtitles` | Transcripts, burned-in subtitles with styling, translation |
-| `video-edit` | Background music, voiceover, text and logo overlays, animated captions, compositions |
+| `video-edit` | Your own music and voiceover tracks, text and logo overlays, animated captions, compositions |
 | `video-live` | Cameras and live streams with alerts, meeting recording, desktop screen capture |
-| `videodb` | Setup, the Python SDK reference, AI generation, dubbing, sandbox compute |
+| `videodb` | Setup, the Python SDK reference, sandbox compute |
 
 Four slash commands for Claude Code: `/videodb:setup`, `/videodb:find`, `/videodb:clip`, `/videodb:subtitles`. The plugin also carries the hosted MCP server configuration (`.mcp.json`).
 

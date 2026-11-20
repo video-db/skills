@@ -1,6 +1,6 @@
 ---
 name: video-subtitles
-description: Subtitles, captions and transcripts for a video or audio file. Use when the user wants a transcript (plain or timestamped) of a video, podcast or call recording, static subtitles burned in with a chosen font, colour and position, a transcript or subtitles translated into another language, or dubbing. Animated or karaoke captions belong to video-edit. Works on YouTube links, public video URLs, audio files and media already in the user's VideoDB account.
+description: Subtitles, captions and transcripts for a video or audio file. Use when the user wants a transcript (plain or timestamped) of a video, podcast or call recording, static subtitles burned in with a chosen font, colour and position, or a transcript or subtitles translated into another language. Animated or karaoke captions belong to video-edit. Works on YouTube links, public video URLs, audio files and media already in the user's VideoDB account.
 ---
 
 # Subtitles and transcripts
@@ -33,7 +33,7 @@ Style options on `add_subtitles`: `font_name`, `font_size` (8 to 72, default 18)
 
 **Translate.** `translate_transcript(video_id, language="Spanish")` returns the translated, timestamped segments. Give them to the user as text or as an SRT-style list.
 
-**Dubbing and translated voiceover.** Not available through the connector. In Claude Code, the SDK does it (https://docs.videodb.io/pages/act/generative-media/translation-and-dubbing). In chat, offer the translated transcript and say that dubbing needs the SDK.
+**Other languages.** Offer the translated transcript, or subtitles in the target language.
 
 ## With the Python SDK (Claude Code)
 
