@@ -100,7 +100,7 @@ video = coll.generate_video(model="heygen", image_url=face_url, config=HeyGenCon
 
 | `HeyGenConfig` field | Values |
 |---|---|
-| `voice` | Exact voice name; `HeyGenConfig.voices` has 12 starters, all 102 at https://docs.videodb.io/api-reference/generation/models/heygen (`HeyGenConfig.docs`) |
+| `voice` | Exact voice name; `HeyGenConfig.voices` has 12 starters, all 102 at https://docs.videodb.io/pages/act/generative-media/avatar-video (`HeyGenConfig.docs`) |
 | `audio_id` | User's audio to lip-sync; not with `voice` |
 | `talking_style` | `HeyGenConfig.talking_styles`: `"stable"` (default), `"expressive"` |
 | `expression` | `"happy"` |
@@ -108,7 +108,7 @@ video = coll.generate_video(model="heygen", image_url=face_url, config=HeyGenCon
 | `background` | `{"type": "color", "value": "#FFFFFF"}`, or `"image"` / `"video"` with a public URL |
 
 - Script up to `HeyGenConfig.max_seconds` (120 s of speech, about 1,800 characters); audio up to 120 s.
-- Costs $0.50 per output second. Takes about 2 to 5 minutes; use `callback_url` for long scripts.
+- Costs $0.15 per output second. Takes about 2 to 5 minutes; use `callback_url` for long scripts.
 - Pro plans only. A free account gets `heygen is not enabled for your account.`
 - Bad keys or values fail before generation, with the allowed values in the error. Read the message and fix the argument.
 
