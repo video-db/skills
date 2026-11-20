@@ -70,18 +70,18 @@ video.play()
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `prompt` | `str\|None` | `None` | Text description; for `heygen`, the exact script spoken |
-| `duration` | `float` | `5` | Seconds (`default` model: integer 5-8). Ignored by `heygen` |
+| `duration` | `float` | `5` | Integer seconds: `default` 5-8, `seedance` 4-15. Ignored by `heygen` |
 | `callback_url` | `str\|None` | `None` | URL to receive async callback |
 | `model` | `str\|None` | `None` | `"default"`, `"seedance"` or `"heygen"`. `conn.get_generation_models()` lists what the account can use |
 | `image_url` | `str\|None` | `None` | Start frame; for `heygen`, the required face photo (public URL) |
-| `reference_images` | `list[str]\|None` | `None` | Consistency images (`default` / `seedance`) |
+| `reference_images` | `list[str]\|None` | `None` | Up to 2 consistency images (`default` / `seedance`) |
 | `aspect_ratio` | `str\|None` | `None` | `"16:9"` / `"9:16"`; `heygen` also `"4:5"`, `"5:4"`, `"1:1"`, `"auto"` |
 | `resolution` | `str\|None` | `None` | `seedance`: `"480p"` / `"720p"`; `heygen`: `"360p"` to `"1080p"` |
 | `config` | `HeyGenConfig\|dict\|None` | `None` | Model-specific options; only `heygen` takes any |
 
 ### Talking avatar (HeyGen)
 
-`model="heygen"` turns one face photo and a script into a talking-head video. `prompt` is spoken word for word, so pass only the words to say, no instructions.
+Requires `videodb>=0.5.2`. `model="heygen"` turns one face photo and a script into a talking-head video. `prompt` is spoken word for word, so pass only the words to say, no instructions.
 
 ```python
 from videodb import HeyGenConfig
@@ -100,7 +100,7 @@ video = coll.generate_video(model="heygen", image_url=face_url, config=HeyGenCon
 
 | `HeyGenConfig` field | Values |
 |---|---|
-| `voice` | Exact voice name; `HeyGenConfig.voices` has 12 starters, all 102 at https://docs.videodb.io/pages/act/generative-media/avatar-video (`HeyGenConfig.docs`) |
+| `voice` | Exact voice name; `HeyGenConfig.voices` has 12 starters, all 102 at https://docs.videodb.io/pages/act/generative-media/avatar-video |
 | `audio_id` | User's audio to lip-sync; not with `voice` |
 | `talking_style` | `HeyGenConfig.talking_styles`: `"stable"` (default), `"expressive"` |
 | `expression` | `"happy"` |
