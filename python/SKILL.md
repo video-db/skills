@@ -428,3 +428,4 @@ For complete capture workflow, see [reference/capture.md](reference/capture.md).
 | Need to combine/trim clips | `VideoAsset` on an Editor `Timeline` |
 | Need to compose images with voiceover | `ImageAsset` + `AudioAsset` on separate Editor tracks |
 | Need to generate voiceover, music, or SFX | `coll.generate_voice()`, `generate_music()`, `generate_sound_effect()` |
+| Need to change the voice of an existing audio | `coll.change_voice(audio_id, voice_name)` |
