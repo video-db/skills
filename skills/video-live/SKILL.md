@@ -34,7 +34,7 @@ Long jobs return `status: processing`. The reply carries an `output_url` and nam
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Streams: `${CLAUDE_PLUGIN_ROOT}/python/reference/rtstream.md`. Desktop capture, step by step, with the WebSocket event listener: `${CLAUDE_PLUGIN_ROOT}/python/reference/capture.md` and `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` (Screen Recording section). The capture extra installs with `pip install "videodb[capture]>=0.5.0"`.
+Set up first with `/videodb:setup` if `import videodb` fails. Streams: https://docs.videodb.io/pages/ingest/live-streams/rtsp-ingest. Desktop capture: https://docs.videodb.io/pages/ingest/capture-sdks/overview and https://docs.videodb.io/pages/ingest/capture-sdks/realtime-context. The capture extra installs with `pip install "videodb[capture]>=0.5.0"`.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")

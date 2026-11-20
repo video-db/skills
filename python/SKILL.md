@@ -166,7 +166,7 @@ if response.response_type in ("shots", "deepsearch") and len(response):
 
 Analyzer types: `spoken_words` (→ artifact `transcript`), `vlm` (→ `scene`), `object_detection` (→ `objects`), `ocr`, `brand_detection` (→ `brands`), `activity_recognition` (→ `activity`), `location_detection` (→ `location`), `faces`, `audio_event_detection`. They are plain strings — there is no SDK enum.
 
-See [reference/indexing.md](reference/indexing.md) for segmentation, sampling, field configuration, and cost tuning.
+Segmentation, sampling, field configuration and cost tuning: [https://docs.videodb.io/pages/understand/indexing-pipelines/create-an-index](https://docs.videodb.io/pages/understand/indexing-pipelines/create-an-index).
 
 ### Retrieval
 
@@ -187,7 +187,7 @@ video.aggregate(index_name="objects", group_by="frames.detections.label", metric
 answer = video.ask("What did they say about pricing?", include_sources=True)
 ```
 
-All five exist on `Collection` too, fanning out across every indexed video. See [reference/search.md](reference/search.md).
+All five exist on `Collection` too, fanning out across every indexed video. See [https://docs.videodb.io/pages/understand/search-and-retrieval/intelligent-search](https://docs.videodb.io/pages/understand/search-and-retrieval/intelligent-search).
 
 **`search()` now returns `SearchResponse`, not `SearchResult`.** `get_shots()`, `compile()`, `play()`, and iteration all work, but there is no `.stream_url` on it — use `.compile()`.
 
@@ -216,11 +216,11 @@ results = video.legacy_search(
 )
 ```
 
-Recognise this pattern in existing repos and leave it alone unless asked to migrate — it still works. See [reference/migration.md](reference/migration.md) to port it, or [reference/legacy/search.md](reference/legacy/search.md) to maintain it.
+Recognise this pattern in existing repos and leave it alone unless asked to migrate — it still works. Legacy docs: [https://docs.videodb.io/pages/understand/legacy-indexing-search/indexes-and-search](https://docs.videodb.io/pages/understand/legacy-indexing-search/indexes-and-search).
 
 ### Timeline editing
 
-Use the Editor API to compose videos, images, audio, and text. See [reference/editor.md](reference/editor.md) for full workflow.
+Use the Editor API to compose videos, images, audio, and text. Full workflow: [https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture](https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture).
 
 ```python
 from videodb.editor import Timeline, Track, Clip, VideoAsset, ImageAsset, AudioAsset, Fit
@@ -319,7 +319,7 @@ image = job.wait(timeout=900, interval=5)
 sandbox.stop(); sandbox.wait_for_stop()
 ```
 
-Model IDs must match the catalog exactly (**no `-FP8` suffix**) or `create_sandbox` raises `Unsupported sandbox model`. See [reference/sandbox.md](reference/sandbox.md) for the full model catalog, tiers, categories, pricing, and pitfalls.
+Model IDs must match the catalog exactly (**no `-FP8` suffix**) or `create_sandbox` raises `Unsupported sandbox model`. Model catalog, tiers and pricing: [https://docs.videodb.io/pages/core-concepts/sandbox-models](https://docs.videodb.io/pages/core-concepts/sandbox-models).
 
 ## Error handling
 
@@ -351,65 +351,26 @@ except InvalidRequestError as e:
 | Negative timestamps on Timeline | Silently produces broken stream | Always validate `start >= 0` before creating `VideoAsset` |
 | `generate_video()` / `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |
 
-## Additional docs
+## Docs
 
-Reference documentation is in `${CLAUDE_SKILL_DIR}/reference/`. Read files there with that prefix; the links below are relative to this SKILL.md. `${CLAUDE_SKILL_DIR}` is set by Claude Code; on agents that do not set it, use the directory holding this SKILL.md.
+Read these with your web fetch tool when the quick reference above is not enough.
 
-- [reference/api-reference.md](reference/api-reference.md) - Complete VideoDB Python SDK API reference
-- [reference/indexing.md](reference/indexing.md) - Understand → index pipeline: analyzers, artifacts, segmentation, field configuration
-- [reference/indexing-reference.md](reference/indexing-reference.md) - Analyzer catalog and Understanding/Index class reference
-- [reference/search.md](reference/search.md) - Retrieval guide: search, ask, semantic_search, query, aggregate
-- [reference/search-reference.md](reference/search-reference.md) - Retrieval signatures, filter syntax, response objects
-- [reference/migration.md](reference/migration.md) - v1 → v2 mapping and SDK 0.5.0 breaking changes. Read when you find v1 code
-- [reference/editor.md](reference/editor.md) - Timeline editing workflow guide (4-layer model, use cases, examples)
-- [reference/editor-reference.md](reference/editor-reference.md) - Editor code reference (constructors, parameters, enums)
-- [reference/streaming.md](reference/streaming.md) - HLS streaming and instant playback
-- [reference/generative.md](reference/generative.md) - AI-powered media generation (images, video, audio)
-- [reference/sandbox.md](reference/sandbox.md) - Sandbox Compute workflow (run open-weight models: Gemma, Qwen, Whisper, OmniVoice, FLUX, RT-DETR)
-- [reference/sandbox-reference.md](reference/sandbox-reference.md) - Sandbox code reference (create/get/list/stop, tiers, model catalog, sandbox-aware generation)
-- [reference/rtstream.md](reference/rtstream.md) - Live stream ingestion workflow (RTSP/RTMP)
-- [reference/rtstream-reference.md](reference/rtstream-reference.md) - RTStream SDK methods and AI pipelines
-- [reference/capture.md](reference/capture.md) - Desktop capture workflow
-- [reference/capture-reference.md](reference/capture-reference.md) - Capture SDK and WebSocket events
-- [reference/use-cases.md](reference/use-cases.md) - Common video processing patterns and examples
+| Topic | Page |
+|---|---|
+| Python SDK setup and API | https://docs.videodb.io/pages/getting-started/python, https://docs.videodb.io/api-reference |
+| Understand and index | https://docs.videodb.io/pages/understand/indexing-pipelines/create-an-index, https://docs.videodb.io/pages/understand/indexing-pipelines/analyzer-outputs |
+| Search, ask, query, aggregate | https://docs.videodb.io/pages/understand/search-and-retrieval/intelligent-search |
+| Timeline editing | https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture |
+| Streaming and exports | https://docs.videodb.io/pages/act/output-and-delivery/streams-and-exports |
+| Generative media, dubbing | https://docs.videodb.io/pages/act/generative-media, https://docs.videodb.io/pages/act/generative-media/translation-and-dubbing |
+| Sandbox compute | https://docs.videodb.io/pages/core-concepts/sandbox-compute, https://docs.videodb.io/pages/core-concepts/sandbox-models |
+| Live streams (RTSP/RTMP) | https://docs.videodb.io/pages/ingest/live-streams/rtsp-ingest, https://docs.videodb.io/pages/ingest/live-streams/stream-lifecycle |
+| Desktop capture (macOS, Windows) | https://docs.videodb.io/pages/ingest/capture-sdks/overview, https://docs.videodb.io/pages/ingest/capture-sdks/realtime-context |
+| Legacy v1 indexing and search | https://docs.videodb.io/pages/understand/legacy-indexing-search/indexes-and-search |
 
-Legacy v1 indexing and search. These APIs still work and are not deprecated, but read these only when maintaining existing v1 code:
+## Server-side first
 
-- [reference/legacy/index.md](reference/legacy/index.md) - v1 scene indexing and frame extraction workflow
-- [reference/legacy/index-reference.md](reference/legacy/index-reference.md) - v1 scene index code reference (SceneCollection/Scene/Frame)
-- [reference/legacy/search.md](reference/legacy/search.md) - v1 spoken-word and scene search
-
-## Screen Recording (Desktop Capture)
-
-Use an event listener to capture WebSocket events during recording sessions. Desktop capture runs on **macOS** and **Windows**.
-
-### Quick Start
-
-1. **Start listener**: save the listener from [reference/capture-reference.md](reference/capture-reference.md#event-persistence) as `videodb_ws_listener.py` in the project, then run `python videodb_ws_listener.py --clear &` from the project root
-2. **Get WebSocket ID**: `cat /tmp/videodb_ws_id`
-3. **Run capture code** (see reference/capture.md for full workflow)
-4. **Events written to**: `/tmp/videodb_events.jsonl`
-
-### Query Events
-
-```python
-import json
-events = [json.loads(l) for l in open("/tmp/videodb_events.jsonl")]
-
-# Get all transcripts
-transcripts = [e["data"]["text"] for e in events if e.get("channel") == "transcript"]
-
-# Get visual descriptions from last 5 minutes
-import time
-cutoff = time.time() - 300
-recent_visual = [e for e in events 
-                 if e.get("channel") == "visual_index" and e["unix_ts"] > cutoff]
-```
-
-For complete capture workflow, see [reference/capture.md](reference/capture.md).
-
-
-**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, volume control, fade transitions, and media generation. Only fall back to local tools for operations listed under Limitations in reference/editor.md (speed changes, crop/zoom, colour grading, keyframe animation).
+**Do not use ffmpeg, moviepy, or local encoding tools** when VideoDB supports the operation. The following are all handled server-side by VideoDB — trimming, combining clips, overlaying audio or music, adding subtitles, text/image overlays, transcoding, resolution changes, aspect-ratio conversion, resizing for platform requirements, transcription, volume control, fade transitions, and media generation. Only fall back to local tools for what the Editor cannot do (speed changes, crop/zoom, colour grading, keyframe animation).
 
 ### When to use what
 

@@ -33,7 +33,7 @@ Style options on `add_subtitles`: `font_name`, `font_size` (8 to 72, default 18)
 
 **Translate.** `translate_transcript(video_id, language="Spanish")` returns the translated, timestamped segments. Give them to the user as text or as an SRT-style list.
 
-**Dubbing and translated voiceover.** Not available through the connector. In Claude Code, the SDK does it (`${CLAUDE_PLUGIN_ROOT}/python/reference/editor.md`, dubbing section). In chat, offer the translated transcript and say that dubbing needs the SDK.
+**Dubbing and translated voiceover.** Not available through the connector. In Claude Code, the SDK does it (https://docs.videodb.io/pages/act/generative-media/translation-and-dubbing). In chat, offer the translated transcript and say that dubbing needs the SDK.
 
 ## With the Python SDK (Claude Code)
 

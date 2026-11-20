@@ -53,7 +53,7 @@ render_timeline(resolution="1920x1080", tracks=[
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Full guide: `${CLAUDE_PLUGIN_ROOT}/python/reference/editor.md`; generation: `${CLAUDE_PLUGIN_ROOT}/python/reference/generative.md`.
+Set up first with `/videodb:setup` if `import videodb` fails. Full guide: https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture; generation: https://docs.videodb.io/pages/act/generative-media.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")

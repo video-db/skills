@@ -40,7 +40,7 @@ Notes that save a retry:
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/python/reference/editor.md`.
+Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` and https://docs.videodb.io/pages/act/programmable-editing/timeline-architecture.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")
