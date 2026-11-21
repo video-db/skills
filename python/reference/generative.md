@@ -69,9 +69,48 @@ video.play()
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `prompt` | `str` | required | Text description of the video to generate |
-| `duration` | `float` | `5` | Duration in seconds (must be integer value, 5-8) |
+| `prompt` | `str\|None` | `None` | Text description; for `heygen`, the exact script spoken |
+| `duration` | `float` | `5` | Integer seconds: `default` 5-8, `seedance` 4-15. Ignored by `heygen` |
 | `callback_url` | `str\|None` | `None` | URL to receive async callback |
+| `model` | `str\|None` | `None` | `"default"`, `"seedance"` or `"heygen"`. `conn.get_generation_models()` lists what the account can use |
+| `image_url` | `str\|None` | `None` | Start frame; for `heygen`, the required face photo (public URL) |
+| `reference_images` | `list[str]\|None` | `None` | Up to 2 consistency images (`default` / `seedance`) |
+| `aspect_ratio` | `str\|None` | `None` | `"16:9"` / `"9:16"`; `heygen` also `"4:5"`, `"5:4"`, `"1:1"`, `"auto"` |
+| `resolution` | `str\|None` | `None` | `seedance`: `"480p"` / `"720p"`; `heygen`: `"360p"` to `"1080p"` |
+| `config` | `HeyGenConfig\|dict\|None` | `None` | Model-specific options; only `heygen` takes any |
+
+### Talking avatar (HeyGen)
+
+Requires `videodb>=0.5.2`. `model="heygen"` turns one face photo and a script into a talking-head video. `prompt` is spoken word for word, so pass only the words to say, no instructions.
+
+```python
+from videodb import HeyGenConfig
+
+video = coll.generate_video(
+    prompt="Hi, I'm Maya. Here's our new dashboard in under a minute.",
+    model="heygen",
+    image_url="https://example.com/maya.png",
+    aspect_ratio="9:16",
+    config=HeyGenConfig(voice="Ivy", talking_style="expressive", caption=True),
+)
+
+# Lip-sync to the user's own audio instead of a script
+video = coll.generate_video(model="heygen", image_url=face_url, config=HeyGenConfig(audio_id=audio.id))
+```
+
+| `HeyGenConfig` field | Values |
+|---|---|
+| `voice` | Exact voice name; `HeyGenConfig.voices` has 12 starters, all 102 at https://docs.videodb.io/pages/act/generative-media/avatar-video |
+| `audio_id` | User's audio to lip-sync; not with `voice` |
+| `talking_style` | `HeyGenConfig.talking_styles`: `"stable"` (default), `"expressive"` |
+| `expression` | `"happy"` |
+| `caption` | `True` burns in subtitles |
+| `background` | `{"type": "color", "value": "#FFFFFF"}`, or `"image"` / `"video"` with a public URL |
+
+- Script up to `HeyGenConfig.max_seconds` (120 s of speech, about 1,800 characters); audio up to 120 s.
+- Costs $0.15 per output second. Takes about 2 to 5 minutes; use `callback_url` for long scripts.
+- Pro plans only. A free account gets `heygen is not enabled for your account.`
+- Bad keys or values fail before generation, with the allowed values in the error. Read the message and fix the argument.
 
 Returns a `Video` object. Generated videos are automatically added to the collection and can be used in timelines, searches, and compilations like any uploaded video.
 
