@@ -1,0 +1,18 @@
+{
+  "name": "videodb",
+  "displayName": "VideoDB",
+  "version": "1.4.1",
+  "description": "Video tools for your agent in Cursor. Find any moment in a video by what was said or shown, cut clips and highlight reels, add subtitles, edit, and watch live streams, through the hosted VideoDB MCP server.",
+  "author": {
+    "name": "VideoDB",
+    "email": "support@videodb.io"
+  },
+  "homepage": "https://videodb.io/agents",
+  "repository": "https://github.com/video-db/skills",
+  "license": "MIT",
+  "keywords": ["video", "video editing", "clips", "highlights", "subtitles", "transcript", "video search", "live stream", "mcp"],
+  "logo": ".claude-plugin/icon.png",
+  "skills": "./skills",
+  "commands": "./commands",
+  "mcpServers": "./.mcp.json"
+}

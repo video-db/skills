@@ -1,4 +1,5 @@
 ---
+name: subtitles
 description: Burn subtitles into a video, or get its transcript. Usage - /videodb:subtitles <YouTube link, URL or m- id> [style, e.g. "white on black box" or "translate to Spanish"]
 argument-hint: "<video> [style or language]"
 ---
