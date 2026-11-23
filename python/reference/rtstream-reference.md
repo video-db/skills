@@ -114,7 +114,7 @@ for rts in rtstreams:
 | `rtstream.list_scene_indexes()` | `List[RTStreamSceneIndex]` | **(v1)** List all scene indexes on the stream |
 | `rtstream.get_scene_index(index_id)` | `RTStreamSceneIndex` | **(v1)** Get a specific scene index |
 | `rtstream.search(query, ...)` | `RTStreamSearchResult` | Search indexed content |
-| `rtstream.start_transcript(ws_connection_id, engine)` | `dict` | Start live transcription |
+| `rtstream.start_transcript(ws_connection_id, engine, language)` | `dict` | Start live transcription; `language` is an ISO 639-1 code (`videodb>=0.5.3`), omit to auto-detect |
 | `rtstream.get_transcript(page, page_size, start, end, since)` | `dict` | Get transcript pages |
 | `rtstream.stop_transcript(engine)` | `dict` | Stop transcription |
 
@@ -411,6 +411,7 @@ Real-time transcription via WebSocket:
 rtstream.start_transcript(
     ws_connection_id=ws_id,
     engine=None,  # optional, defaults to "assemblyai"
+    language="es",  # optional ISO 639-1 code (videodb>=0.5.3); omit to auto-detect
 )
 
 # Get transcript pages (with optional filters)
