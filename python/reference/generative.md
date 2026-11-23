@@ -73,11 +73,12 @@ video.play()
 | `duration` | `float` | `5` | Integer seconds: `default` 5-8, `seedance` 4-15. Ignored by `heygen` |
 | `callback_url` | `str\|None` | `None` | URL to receive async callback |
 | `model` | `str\|None` | `None` | `"default"`, `"seedance"` or `"heygen"`. `conn.get_generation_models()` lists what the account can use |
-| `image_url` | `str\|None` | `None` | Start frame; for `heygen`, the required face photo (public URL) |
+| `image_url` | `str\|None` | `None` | Start frame; for `heygen`, the face photo (public URL). This or `image_id` |
 | `reference_images` | `list[str]\|None` | `None` | Up to 2 consistency images (`default` / `seedance`) |
 | `aspect_ratio` | `str\|None` | `None` | `"16:9"` / `"9:16"`; `heygen` also `"4:5"`, `"5:4"`, `"1:1"`, `"auto"` |
 | `resolution` | `str\|None` | `None` | `seedance`: `"480p"` / `"720p"`; `heygen`: `"360p"` to `"1080p"` |
 | `config` | `HeyGenConfig\|dict\|None` | `None` | Model-specific options; only `heygen` takes any |
+| `image_id` | `str\|None` | `None` | A VideoDB image (`img-...`) instead of `image_url`; pass one, not both (`videodb>=0.5.3`) |
 
 ### Talking avatar (HeyGen)
 
@@ -95,7 +96,9 @@ video = coll.generate_video(
 )
 
 # Lip-sync to the user's own audio instead of a script
-video = coll.generate_video(model="heygen", image_url=face_url, config=HeyGenConfig(audio_id=audio.id))
+# A face already in VideoDB (uploaded or generated) goes in as image_id (videodb>=0.5.3)
+face = coll.generate_image(prompt="Studio portrait of a presenter, plain background")
+video = coll.generate_video(model="heygen", image_id=face.id, config=HeyGenConfig(audio_id=audio.id))
 ```
 
 | `HeyGenConfig` field | Values |
