@@ -173,7 +173,27 @@ voice = coll.generate_voice(
 | `config` | `dict` | `{}` | Additional configuration |
 | `callback_url` | `str\|None` | `None` | URL to receive async callback |
 
-All three audio methods return an `Audio` object with `.id`, `.name`, `.length`, and `.collection_id`.
+### Voice Change
+
+Re-voice an existing audio with a preset voice. The words, timing and delivery stay the same, and the result is a new audio in the collection:
+
+```python
+for v in conn.get_generation_models()["voices"]:
+    print(v["name"], "-", v["description"])   # e.g. "George - Warm, British, middle-aged male."
+
+new_voice = coll.change_voice(audio_id="a-xxx", voice_name="George")
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `audio_id` | `str` | required | Source audio ID; up to 30 minutes long |
+| `voice_name` | `str` | `"Default"` | Preset voice from `conn.get_generation_models()["voices"]`; an unknown name raises with the valid list |
+| `config` | `dict\|None` | `None` | Optional `stability`, `similarity_boost`, `style` (0-1), `use_speaker_boost`, `remove_background_noise` |
+| `callback_url` | `str\|None` | `None` | URL to receive async callback |
+
+To re-voice a video's narration, extract or upload its audio first, change the voice, then put the new audio on an Editor timeline over the video (see [editor.md](editor.md)).
+
+All four audio methods return an `Audio` object with `.id`, `.name`, `.length`, and `.collection_id`.
 
 ## Text Generation (LLM Integration)
 
@@ -374,7 +394,7 @@ print(result["output"]["topics"])
 ## Tips
 
 - **Generated media is persistent**: All generated content is stored in your collection and can be reused.
-- **Three audio methods**: Use `generate_music()` for background music, `generate_sound_effect()` for SFX, and `generate_voice()` for text-to-speech. There is no unified `generate_audio()` method.
+- **Four audio methods**: Use `generate_music()` for background music, `generate_sound_effect()` for SFX, `generate_voice()` for text-to-speech, and `change_voice()` to re-voice an existing audio. There is no unified `generate_audio()` method.
 - **Text generation is collection-level**: `coll.generate_text()` does not have access to video content automatically. Fetch the transcript with `video.get_transcript_text()` and pass it in the prompt.
 - **Model tiers**: `"basic"` is fastest, `"pro"` is balanced, `"ultra"` is highest quality. Use `"pro"` for most analysis tasks.
 - **Combine generation types**: Generate images for overlays, music for backgrounds, and voice for narration, then compose using timelines (see [editor.md](editor.md)).
