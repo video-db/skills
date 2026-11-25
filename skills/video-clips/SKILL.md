@@ -5,11 +5,13 @@ description: Cut clips and highlights from a video. Use when the user wants a cl
 
 # Clips, highlights and social cuts
 
+Reference paths in this skill are relative to its directory.
+
 ## Which path
 
-1. **VideoDB connector tools present** (names such as `generate_clip`, `create_highlight_clip`, `compile_clips`, `reframe_video`, `upload_media`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. Do not install anything and do not ask for an API key.
-2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, in chat or any other way, save it yourself to the project's `.env` as `VIDEO_DB_API_KEY`, never print it, and continue with the Python SDK path at the end of this file. In Claude Code, `/mcp` then authorizing videodb also works.
-3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
+1. **VideoDB connector tools present** (names such as `generate_clip`, `create_highlight_clip`, `compile_clips`, `reframe_video`, `upload_media`): use them. This is the path in any connected client, including Cursor, Claude chat, and Cowork. Do not install anything and do not ask for an API key.
+2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, in chat or any other way, save it yourself to the project's `.env` as `VIDEO_DB_API_KEY`, never print it, and continue with the Python SDK path at the end of this file. For the bundled MCP server, authorize VideoDB in Cursor’s Customize → MCP panel, or run `/mcp` in Claude Code.
+3. **No VideoDB tools and no shell**: ask the user to connect VideoDB in their client. In Cursor, open Customize → MCP and authorize the VideoDB server. In Claude chat, open Settings → Connectors, find VideoDB, and log in. For other clients, use their MCP connection settings. Do not request an API key when there is no environment available to run SDK code.
 
 Talking to the user: never write "index", "indexed" or "indexing" in a reply. Say "searchable" ("it is now searchable by what was said and what is shown"), and "transcribe" rather than naming a job. One line of status at a time, then the result.
 
@@ -40,7 +42,7 @@ Notes that save a retry:
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/python/reference/editor.md`.
+Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `../../python/SKILL.md` and `../../python/reference/editor.md`.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")

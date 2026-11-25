@@ -5,11 +5,13 @@ description: "Live video and screen recording. Use when the user wants to connec
 
 # Live streams, meetings and screen capture
 
+Reference paths in this skill are relative to its directory.
+
 ## Which path
 
-1. **VideoDB connector tools present** (names such as `connect_rtstream`, `index_rtstream_scenes`, `create_rtstream_alert`, `record_meeting`): use them for cameras, streams and meetings. This is the path in Claude chat on web, desktop and mobile, and in Cowork. Do not install anything and do not ask for an API key.
-2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, in chat or any other way, save it yourself to the project's `.env` as `VIDEO_DB_API_KEY`, never print it, and continue with the Python SDK path at the end of this file. In Claude Code, `/mcp` then authorizing videodb also works.
-3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
+1. **VideoDB connector tools present** (names such as `connect_rtstream`, `index_rtstream_scenes`, `create_rtstream_alert`, `record_meeting`): use them for cameras, streams and meetings. This is the path in any connected client, including Cursor, Claude chat, and Cowork. Do not install anything and do not ask for an API key.
+2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, in chat or any other way, save it yourself to the project's `.env` as `VIDEO_DB_API_KEY`, never print it, and continue with the Python SDK path at the end of this file. For the bundled MCP server, authorize VideoDB in Cursor’s Customize → MCP panel, or run `/mcp` in Claude Code.
+3. **No VideoDB tools and no shell**: ask the user to connect VideoDB in their client. In Cursor, open Customize → MCP and authorize the VideoDB server. In Claude chat, open Settings → Connectors, find VideoDB, and log in. For other clients, use their MCP connection settings. Do not request an API key when there is no environment available to run SDK code.
 4. **Desktop screen capture** needs a local recorder, so it runs only with a shell (Claude Code, Cowork) through the Python SDK path, on macOS and Windows. In chat, say so in one line.
 
 Talking to the user: never write "index", "indexed" or "indexing" in a reply; say "searchable". One line of status at a time, then the result.
@@ -34,7 +36,7 @@ Long jobs return `status: processing`. The reply carries an `output_url` and nam
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Streams: `${CLAUDE_PLUGIN_ROOT}/python/reference/rtstream.md`. Desktop capture, step by step, with the WebSocket event listener: `${CLAUDE_PLUGIN_ROOT}/python/reference/capture.md` and `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` (Screen Recording section). The capture extra installs with `pip install "videodb[capture]>=0.5.0"`.
+Set up first with `/videodb:setup` if `import videodb` fails. Streams: `../../python/reference/rtstream.md`. Desktop capture, step by step, with the WebSocket event listener: `../../python/reference/capture.md` and `../../python/SKILL.md` (Screen Recording section). The capture extra installs with `pip install "videodb[capture]>=0.5.0"`.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")

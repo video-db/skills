@@ -18,11 +18,12 @@ VideoDB does the video work on its servers. The agent asks for it in plain langu
 
 </div>
 
-## Four ways to use it
+## Ways to use it
 
 | You are using | Do this | What you get |
 | --- | --- | --- |
 | **Claude** (web, desktop, mobile), Cowork, Claude Code | [Add to Claude](https://claude.ai/customize/plugins/id/52e93c02-c63f-4724-9716-d283e23e64e3%40anthropic-plugin-directory), one click, log in to VideoDB when asked | The skills below plus the VideoDB connector. Paste a YouTube link and ask. No install, no API key. |
+| **Cursor** | [Install the Cursor plugin](#use-in-cursor) from this repository | Six skills, four commands, and the hosted MCP server; authorize with your VideoDB account. |
 | **ChatGPT** | [Add to ChatGPT](https://videodb.io/chatgpt?ref=skills), one click, log in to VideoDB when asked | The VideoDB tools in your ChatGPT conversations. Paste a YouTube link and ask. No install, no API key. |
 | **Any other MCP client** (Cursor, Claude Code, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams, meeting recording. |
 | **A coding agent with a shell** (Claude Code, Cursor, Codex, Copilot, others) | `npx skills add video-db/skills` | The skills teach the agent the VideoDB Python SDK, so it can write and run code: everything the connector does, plus local files, AI generation, dubbing, sandbox compute and desktop capture. |
@@ -46,6 +47,48 @@ In Claude chat and Cowork the skills use the VideoDB connector, which the plugin
 ## Add to ChatGPT
 
 One click from the [VideoDB plugin page in ChatGPT](https://videodb.io/chatgpt?ref=skills). Log in to VideoDB when ChatGPT asks, then try the same prompts as above.
+
+## Use in Cursor
+
+This repository includes a Cursor plugin manifest alongside the Claude manifest.
+The Cursor plugin is not yet listed in the public marketplace.
+
+1. Clone this repository and check out the revision you want to install.
+2. In Cursor, open **Customize → Plugins → Import from Disk** and select the
+   repository root, containing `.cursor-plugin/plugin.json`.
+3. Open **Customize → MCP**, find the VideoDB server, and complete browser sign-in.
+   Plugin server names may have a `plugin-` prefix. The hosted connection needs
+   no Python installation or API key.
+4. Ask **"List my VideoDB collections"** to verify the connection.
+
+Local imports must be allowed by your organization. See
+[Cursor's plugin documentation](https://cursor.com/docs/plugins) for local imports
+and team marketplace installation.
+
+The plugin includes `videodb`, `video-search`, `video-clips`, `video-subtitles`,
+`video-edit`, and `video-live`, plus the `setup`, `find`, `clip`, and `subtitles`
+commands. Use Cursor's command picker to select the command and supply your request.
+For local files, Python scripts, capture, or other SDK-only features, ask to set up
+the Python SDK; it uses your VideoDB API key separately from MCP OAuth.
+
+Try these requests after connecting:
+
+- "Find where they discuss pricing in this video and make a shareable clip."
+- "Cut 1:10 to 1:40 and add white subtitles on a black background."
+- "Give me this video's timestamped transcript."
+
+### Validate the Cursor package
+
+```bash
+python -m pip install jsonschema PyYAML
+python scripts/validate_cursor_plugin.py
+```
+
+The validator checks the manifest against a pinned revision of Cursor's schema,
+component paths, skill and command frontmatter, and MCP configuration. Before
+publishing, also verify in Cursor that all six skills and four commands are visible,
+OAuth completes, and the collections request succeeds. Static validation does not
+exercise the Cursor runtime or authenticate to VideoDB.
 
 ## Connect the MCP server in any client
 
@@ -126,7 +169,7 @@ Use the VideoDB connector tools when they are present. Load the skill that match
 
 The plugin itself collects nothing. It has no hooks and sends no telemetry. The video work happens on VideoDB's servers, so these things leave your machine:
 
-- **Connector (claude.ai, Cowork, Claude Code):** your requests, and the video links you share, go to `https://mcp.videodb.io/mcp` after you sign in to VideoDB.
+- **Connector (Cursor, claude.ai, Cowork, Claude Code):** your requests, and the video links you share, go to `https://mcp.videodb.io/mcp` after you sign in to VideoDB.
 - **Python SDK (coding agents):** the SDK sends your requests, the files and links you upload, and your API key to `https://api.videodb.io`. The key is saved only in your project's `.env` file.
 - **Live capture and meetings:** desktop screen and audio, camera streams, and meeting recordings stream to VideoDB only after you start them.
 

@@ -18,9 +18,9 @@ VideoDB runs video work on its servers: ingest, understand, index, search, clip,
 
 ## Which path
 
-1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `generate_clip`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. No install, no API key.
-2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, save it yourself to the project's `.env` (Setup, below), never print it, and continue with the SDK. In Claude Code, `/mcp` then authorizing the bundled videodb server also works.
-3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
+1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `generate_clip`): use them. This is the path in any connected client, including Cursor, Claude chat, and Cowork. No install, no API key.
+2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, save it yourself to the project's `.env` (Setup, below), never print it, and continue with the SDK. For the bundled MCP server, authorize VideoDB in Cursor’s Customize → MCP panel, or run `/mcp` in Claude Code.
+3. **No VideoDB tools and no shell**: ask the user to connect VideoDB in their client. In Cursor, open Customize → MCP and authorize the VideoDB server. In Claude chat, open Settings → Connectors, find VideoDB, and log in. For other clients, use their MCP connection settings. Do not request an API key when there is no environment available to run SDK code.
 
 The SDK path is also the only path for code, scripts, notebooks, desktop capture, AI generation, dubbing and sandbox compute, which the connector does not do. Talking to the user: never write "index", "indexed" or "indexing" in a reply; say "searchable".
 
@@ -96,16 +96,20 @@ Ask the user for their VideoDB API key in one line: free at https://console.vide
 
 Tell them what you saved and where, without repeating the key.
 
-### 3. Authorize the hosted MCP server (Claude Code plugin only)
+### 3. Authorize the hosted MCP server
 
-The plugin bundles the hosted MCP server at `https://mcp.videodb.io/mcp`, which is
-authorized separately from the SDK key above. Tell the user to run `/mcp`, select
-**videodb**, and complete browser authorization with their VideoDB account. Verify with
-"list my VideoDB collections".
+The Claude and Cursor plugins bundle `https://mcp.videodb.io/mcp`. MCP authorization
+is separate from the SDK key above and needs no local Python install or API key.
 
-The MCP tools need no local Python install and no API key. Skip this step when the skill
-was installed with `npx skills add` or is running outside Claude Code — there is no MCP
-server in that case, and the SDK path above is the only one available.
+- **Cursor:** open Customize → MCP, find the VideoDB server (its name may include
+  the plugin prefix), and complete browser authorization with your VideoDB account.
+- **Claude Code:** run `/mcp`, select **videodb**, and authorize in the browser.
+- **Other clients:** connect the endpoint in the client's MCP settings and authorize.
+
+Verify by asking to list your VideoDB collections. Installing with `npx skills add`
+installs only skills; check whether an MCP connection was configured separately
+before assuming it is absent. Use the SDK when the task requires Python or the
+client has no MCP connection.
 
 ## Quick Reference
 

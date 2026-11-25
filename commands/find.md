@@ -1,11 +1,12 @@
 ---
+name: find
 description: Find a moment in a video or ask it a question. Usage - /videodb:find <YouTube link, URL or m- id> <what to look for, or a question>
 argument-hint: "<video> <query or question>"
 ---
 
 Find what the user is looking for by following the `video-search` skill. Prefer the VideoDB connector tools when they are present; fall back to the Python SDK only in a shell with no connector.
 
-Input: $ARGUMENTS
+Input: use the arguments supplied with this command (expanded as `$ARGUMENTS` in Claude Code).
 
 1. Get the `m-` id (`upload_media` for a link; `search_videos_by_title` for a name).
 2. About what was said, one-off question: `generate_transcript`, then `get_transcript(timestamped=true)`, read it and find the moments yourself. No index needed.
