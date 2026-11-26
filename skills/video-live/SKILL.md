@@ -5,8 +5,6 @@ description: "Live video and screen recording. Use when the user wants to connec
 
 # Live streams, meetings and screen capture
 
-Reference paths in this skill are relative to its directory.
-
 ## Which path
 
 1. **VideoDB connector tools present** (names such as `connect_rtstream`, `index_rtstream_scenes`, `create_rtstream_alert`, `record_meeting`): use them for cameras, streams and meetings. This is the path in any connected client, including Cursor, Claude chat, and Cowork. Do not install anything and do not ask for an API key.
@@ -36,7 +34,7 @@ Long jobs return `status: processing`. The reply carries an `output_url` and nam
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Streams: `../../python/reference/rtstream.md`. Desktop capture, step by step, with the WebSocket event listener: `../../python/reference/capture.md` and `../../python/SKILL.md` (Screen Recording section). The capture extra installs with `pip install "videodb[capture]>=0.5.0"`.
+Set up first with `/videodb:setup` if `import videodb` fails. Streams: `${CLAUDE_PLUGIN_ROOT}/python/reference/rtstream.md`. Desktop capture, step by step, with the WebSocket event listener: `${CLAUDE_PLUGIN_ROOT}/python/reference/capture.md` and `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` (Screen Recording section). The capture extra installs with `pip install "videodb[capture]>=0.5.0"`.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")

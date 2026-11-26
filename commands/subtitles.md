@@ -6,7 +6,7 @@ argument-hint: "<video> [style or language]"
 
 Subtitle or transcribe the video by following the `video-subtitles` skill. Prefer the VideoDB connector tools when they are present; fall back to the Python SDK only in a shell with no connector.
 
-Input: use the arguments supplied with this command (expanded as `$ARGUMENTS` in Claude Code).
+Input: $ARGUMENTS
 
 - Default: `generate_transcript` and poll until done, then `add_subtitles` with the style the user described, and reply with the `player_url`.
 - "transcript": `generate_transcript`, then `get_transcript(timestamped=true)`, and paste the transcript.

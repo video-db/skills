@@ -6,7 +6,7 @@ argument-hint: "<video> <range or prompt>"
 
 Make the clip the user asked for by following the `video-clips` skill. Prefer the VideoDB connector tools when they are present; fall back to the Python SDK only in a shell with no connector.
 
-Input: use the arguments supplied with this command (expanded as `$ARGUMENTS` in Claude Code).
+Input: $ARGUMENTS
 
 - A time range (mm:ss-mm:ss, or seconds): `generate_clip` on that range.
 - A description ("highlights of the demo"): `generate_transcript` once and poll until done, then `create_highlight_clip` with that prompt, then `compile_clips` with the shots it returns.

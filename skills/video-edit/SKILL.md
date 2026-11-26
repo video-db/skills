@@ -5,8 +5,6 @@ description: Edit and compose video on a timeline. Use when the user wants to ad
 
 # Edit and compose
 
-Reference paths in this skill are relative to its directory.
-
 ## Which path
 
 1. **VideoDB connector tools present** (names such as `render_timeline`, `upload_media`, `download_timeline_render`): use them. This is the path in any connected client, including Cursor, Claude chat, and Cowork. Do not install anything and do not ask for an API key.
@@ -55,7 +53,7 @@ render_timeline(resolution="1920x1080", tracks=[
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Full guide: `../../python/reference/editor.md`; generation: `../../python/reference/generative.md`.
+Set up first with `/videodb:setup` if `import videodb` fails. Full guide: `${CLAUDE_PLUGIN_ROOT}/python/reference/editor.md`; generation: `${CLAUDE_PLUGIN_ROOT}/python/reference/generative.md`.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")

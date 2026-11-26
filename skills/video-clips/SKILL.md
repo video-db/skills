@@ -5,8 +5,6 @@ description: Cut clips and highlights from a video. Use when the user wants a cl
 
 # Clips, highlights and social cuts
 
-Reference paths in this skill are relative to its directory.
-
 ## Which path
 
 1. **VideoDB connector tools present** (names such as `generate_clip`, `create_highlight_clip`, `compile_clips`, `reframe_video`, `upload_media`): use them. This is the path in any connected client, including Cursor, Claude chat, and Cowork. Do not install anything and do not ask for an API key.
@@ -42,7 +40,7 @@ Notes that save a retry:
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `../../python/SKILL.md` and `../../python/reference/editor.md`.
+Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/python/reference/editor.md`.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")

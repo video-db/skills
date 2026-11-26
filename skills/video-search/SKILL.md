@@ -5,8 +5,6 @@ description: Find a moment in a video or ask a question about it. Use when the u
 
 # Find a moment, or ask a video
 
-Reference paths in this skill are relative to its directory.
-
 ## Which path
 
 1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `ask_video`, `understand_video`): use them. This is the path in any connected client, including Cursor, Claude chat, and Cowork. Do not install anything and do not ask for an API key.
@@ -69,7 +67,7 @@ Older videos that were indexed with `index_spoken_words` or `index_scenes` (v1) 
 
 ## With the Python SDK (Claude Code)
 
-Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `../../python/SKILL.md` and `../../python/reference/search.md`.
+Set up first with `/videodb:setup` if `import videodb` fails. Full reference: `${CLAUDE_PLUGIN_ROOT}/python/SKILL.md` and `${CLAUDE_PLUGIN_ROOT}/python/reference/search.md`.
 
 ```python
 from dotenv import load_dotenv; load_dotenv(".env")
