@@ -1,0 +1,40 @@
+{
+  "name": "videodb",
+  "displayName": "VideoDB",
+  "version": "1.4.3",
+  "description": "Search, edit, clip, and subtitle videos with VideoDB. Find moments by what was said or shown, create shareable clips, and work with live streams using the hosted MCP server and Python SDK skills.",
+  "author": {
+    "name": "VideoDB",
+    "email": "support@videodb.io"
+  },
+  "publisher": "VideoDB",
+  "homepage": "https://docs.videodb.io",
+  "repository": "https://github.com/video-db/skills",
+  "license": "MIT",
+  "logo": "./.claude-plugin/icon.png",
+  "keywords": [
+    "videodb",
+    "video search",
+    "video editing",
+    "clips",
+    "subtitles",
+    "transcription",
+    "live streaming",
+    "mcp"
+  ],
+  "category": "integrations",
+  "tags": [
+    "video",
+    "video-editing",
+    "video-search",
+    "clips",
+    "subtitles",
+    "mcp"
+  ],
+  "skills": [
+    "./python",
+    "./skills"
+  ],
+  "commands": "./commands",
+  "mcpServers": "./.mcp.json"
+}
