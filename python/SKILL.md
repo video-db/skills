@@ -19,7 +19,7 @@ VideoDB runs video work on its servers: ingest, understand, index, search, clip,
 ## Which path
 
 1. **VideoDB connector tools present** (names such as `upload_media`, `search_video`, `generate_clip`): use them. This is the path in Claude chat on web, desktop and mobile, and in Cowork. No install, no API key.
-2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $20 of credits, no card). When the user gives it, save it yourself to the project's `.env` (Setup, below), never print it, and continue with the SDK. In Claude Code, `/mcp` then authorizing the bundled videodb server also works.
+2. **No VideoDB tools, but you have a shell** (Claude Code, Cowork, any agent that can run Python): ask for the VideoDB API key in one friendly line (free at https://console.videodb.io, $10 of credits, no card). When the user gives it, save it yourself to the project's `.env` (Setup, below), never print it, and continue with the SDK. In Claude Code, `/mcp` then authorizing the bundled videodb server also works.
 3. **No VideoDB tools and no shell**: you are in Claude chat. Reply with only this, adapted to the request: "VideoDB isn't connected yet. Open Settings → Connectors, find VideoDB, click Connect and log in (free, no card). Then send this request again and I'll take it from there." Do not mention API keys, `.env`, shells, Claude Code or `/mcp` here; none of them apply in chat, and a key pasted into chat cannot be used because nothing runs code there.
 
 The SDK path is also the only path for code, scripts, notebooks, desktop capture, AI generation, dubbing and sandbox compute, which the connector does not do. Talking to the user: never write "index", "indexed" or "indexing" in a reply; say "searchable".
@@ -88,7 +88,7 @@ The `>=0.5.0` pin matters — the understand/index/ask/aggregate APIs do not exi
 
 ### 2. Configure API key
 
-Ask the user for their VideoDB API key in one line: free at https://console.videodb.io, $20 of free credits, no credit card. When they give it to you, in chat or any other way, save it for them and keep going:
+Ask the user for their VideoDB API key in one line: free at https://console.videodb.io, $10 of free credits, no credit card. When they give it to you, in chat or any other way, save it for them and keep going:
 
 - Write `VIDEO_DB_API_KEY=<key>` to the project's `.env` (create the file if needed) and make sure `.env` is listed in `.gitignore`.
 - Never print, echo, log or commit the key, and never send it anywhere except through the SDK.
