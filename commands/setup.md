@@ -11,7 +11,7 @@ First check what is already there:
 Then set up the SDK by following the Setup section of the `videodb` skill (`${CLAUDE_PLUGIN_ROOT}/python/SKILL.md`):
 
 1. Install the SDK: `pip install "videodb[capture]>=0.5.0" python-dotenv` (without the capture extra if that fails on Linux).
-2. Ask the user for their VideoDB API key in one line (free at https://console.videodb.io, $20 of free credits, no credit card). When they give it, write `VIDEO_DB_API_KEY=<key>` to the project's `.env` yourself and make sure `.env` is gitignored. Never print or echo the key.
+2. Ask the user for their VideoDB API key in one line (free at https://console.videodb.io, $10 of free credits, no credit card). When they give it, write `VIDEO_DB_API_KEY=<key>` to the project's `.env` yourself and make sure `.env` is gitignored. Never print or echo the key.
 3. For the hosted MCP server, tell the user to run `/mcp`, pick videodb and authorize in the browser.
 4. Verify: run a short inline Python that connects and prints the number of videos in the default collection, and if MCP tools are present, call `list_collections`.
 
