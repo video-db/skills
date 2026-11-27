@@ -27,7 +27,7 @@ VideoDB does the video work on its servers. The agent asks for it in plain langu
 | **Any other MCP client** (Cursor, Claude Code, MCP Inspector, your own agent) | Connect `https://mcp.videodb.io/mcp` | 89 tools over your VideoDB account: upload, transcribe, subtitle, search, ask, clip, reframe, compose, live streams, meeting recording. |
 | **A coding agent with a shell** (Claude Code, Cursor, Codex, Copilot, others) | `npx skills add video-db/skills` | The skills teach the agent the VideoDB Python SDK, so it can write and run code: everything the connector does, plus local files, sandbox compute and desktop capture. |
 
-A free VideoDB account comes with $20 of credits, no credit card: [console.videodb.io](https://console.videodb.io).
+A free VideoDB account comes with $10 of credits, no credit card: [console.videodb.io](https://console.videodb.io).
 
 ## Add to Claude
 
